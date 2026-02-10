@@ -11,25 +11,25 @@ export default function Standings() {
     <div className="min-h-screen bg-background py-12">
       <div className="container mx-auto px-4 max-w-4xl">
         <h1 className="text-5xl font-display font-bold uppercase text-secondary mb-12 border-l-8 border-primary pl-6">
-          League Standings
+          Tabela Ligowa
         </h1>
 
         <Card className="border-none shadow-lg overflow-hidden">
           <CardHeader className="bg-secondary text-white">
             <CardTitle className="font-display uppercase tracking-wider text-2xl">
-              2026 Regular Season
+              Sezon Zasadniczy 2026
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
             <Table>
               <TableHeader>
                 <TableRow className="bg-muted hover:bg-muted">
-                  <TableHead className="w-[100px] text-center font-bold uppercase">Rank</TableHead>
-                  <TableHead className="uppercase font-bold">Team</TableHead>
-                  <TableHead className="text-center uppercase font-bold">GP</TableHead>
+                  <TableHead className="w-[100px] text-center font-bold uppercase">Miejsce</TableHead>
+                  <TableHead className="uppercase font-bold">Drużyna</TableHead>
+                  <TableHead className="text-center uppercase font-bold">M</TableHead>
                   <TableHead className="text-center uppercase font-bold text-green-600">W</TableHead>
-                  <TableHead className="text-center uppercase font-bold text-red-600">L</TableHead>
-                  <TableHead className="text-center uppercase font-bold text-primary text-lg">Pts</TableHead>
+                  <TableHead className="text-center uppercase font-bold text-red-600">P</TableHead>
+                  <TableHead className="text-center uppercase font-bold text-primary text-lg">Pkt</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>

@@ -11,11 +11,11 @@ export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   const navItems = [
-    { label: "Home", href: "/" },
-    { label: "News", href: "/news" },
-    { label: "Team", href: "/team" },
-    { label: "Standings", href: "/standings" },
-    { label: "Gallery", href: "/gallery" },
+    { label: "Start", href: "/" },
+    { label: "Aktualności", href: "/news" },
+    { label: "Drużyna", href: "/team" },
+    { label: "Tabela", href: "/standings" },
+    { label: "Galeria", href: "/gallery" },
   ];
 
   const NavLink = ({ href, label, mobile = false }: { href: string; label: string; mobile?: boolean }) => {

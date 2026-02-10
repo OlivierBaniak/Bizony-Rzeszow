@@ -77,16 +77,16 @@ export default function AdminDashboard() {
         <Tabs defaultValue="news" className="space-y-6">
           <TabsList className="bg-white p-1 shadow-sm border h-auto flex-wrap justify-start">
             <TabsTrigger value="news" className="data-[state=active]:bg-primary data-[state=active]:text-white px-6 py-2 uppercase font-display tracking-wider">
-              <Newspaper className="w-4 h-4 mr-2" /> News
+              <Newspaper className="w-4 h-4 mr-2" /> Aktualności
             </TabsTrigger>
             <TabsTrigger value="team" className="data-[state=active]:bg-primary data-[state=active]:text-white px-6 py-2 uppercase font-display tracking-wider">
-              <Users className="w-4 h-4 mr-2" /> Roster
+              <Users className="w-4 h-4 mr-2" /> Skład
             </TabsTrigger>
             <TabsTrigger value="standings" className="data-[state=active]:bg-primary data-[state=active]:text-white px-6 py-2 uppercase font-display tracking-wider">
-              <Trophy className="w-4 h-4 mr-2" /> Standings
+              <Trophy className="w-4 h-4 mr-2" /> Tabela
             </TabsTrigger>
             <TabsTrigger value="gallery" className="data-[state=active]:bg-primary data-[state=active]:text-white px-6 py-2 uppercase font-display tracking-wider">
-              <ImageIcon className="w-4 h-4 mr-2" /> Gallery
+              <ImageIcon className="w-4 h-4 mr-2" /> Galeria
             </TabsTrigger>
           </TabsList>
 
@@ -94,26 +94,26 @@ export default function AdminDashboard() {
           <TabsContent value="news" className="space-y-6">
             <div className="grid md:grid-cols-3 gap-6">
               <Card className="md:col-span-1 h-fit">
-                <CardHeader><CardTitle>Add News Article</CardTitle></CardHeader>
+                <CardHeader><CardTitle>Dodaj Artykuł</CardTitle></CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
-                    <Label>Title</Label>
-                    <Input value={newsForm.title} onChange={e => setNewsForm({...newsForm, title: e.target.value})} placeholder="Victory against Warsaw..." />
+                    <Label>Tytuł</Label>
+                    <Input value={newsForm.title} onChange={e => setNewsForm({...newsForm, title: e.target.value})} placeholder="Zwycięstwo nad Warszawą..." />
                   </div>
                   <div className="space-y-2">
-                    <Label>Excerpt</Label>
-                    <Textarea value={newsForm.excerpt} onChange={e => setNewsForm({...newsForm, excerpt: e.target.value})} placeholder="Brief summary..." />
+                    <Label>Wstęp</Label>
+                    <Textarea value={newsForm.excerpt} onChange={e => setNewsForm({...newsForm, excerpt: e.target.value})} placeholder="Krótkie podsumowanie..." />
                   </div>
                   <div className="space-y-2">
-                    <Label>Full Content</Label>
-                    <Textarea className="h-32" value={newsForm.content} onChange={e => setNewsForm({...newsForm, content: e.target.value})} placeholder="Full story..." />
+                    <Label>Treść</Label>
+                    <Textarea className="h-32" value={newsForm.content} onChange={e => setNewsForm({...newsForm, content: e.target.value})} placeholder="Pełna treść..." />
                   </div>
                   <div className="space-y-2">
-                    <Label>Image URL</Label>
+                    <Label>URL Obrazu</Label>
                     <Input value={newsForm.image} onChange={e => setNewsForm({...newsForm, image: e.target.value})} placeholder="https://..." />
                   </div>
                   <Button onClick={handleAddNews} className="w-full bg-primary hover:bg-primary/90 text-white">
-                    <Plus className="w-4 h-4 mr-2" /> Publish News
+                    <Plus className="w-4 h-4 mr-2" /> Opublikuj
                   </Button>
                 </CardContent>
               </Card>

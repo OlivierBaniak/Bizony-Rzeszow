@@ -8,7 +8,7 @@ export default function Team() {
     <div className="min-h-screen bg-background py-12">
       <div className="container mx-auto px-4">
         <h1 className="text-5xl font-display font-bold uppercase text-secondary mb-12 border-l-8 border-primary pl-6">
-          Meet the Team
+          Poznaj Drużynę
         </h1>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">

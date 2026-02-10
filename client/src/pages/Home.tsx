@@ -31,23 +31,23 @@ export default function Home() {
             transition={{ duration: 0.8 }}
           >
             <span className="inline-block py-1 px-3 border border-primary/50 bg-primary/20 text-primary backdrop-blur-md rounded-full text-sm font-bold uppercase tracking-widest mb-4">
-              Official Team Website
+              Oficjalna Strona Drużyny
             </span>
             <h1 className="text-6xl md:text-8xl font-display font-bold uppercase tracking-tighter drop-shadow-lg">
               Bizony <span className="text-primary">Rzeszów</span>
             </h1>
             <p className="text-xl md:text-2xl font-light text-gray-200 max-w-2xl mx-auto mt-4 mb-8">
-              Passion. Power. Pride. The spirit of baseball in Podkarpacie.
+              Pasja. Siła. Duma. Duch baseballu na Podkarpaciu.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/standings">
                 <Button size="lg" className="bg-primary hover:bg-primary/90 text-white font-display text-xl uppercase px-8 h-14">
-                  View Standings
+                  Zobacz Tabelę
                 </Button>
               </Link>
               <Link href="/team">
                 <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10 hover:text-white font-display text-xl uppercase px-8 h-14">
-                  Meet the Team
+                  Poznaj Drużynę
                 </Button>
               </Link>
             </div>
@@ -62,10 +62,10 @@ export default function Home() {
           {/* News Column */}
           <div className="lg:col-span-2 space-y-8">
             <div className="flex items-center justify-between">
-              <h2 className="text-4xl font-display font-bold uppercase text-secondary">Latest News</h2>
+              <h2 className="text-4xl font-display font-bold uppercase text-secondary">Aktualności</h2>
               <Link href="/news">
                 <Button variant="link" className="text-primary hover:text-primary/80 group">
-                  View All <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  Zobacz Wszystkie <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
             </div>
@@ -100,7 +100,7 @@ export default function Home() {
           <div className="space-y-8">
             <div className="flex items-center gap-3">
               <Trophy className="w-8 h-8 text-primary" />
-              <h2 className="text-4xl font-display font-bold uppercase text-secondary">League Table</h2>
+              <h2 className="text-4xl font-display font-bold uppercase text-secondary">Tabela Ligowa</h2>
             </div>
 
             <Card className="border-t-4 border-t-primary shadow-lg">
@@ -108,10 +108,10 @@ export default function Home() {
                 <table className="w-full text-sm">
                   <thead className="bg-muted text-muted-foreground uppercase font-display tracking-wider">
                     <tr>
-                      <th className="p-3 text-left">Team</th>
+                      <th className="p-3 text-left">Drużyna</th>
                       <th className="p-3 text-center">W</th>
-                      <th className="p-3 text-center">L</th>
-                      <th className="p-3 text-center font-bold">Pts</th>
+                      <th className="p-3 text-center">P</th>
+                      <th className="p-3 text-center font-bold">Pkt</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -131,7 +131,7 @@ export default function Home() {
                 <div className="p-4 border-t bg-muted/20">
                   <Link href="/standings">
                     <Button variant="outline" className="w-full uppercase font-display tracking-wider text-xs">
-                      Full Standings
+                      Pełna Tabela
                     </Button>
                   </Link>
                 </div>
@@ -141,17 +141,17 @@ export default function Home() {
             {/* Next Match Promo (Static for Mockup) */}
             <div className="bg-secondary text-white p-6 rounded-lg relative overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 rounded-full blur-3xl -mr-16 -mt-16" />
-              <h3 className="font-display uppercase tracking-widest text-primary mb-4 text-sm font-bold">Next Match</h3>
+              <h3 className="font-display uppercase tracking-widest text-primary mb-4 text-sm font-bold">Następny Mecz</h3>
               <div className="text-center space-y-4">
                 <div className="flex justify-between items-center">
                   <span className="font-bold text-lg">Bizony</span>
                   <span className="text-muted-foreground text-sm">VS</span>
                   <span className="font-bold text-lg">Centaurs</span>
                 </div>
-                <div className="text-4xl font-display font-bold">MAY 15</div>
-                <div className="text-sm text-gray-400">14:00 • Rzeszów Field</div>
+                <div className="text-4xl font-display font-bold">15 MAJA</div>
+                <div className="text-sm text-gray-400">14:00 • Boisko Rzeszów</div>
                 <Button className="w-full bg-primary hover:bg-primary/90 uppercase font-display">
-                  Get Tickets
+                  Kup Bilety
                 </Button>
               </div>
             </div>

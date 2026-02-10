@@ -8,7 +8,7 @@ export default function Gallery() {
     <div className="min-h-screen bg-background py-12">
       <div className="container mx-auto px-4">
         <h1 className="text-5xl font-display font-bold uppercase text-secondary mb-12 border-l-8 border-primary pl-6">
-          Photo Gallery
+          Galeria Zdjęć
         </h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -23,7 +23,7 @@ export default function Gallery() {
                   />
                   <div className="absolute inset-0 bg-black/50 opacity-0 transition-opacity group-hover:opacity-100 flex items-center justify-center">
                     <span className="text-white font-display uppercase text-xl font-bold tracking-wider border-2 border-primary px-4 py-2">
-                      View
+                      Powiększ
                     </span>
                   </div>
                   <div className="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">

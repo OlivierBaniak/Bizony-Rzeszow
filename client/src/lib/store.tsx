@@ -59,26 +59,26 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 const INITIAL_NEWS: NewsItem[] = [
   {
     id: "1",
-    title: "Bizony Rzeszów Start the 2026 Season Strong!",
-    excerpt: "The team showed incredible spirit in the opening game against Warsaw.",
-    content: "It was a sunny afternoon in Rzeszów as the Bizony took to the field...",
+    title: "Bizony Rzeszów mocno zaczynają sezon 2026!",
+    excerpt: "Zespół pokazał niesamowitego ducha w meczu otwarcia przeciwko Warszawie.",
+    content: "To było słoneczne popołudnie w Rzeszowie, gdy Bizony wyszły na boisko...",
     date: "2026-04-12",
     image: newsImg,
   },
   {
     id: "2",
-    title: "New Training Facility Opens",
-    excerpt: "We are proud to announce our new indoor batting cages are ready.",
-    content: "Thanks to the support of our sponsors, we now have state-of-the-art facilities...",
+    title: "Otwarcie Nowego Obiektu Treningowego",
+    excerpt: "Z dumą ogłaszamy, że nasze nowe kryte klatki do odbijania są gotowe.",
+    content: "Dzięki wsparciu naszych sponsorów dysponujemy teraz najnowocześniejszymi obiektami...",
     date: "2026-03-20",
     image: heroImg,
   },
 ];
 
 const INITIAL_PLAYERS: Player[] = [
-  { id: "1", name: "Jan Kowalski", number: 23, position: "Pitcher", image: "https://images.unsplash.com/photo-1556637482-fa587f893e48?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3" },
-  { id: "2", name: "Mike Smith", number: 12, position: "Catcher", image: "https://images.unsplash.com/photo-1619472624508-41cb76503c5d?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3" },
-  { id: "3", name: "Adam Nowak", number: 5, position: "Shortstop", image: "https://images.unsplash.com/photo-1522778119026-d647f0565c6d?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3" },
+  { id: "1", name: "Jan Kowalski", number: 23, position: "Miotacz", image: "https://images.unsplash.com/photo-1556637482-fa587f893e48?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3" },
+  { id: "2", name: "Mike Smith", number: 12, position: "Łapacz", image: "https://images.unsplash.com/photo-1619472624508-41cb76503c5d?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3" },
+  { id: "3", name: "Adam Nowak", number: 5, position: "Łącznik", image: "https://images.unsplash.com/photo-1522778119026-d647f0565c6d?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3" },
 ];
 
 const INITIAL_STANDINGS: Standing[] = [
