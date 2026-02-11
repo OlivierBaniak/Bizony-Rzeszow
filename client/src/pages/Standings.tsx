@@ -3,7 +3,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function Standings() {
-  const { standings } = useApp();
+  const { standings, leagueMetadata } = useApp();
   // Sort standings by points (descending)
   const sortedStandings = [...standings].sort((a, b) => b.points - a.points);
 
@@ -11,13 +11,13 @@ export default function Standings() {
     <div className="min-h-screen bg-background py-12">
       <div className="container mx-auto px-4 max-w-4xl">
         <h1 className="text-5xl font-display font-bold uppercase text-secondary mb-12 border-l-8 border-primary pl-6">
-          Tabela Ligowa
+          {leagueMetadata.title}
         </h1>
 
         <Card className="border-none shadow-lg overflow-hidden">
           <CardHeader className="bg-secondary text-white">
             <CardTitle className="font-display uppercase tracking-wider text-2xl">
-              Sezon Zasadniczy 2026
+              {leagueMetadata.subtitle}
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">

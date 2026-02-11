@@ -12,6 +12,7 @@ import News from "@/pages/News";
 import Team from "@/pages/Team";
 import Standings from "@/pages/Standings";
 import Gallery from "@/pages/Gallery";
+import About from "@/pages/About";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import Login from "@/pages/admin/Login";
 import NotFound from "@/pages/not-found";
@@ -27,6 +28,7 @@ function Router() {
           <Route path="/team" component={Team} />
           <Route path="/standings" component={Standings} />
           <Route path="/gallery" component={Gallery} />
+          <Route path="/about" component={About} />
           <Route path="/admin" component={AdminDashboard} />
           <Route path="/login" component={Login} />
           <Route component={NotFound} />

@@ -30,17 +30,37 @@ export type Standing = {
   points: number;
 };
 
-export type GalleryItem = {
+export type LeagueMetadata = {
+  title: string;
+  subtitle: string;
+};
+
+export type GalleryImage = {
+  id: string;
+  url: string;
+  description: string;
+};
+
+export type GalleryFolder = {
   id: string;
   title: string;
-  url: string;
+  description: string;
+  mainImage: string;
+  images: GalleryImage[];
+};
+
+export type ClubHistory = {
+  content: string;
+  images: string[];
 };
 
 type AppContextType = {
   news: NewsItem[];
   players: Player[];
   standings: Standing[];
-  gallery: GalleryItem[];
+  leagueMetadata: LeagueMetadata;
+  galleryFolders: GalleryFolder[];
+  clubHistory: ClubHistory;
   isAdmin: boolean;
   login: () => void;
   logout: () => void;
@@ -49,8 +69,12 @@ type AppContextType = {
   addPlayer: (item: Omit<Player, "id">) => void;
   deletePlayer: (id: string) => void;
   updateStandings: (items: Standing[]) => void;
-  addGalleryItem: (item: Omit<GalleryItem, "id">) => void;
-  deleteGalleryItem: (id: string) => void;
+  updateLeagueMetadata: (metadata: LeagueMetadata) => void;
+  addGalleryFolder: (folder: Omit<GalleryFolder, "id" | "images">) => void;
+  deleteGalleryFolder: (id: string) => void;
+  addImageToFolder: (folderId: string, image: Omit<GalleryImage, "id">) => void;
+  deleteImageFromFolder: (folderId: string, imageId: string) => void;
+  updateClubHistory: (history: ClubHistory) => void;
 };
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -88,17 +112,45 @@ const INITIAL_STANDINGS: Standing[] = [
   { id: "4", team: "Kutno Stal", played: 10, won: 2, lost: 8, points: 4 },
 ];
 
-const INITIAL_GALLERY: GalleryItem[] = [
-  { id: "1", title: "Season Opener", url: teamImg },
-  { id: "2", title: "Action Shot", url: newsImg },
-  { id: "3", title: "Stadium at Night", url: heroImg },
+const INITIAL_METADATA: LeagueMetadata = {
+  title: "Tabela Ligowa",
+  subtitle: "Sezon Zasadniczy 2026"
+};
+
+const INITIAL_GALLERY: GalleryFolder[] = [
+  {
+    id: "1",
+    title: "Inauguracja Sezonu",
+    description: "Zdjęcia z pierwszego meczu w sezonie 2026 przeciwko Warszawie.",
+    mainImage: teamImg,
+    images: [
+      { id: "i1", url: teamImg, description: "Drużyna w komplecie" },
+      { id: "i2", url: newsImg, description: "Akcja pod bazą" }
+    ]
+  },
+  {
+    id: "2",
+    title: "Treningi Nocne",
+    description: "Klimatyczne ujęcia z wieczornych treningów pod jupiterami.",
+    mainImage: heroImg,
+    images: [
+      { id: "i3", url: heroImg, description: "Stadion nocą" }
+    ]
+  }
 ];
+
+const INITIAL_HISTORY: ClubHistory = {
+  content: "Klub Bizony Rzeszów powstał z pasji do baseballu... Nasza historia to lata ciężkiej pracy i budowania społeczności w regionie Podkarpacia.",
+  images: [teamImg, heroImg]
+};
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [news, setNews] = useState<NewsItem[]>(INITIAL_NEWS);
   const [players, setPlayers] = useState<Player[]>(INITIAL_PLAYERS);
   const [standings, setStandings] = useState<Standing[]>(INITIAL_STANDINGS);
-  const [gallery, setGallery] = useState<GalleryItem[]>(INITIAL_GALLERY);
+  const [leagueMetadata, setLeagueMetadata] = useState<LeagueMetadata>(INITIAL_METADATA);
+  const [galleryFolders, setGalleryFolders] = useState<GalleryFolder[]>(INITIAL_GALLERY);
+  const [clubHistory, setClubHistory] = useState<ClubHistory>(INITIAL_HISTORY);
   const [isAdmin, setIsAdmin] = useState(false);
 
   const login = () => setIsAdmin(true);
@@ -130,13 +182,49 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setStandings(items);
   };
 
-  const addGalleryItem = (item: Omit<GalleryItem, "id">) => {
-    const newItem = { ...item, id: Math.random().toString(36).substr(2, 9) };
-    setGallery([...gallery, newItem]);
+  const updateLeagueMetadata = (metadata: LeagueMetadata) => {
+    setLeagueMetadata(metadata);
   };
 
-  const deleteGalleryItem = (id: string) => {
-    setGallery(gallery.filter((g) => g.id !== id));
+  const addGalleryFolder = (folder: Omit<GalleryFolder, "id" | "images">) => {
+    const newFolder: GalleryFolder = {
+      ...folder,
+      id: Math.random().toString(36).substr(2, 9),
+      images: []
+    };
+    setGalleryFolders([...galleryFolders, newFolder]);
+  };
+
+  const deleteGalleryFolder = (id: string) => {
+    setGalleryFolders(galleryFolders.filter(f => f.id !== id));
+  };
+
+  const addImageToFolder = (folderId: string, image: Omit<GalleryImage, "id">) => {
+    setGalleryFolders(galleryFolders.map(f => {
+      if (f.id === folderId) {
+        return {
+          ...f,
+          images: [...f.images, { ...image, id: Math.random().toString(36).substr(2, 9) }]
+        };
+      }
+      return f;
+    }));
+  };
+
+  const deleteImageFromFolder = (folderId: string, imageId: string) => {
+    setGalleryFolders(galleryFolders.map(f => {
+      if (f.id === folderId) {
+        return {
+          ...f,
+          images: f.images.filter(img => img.id !== imageId)
+        };
+      }
+      return f;
+    }));
+  };
+
+  const updateClubHistory = (history: ClubHistory) => {
+    setClubHistory(history);
   };
 
   return (
@@ -145,7 +233,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         news,
         players,
         standings,
-        gallery,
+        leagueMetadata,
+        galleryFolders,
+        clubHistory,
         isAdmin,
         login,
         logout,
@@ -154,8 +244,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         addPlayer,
         deletePlayer,
         updateStandings,
-        addGalleryItem,
-        deleteGalleryItem,
+        updateLeagueMetadata,
+        addGalleryFolder,
+        deleteGalleryFolder,
+        addImageToFolder,
+        deleteImageFromFolder,
+        updateClubHistory,
       }}
     >
       {children}

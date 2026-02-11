@@ -13,6 +13,7 @@ export function Navbar() {
   const navItems = [
     { label: "Start", href: "/" },
     { label: "Aktualności", href: "/news" },
+    { label: "O Klubie", href: "/about" },
     { label: "Drużyna", href: "/team" },
     { label: "Tabela", href: "/standings" },
     { label: "Galeria", href: "/gallery" },

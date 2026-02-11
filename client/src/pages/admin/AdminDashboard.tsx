@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, Trash, Save, LayoutDashboard, Newspaper, Users, Trophy, Image as ImageIcon } from "lucide-react";
+import { Plus, Trash, Save, LayoutDashboard, Newspaper, Users, Trophy, Image as ImageIcon, FolderOpen, Info } from "lucide-react";
 
 export default function AdminDashboard() {
   const { 
@@ -15,17 +15,23 @@ export default function AdminDashboard() {
     news, addNews, deleteNews,
     players, addPlayer, deletePlayer,
     standings, updateStandings,
-    gallery, addGalleryItem, deleteGalleryItem
+    leagueMetadata, updateLeagueMetadata,
+    galleryFolders, addGalleryFolder, deleteGalleryFolder, addImageToFolder, deleteImageFromFolder,
+    clubHistory, updateClubHistory
   } = useApp();
   const [, setLocation] = useLocation();
 
   // Form States
   const [newsForm, setNewsForm] = useState({ title: "", excerpt: "", content: "", image: "" });
   const [playerForm, setPlayerForm] = useState({ name: "", number: "", position: "", image: "" });
-  const [galleryForm, setGalleryForm] = useState({ title: "", url: "" });
+  const [folderForm, setFolderForm] = useState({ title: "", description: "", mainImage: "" });
+  const [imageForm, setImageForm] = useState({ url: "", description: "" });
+  const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
   
-  // Local state for standings editing
+  // Local states for metadata and history
+  const [metaDraft, setMetaDraft] = useState(leagueMetadata);
   const [standingsDraft, setStandingsDraft] = useState(standings);
+  const [historyDraft, setHistoryDraft] = useState(clubHistory);
 
   if (!isAdmin) {
     setLocation("/login");
@@ -48,14 +54,25 @@ export default function AdminDashboard() {
     setPlayerForm({ name: "", number: "", position: "", image: "" });
   };
 
-  const handleAddGallery = () => {
-    if (!galleryForm.url) return;
-    addGalleryItem(galleryForm);
-    setGalleryForm({ title: "", url: "" });
+  const handleAddFolder = () => {
+    if (!folderForm.title) return;
+    addGalleryFolder(folderForm);
+    setFolderForm({ title: "", description: "", mainImage: "" });
+  };
+
+  const handleAddImage = (folderId: string) => {
+    if (!imageForm.url) return;
+    addImageToFolder(folderId, imageForm);
+    setImageForm({ url: "", description: "" });
   };
 
   const handleSaveStandings = () => {
     updateStandings(standingsDraft);
+    updateLeagueMetadata(metaDraft);
+  };
+
+  const handleSaveHistory = () => {
+    updateClubHistory(historyDraft);
   };
 
   const updateDraftTeam = (id: string, field: string, value: string | number) => {
@@ -76,17 +93,20 @@ export default function AdminDashboard() {
       <div className="container mx-auto px-4">
         <Tabs defaultValue="news" className="space-y-6">
           <TabsList className="bg-white p-1 shadow-sm border h-auto flex-wrap justify-start">
-            <TabsTrigger value="news" className="data-[state=active]:bg-primary data-[state=active]:text-white px-6 py-2 uppercase font-display tracking-wider">
-              <Newspaper className="w-4 h-4 mr-2" /> Aktualności
+            <TabsTrigger value="news" className="px-6 py-2 uppercase font-display tracking-wider">
+              Aktualności
             </TabsTrigger>
-            <TabsTrigger value="team" className="data-[state=active]:bg-primary data-[state=active]:text-white px-6 py-2 uppercase font-display tracking-wider">
-              <Users className="w-4 h-4 mr-2" /> Skład
+            <TabsTrigger value="team" className="px-6 py-2 uppercase font-display tracking-wider">
+              Skład
             </TabsTrigger>
-            <TabsTrigger value="standings" className="data-[state=active]:bg-primary data-[state=active]:text-white px-6 py-2 uppercase font-display tracking-wider">
-              <Trophy className="w-4 h-4 mr-2" /> Tabela
+            <TabsTrigger value="standings" className="px-6 py-2 uppercase font-display tracking-wider">
+              Tabela
             </TabsTrigger>
-            <TabsTrigger value="gallery" className="data-[state=active]:bg-primary data-[state=active]:text-white px-6 py-2 uppercase font-display tracking-wider">
-              <ImageIcon className="w-4 h-4 mr-2" /> Galeria
+            <TabsTrigger value="gallery" className="px-6 py-2 uppercase font-display tracking-wider">
+              Galeria
+            </TabsTrigger>
+            <TabsTrigger value="about" className="px-6 py-2 uppercase font-display tracking-wider">
+              O Klubie
             </TabsTrigger>
           </TabsList>
 
@@ -139,29 +159,27 @@ export default function AdminDashboard() {
           <TabsContent value="team" className="space-y-6">
             <div className="grid md:grid-cols-3 gap-6">
               <Card className="md:col-span-1 h-fit">
-                <CardHeader><CardTitle>Add Player</CardTitle></CardHeader>
+                <CardHeader><CardTitle>Dodaj Zawodnika</CardTitle></CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
-                    <Label>Full Name</Label>
-                    <Input value={playerForm.name} onChange={e => setPlayerForm({...playerForm, name: e.target.value})} placeholder="John Doe" />
+                    <Label>Imię i Nazwisko</Label>
+                    <Input value={playerForm.name} onChange={e => setPlayerForm({...playerForm, name: e.target.value})} />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label>Number</Label>
-                      <Input type="number" value={playerForm.number} onChange={e => setPlayerForm({...playerForm, number: e.target.value})} placeholder="23" />
+                      <Label>Numer</Label>
+                      <Input type="number" value={playerForm.number} onChange={e => setPlayerForm({...playerForm, number: e.target.value})} />
                     </div>
                     <div className="space-y-2">
-                      <Label>Position</Label>
-                      <Input value={playerForm.position} onChange={e => setPlayerForm({...playerForm, position: e.target.value})} placeholder="Pitcher" />
+                      <Label>Pozycja</Label>
+                      <Input value={playerForm.position} onChange={e => setPlayerForm({...playerForm, position: e.target.value})} />
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label>Photo URL</Label>
-                    <Input value={playerForm.image} onChange={e => setPlayerForm({...playerForm, image: e.target.value})} placeholder="https://..." />
+                    <Label>Zdjęcie URL</Label>
+                    <Input value={playerForm.image} onChange={e => setPlayerForm({...playerForm, image: e.target.value})} />
                   </div>
-                  <Button onClick={handleAddPlayer} className="w-full bg-primary hover:bg-primary/90 text-white">
-                    <Plus className="w-4 h-4 mr-2" /> Add Player
-                  </Button>
+                  <Button onClick={handleAddPlayer} className="w-full bg-primary">Dodaj</Button>
                 </CardContent>
               </Card>
 
@@ -183,25 +201,38 @@ export default function AdminDashboard() {
           </TabsContent>
 
           {/* STANDINGS TAB */}
-          <TabsContent value="standings">
+          <TabsContent value="standings" className="space-y-6">
             <Card>
-              <CardHeader className="flex flex-row justify-between items-center">
-                <CardTitle>Manage League Table</CardTitle>
-                <Button onClick={handleSaveStandings} className="bg-green-600 hover:bg-green-700 text-white">
-                  <Save className="w-4 h-4 mr-2" /> Save Changes
+              <CardHeader className="flex flex-row justify-between items-center border-b">
+                <CardTitle>Zarządzaj Tabelą i Nagłówkami</CardTitle>
+                <Button onClick={handleSaveStandings} className="bg-green-600 hover:bg-green-700 text-white font-display uppercase tracking-wider">
+                  <Save className="w-4 h-4 mr-2" /> Zapisz Wszystko
                 </Button>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                   <div className="grid grid-cols-6 font-bold text-sm uppercase bg-muted p-3 rounded">
-                      <div className="col-span-2">Team Name</div>
-                      <div className="text-center">Played</div>
-                      <div className="text-center">Won</div>
-                      <div className="text-center">Lost</div>
-                      <div className="text-center">Points</div>
+              <CardContent className="pt-6 space-y-8">
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label>Główny Nagłówek (np. Tabela Ligowa)</Label>
+                    <Input value={metaDraft.title} onChange={e => setMetaDraft({...metaDraft, title: e.target.value})} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Podtytuł (np. Sezon Zasadniczy 2026)</Label>
+                    <Input value={metaDraft.subtitle} onChange={e => setMetaDraft({...metaDraft, subtitle: e.target.value})} />
+                  </div>
+                </div>
+
+                <div className="space-y-2 pt-4 border-t">
+                   <Label className="text-lg font-display uppercase mb-4 block">Wyniki Drużyn</Label>
+                   <div className="grid grid-cols-7 font-bold text-xs uppercase bg-muted p-3 rounded">
+                      <div className="col-span-2">Drużyna</div>
+                      <div className="text-center">Mecze</div>
+                      <div className="text-center">W</div>
+                      <div className="text-center">P</div>
+                      <div className="text-center">Pkt</div>
+                      <div></div>
                    </div>
                    {standingsDraft.map(team => (
-                     <div key={team.id} className="grid grid-cols-6 gap-2 items-center p-2 border-b">
+                     <div key={team.id} className="grid grid-cols-7 gap-2 items-center p-2 border-b">
                         <div className="col-span-2">
                           <Input value={team.team} onChange={e => updateDraftTeam(team.id, 'team', e.target.value)} />
                         </div>
@@ -209,52 +240,143 @@ export default function AdminDashboard() {
                         <Input type="number" value={team.won} onChange={e => updateDraftTeam(team.id, 'won', parseInt(e.target.value))} className="text-center" />
                         <Input type="number" value={team.lost} onChange={e => updateDraftTeam(team.id, 'lost', parseInt(e.target.value))} className="text-center" />
                         <Input type="number" value={team.points} onChange={e => updateDraftTeam(team.id, 'points', parseInt(e.target.value))} className="text-center font-bold" />
+                        <Button variant="ghost" size="icon" onClick={() => setStandingsDraft(standingsDraft.filter(t => t.id !== team.id))}>
+                          <Trash className="w-4 h-4 text-destructive" />
+                        </Button>
                      </div>
                    ))}
+                   <Button variant="outline" className="mt-4" onClick={() => setStandingsDraft([...standingsDraft, { id: Math.random().toString(), team: "Nowa Drużyna", played: 0, won: 0, lost: 0, points: 0 }])}>
+                     <Plus className="w-4 h-4 mr-2" /> Dodaj Wiersz
+                   </Button>
                 </div>
               </CardContent>
             </Card>
           </TabsContent>
           
           {/* GALLERY TAB */}
-           <TabsContent value="gallery" className="space-y-6">
+          <TabsContent value="gallery" className="space-y-6">
             <div className="grid md:grid-cols-3 gap-6">
               <Card className="md:col-span-1 h-fit">
-                <CardHeader><CardTitle>Add Photo</CardTitle></CardHeader>
+                <CardHeader><CardTitle>Nowy Album</CardTitle></CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
-                    <Label>Title / Caption</Label>
-                    <Input value={galleryForm.title} onChange={e => setGalleryForm({...galleryForm, title: e.target.value})} placeholder="Game vs Kutno" />
+                    <Label>Tytuł Albumu</Label>
+                    <Input value={folderForm.title} onChange={e => setFolderForm({...folderForm, title: e.target.value})} />
                   </div>
                   <div className="space-y-2">
-                    <Label>Image URL</Label>
-                    <Input value={galleryForm.url} onChange={e => setGalleryForm({...galleryForm, url: e.target.value})} placeholder="https://..." />
+                    <Label>Krótki Opis</Label>
+                    <Textarea value={folderForm.description} onChange={e => setFolderForm({...folderForm, description: e.target.value})} />
                   </div>
-                  <Button onClick={handleAddGallery} className="w-full bg-primary hover:bg-primary/90 text-white">
-                    <Plus className="w-4 h-4 mr-2" /> Add to Gallery
+                  <div className="space-y-2">
+                    <Label>Zdjęcie Główne URL</Label>
+                    <Input value={folderForm.mainImage} onChange={e => setFolderForm({...folderForm, mainImage: e.target.value})} />
+                  </div>
+                  <Button onClick={handleAddFolder} className="w-full bg-primary">
+                    Stwórz Album
                   </Button>
                 </CardContent>
               </Card>
 
-              <div className="md:col-span-2 grid grid-cols-3 gap-4">
-                {gallery.map(item => (
-                  <div key={item.id} className="relative group aspect-square rounded overflow-hidden">
-                    <img src={item.url} className="w-full h-full object-cover" />
-                    <Button 
-                      variant="destructive" 
-                      size="icon" 
-                      onClick={() => deleteGalleryItem(item.id)}
-                      className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                    >
-                      <Trash className="w-4 h-4" />
-                    </Button>
-                    <div className="absolute bottom-0 left-0 w-full bg-black/50 text-white text-xs p-2 truncate">
-                      {item.title}
-                    </div>
-                  </div>
+              <div className="md:col-span-2 space-y-6">
+                {galleryFolders.map(folder => (
+                  <Card key={folder.id} className={`border-2 transition-colors ${selectedFolderId === folder.id ? 'border-primary' : 'border-transparent'}`}>
+                    <CardHeader className="flex flex-row items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <img src={folder.mainImage} className="w-16 h-12 object-cover rounded" />
+                        <div>
+                          <CardTitle className="text-xl uppercase font-display">{folder.title}</CardTitle>
+                          <p className="text-xs text-muted-foreground">{folder.images.length} zdjęć</p>
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button variant="outline" size="sm" onClick={() => setSelectedFolderId(selectedFolderId === folder.id ? null : folder.id)}>
+                          <FolderOpen className="w-4 h-4 mr-2" /> 
+                          {selectedFolderId === folder.id ? 'Zamknij' : 'Zarządzaj'}
+                        </Button>
+                        <Button variant="destructive" size="icon" onClick={() => deleteGalleryFolder(folder.id)}>
+                          <Trash className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </CardHeader>
+                    {selectedFolderId === folder.id && (
+                      <CardContent className="pt-4 border-t bg-muted/20">
+                        <div className="space-y-4">
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-1">
+                              <Label className="text-xs">Nowe Zdjęcie URL</Label>
+                              <Input size={30} value={imageForm.url} onChange={e => setImageForm({...imageForm, url: e.target.value})} />
+                            </div>
+                            <div className="space-y-1">
+                              <Label className="text-xs">Opis Zdjęcia</Label>
+                              <div className="flex gap-2">
+                                <Input value={imageForm.description} onChange={e => setImageForm({...imageForm, description: e.target.value})} />
+                                <Button onClick={() => handleAddImage(folder.id)}>Dodaj</Button>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-4 gap-2">
+                            {folder.images.map(img => (
+                              <div key={img.id} className="relative aspect-square group">
+                                <img src={img.url} className="w-full h-full object-cover rounded border" />
+                                <Button 
+                                  variant="destructive" size="icon" 
+                                  className="absolute top-1 right-1 w-6 h-6 opacity-0 group-hover:opacity-100"
+                                  onClick={() => deleteImageFromFolder(folder.id, img.id)}
+                                >
+                                  <Trash className="w-3 h-3" />
+                                </Button>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </CardContent>
+                    )}
+                  </Card>
                 ))}
               </div>
             </div>
+          </TabsContent>
+
+          {/* ABOUT TAB */}
+          <TabsContent value="about">
+            <Card>
+              <CardHeader className="flex flex-row justify-between items-center border-b">
+                <CardTitle>Historia Klubu</CardTitle>
+                <Button onClick={handleSaveHistory} className="bg-green-600 hover:bg-green-700 text-white font-display uppercase tracking-wider">
+                  <Save className="w-4 h-4 mr-2" /> Zapisz Historię
+                </Button>
+              </CardHeader>
+              <CardContent className="pt-6 space-y-6">
+                <div className="space-y-2">
+                  <Label>Treść Historii (obsługuje wiele linii)</Label>
+                  <Textarea 
+                    className="h-64 font-sans text-lg" 
+                    value={historyDraft.content} 
+                    onChange={e => setHistoryDraft({...historyDraft, content: e.target.value})} 
+                  />
+                </div>
+                <div className="space-y-4">
+                   <Label>Zdjęcia w sekcji O Klubie (URL)</Label>
+                   {historyDraft.images.map((url, idx) => (
+                     <div key={idx} className="flex gap-2">
+                       <Input value={url} onChange={e => {
+                         const newImages = [...historyDraft.images];
+                         newImages[idx] = e.target.value;
+                         setHistoryDraft({...historyDraft, images: newImages});
+                       }} />
+                       <Button variant="destructive" size="icon" onClick={() => {
+                         setHistoryDraft({...historyDraft, images: historyDraft.images.filter((_, i) => i !== idx)});
+                       }}>
+                         <Trash className="w-4 h-4" />
+                       </Button>
+                     </div>
+                   ))}
+                   <Button variant="outline" onClick={() => setHistoryDraft({...historyDraft, images: [...historyDraft.images, ""]})}>
+                     <Plus className="w-4 h-4 mr-2" /> Dodaj URL Zdjęcia
+                   </Button>
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
 
         </Tabs>
