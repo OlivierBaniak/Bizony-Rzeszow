@@ -44,18 +44,18 @@
   --popover: 0 0% 100%;
   --popover-foreground: 222 47% 11%;
 
-  /* Vibrant Orange Accent */
-  --primary: 25 95% 53%; /* Bison Orange */
+  /* Vibrant Red Accent - from logo */
+  --primary: 0 72% 51%; /* Logo Red */
   --primary-foreground: 0 0% 100%;
 
   /* Navy Blue Secondary */
-  --secondary: 222 47% 15%; /* Darker Navy */
+  --secondary: 222 47% 10%; /* Very Dark Navy */
   --secondary-foreground: 0 0% 100%;
 
   --muted: 220 14% 94%;
   --muted-foreground: 220 8% 46%;
 
-  --accent: 25 95% 96%; /* Very light orange tint for hovers */
+  --accent: 0 72% 98%; /* Very light red tint for hovers */
   --accent-foreground: 222 47% 11%;
 
   --destructive: 0 84% 60%;
@@ -63,7 +63,7 @@
 
   --border: 220 13% 91%;
   --input: 220 13% 91%;
-  --ring: 25 95% 53%;
+  --ring: 0 72% 51%;
 
   --radius: 0.25rem; /* Sports feel is often blocky/sharp */
 }
@@ -79,10 +79,10 @@
   --popover: 222 47% 13%;
   --popover-foreground: 210 40% 98%;
 
-  --primary: 25 95% 53%; /* Orange pops on navy */
+  --primary: 0 72% 51%; /* Red pops on navy */
   --primary-foreground: 0 0% 100%;
 
-  --secondary: 217 33% 17%;
+  --secondary: 217 33% 15%;
   --secondary-foreground: 210 40% 98%;
 
   --muted: 217 33% 17%;
@@ -96,7 +96,7 @@
 
   --border: 217 33% 20%;
   --input: 217 33% 20%;
-  --ring: 25 95% 53%;
+  --ring: 0 72% 51%;
 }
 
 @layer base {

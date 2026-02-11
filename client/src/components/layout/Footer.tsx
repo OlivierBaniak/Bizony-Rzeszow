@@ -1,3 +1,4 @@
+import logo from "@assets/bizony--rSs6oZ4_1770847193876.webp";
 import { Facebook, Instagram, Twitter } from "lucide-react";
 
 export function Footer() {
@@ -7,7 +8,10 @@ export function Footer() {
         <div className="grid md:grid-cols-3 gap-8">
           {/* Brand */}
           <div className="space-y-4">
-            <h3 className="text-2xl font-bold font-display uppercase tracking-wider">Bizony Rzeszów</h3>
+            <div className="flex items-center gap-3">
+              <img src={logo} alt="Logo" className="h-12 w-auto brightness-0 invert" />
+              <h3 className="text-2xl font-bold font-display uppercase tracking-wider">Bizony Rzeszów</h3>
+            </div>
             <p className="text-secondary-foreground/80 max-w-xs">
               The premier baseball team of Podkarpacie. Passion, dedication, and community since 20XX.
             </p>

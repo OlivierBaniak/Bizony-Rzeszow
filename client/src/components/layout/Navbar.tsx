@@ -5,6 +5,8 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu, Shield } from "lucide-react";
 import { useState } from "react";
 
+import logo from "@assets/bizony--rSs6oZ4_1770847193876.webp";
+
 export function Navbar() {
   const [location] = useLocation();
   const { isAdmin, logout } = useApp();
@@ -43,9 +45,7 @@ export function Navbar() {
         {/* Logo */}
         <Link href="/">
           <a className="flex items-center gap-2 group">
-            <div className="w-10 h-10 bg-primary rounded-sm flex items-center justify-center text-primary-foreground font-display text-2xl font-bold group-hover:bg-primary/90 transition-colors">
-              B
-            </div>
+            <img src={logo} alt="Bizony Rzeszów Logo" className="h-16 w-auto object-contain" />
             <div className="flex flex-col">
               <span className="font-display text-2xl leading-none font-bold uppercase tracking-wider text-foreground">
                 Bizony
