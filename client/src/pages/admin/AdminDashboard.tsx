@@ -38,6 +38,17 @@ export default function AdminDashboard() {
     return null;
   }
 
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, callback: (url: string) => void) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        callback(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleAddNews = () => {
     if (!newsForm.title) return;
     addNews({ ...newsForm, image: newsForm.image || "https://placehold.co/600x400" });
@@ -129,8 +140,19 @@ export default function AdminDashboard() {
                     <Textarea className="h-32" value={newsForm.content} onChange={e => setNewsForm({...newsForm, content: e.target.value})} placeholder="Pełna treść..." />
                   </div>
                   <div className="space-y-2">
-                    <Label>URL Obrazu</Label>
-                    <Input value={newsForm.image} onChange={e => setNewsForm({...newsForm, image: e.target.value})} placeholder="https://..." />
+                    <Label>Obraz (Adres URL lub Prześlij)</Label>
+                    <div className="flex gap-2">
+                      <Input value={newsForm.image} onChange={e => setNewsForm({...newsForm, image: e.target.value})} placeholder="https://..." />
+                      <div className="relative">
+                        <Input 
+                          type="file" 
+                          accept="image/*" 
+                          className="absolute inset-0 opacity-0 cursor-pointer" 
+                          onChange={(e) => handleFileUpload(e, (url) => setNewsForm({...newsForm, image: url}))}
+                        />
+                        <Button variant="outline" type="button">Wybierz</Button>
+                      </div>
+                    </div>
                   </div>
                   <Button onClick={handleAddNews} className="w-full bg-primary hover:bg-primary/90 text-white">
                     <Plus className="w-4 h-4 mr-2" /> Opublikuj
@@ -176,8 +198,19 @@ export default function AdminDashboard() {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label>Zdjęcie URL</Label>
-                    <Input value={playerForm.image} onChange={e => setPlayerForm({...playerForm, image: e.target.value})} />
+                    <Label>Zdjęcie (Adres URL lub Prześlij)</Label>
+                    <div className="flex gap-2">
+                      <Input value={playerForm.image} onChange={e => setPlayerForm({...playerForm, image: e.target.value})} />
+                      <div className="relative">
+                        <Input 
+                          type="file" 
+                          accept="image/*" 
+                          className="absolute inset-0 opacity-0 cursor-pointer" 
+                          onChange={(e) => handleFileUpload(e, (url) => setPlayerForm({...playerForm, image: url}))}
+                        />
+                        <Button variant="outline" type="button">Wybierz</Button>
+                      </div>
+                    </div>
                   </div>
                   <Button onClick={handleAddPlayer} className="w-full bg-primary">Dodaj</Button>
                 </CardContent>
@@ -268,8 +301,19 @@ export default function AdminDashboard() {
                     <Textarea value={folderForm.description} onChange={e => setFolderForm({...folderForm, description: e.target.value})} />
                   </div>
                   <div className="space-y-2">
-                    <Label>Zdjęcie Główne URL</Label>
-                    <Input value={folderForm.mainImage} onChange={e => setFolderForm({...folderForm, mainImage: e.target.value})} />
+                    <Label>Zdjęcie Główne (Adres URL lub Prześlij)</Label>
+                    <div className="flex gap-2">
+                      <Input value={folderForm.mainImage} onChange={e => setFolderForm({...folderForm, mainImage: e.target.value})} />
+                      <div className="relative">
+                        <Input 
+                          type="file" 
+                          accept="image/*" 
+                          className="absolute inset-0 opacity-0 cursor-pointer" 
+                          onChange={(e) => handleFileUpload(e, (url) => setFolderForm({...folderForm, mainImage: url}))}
+                        />
+                        <Button variant="outline" type="button">Wybierz</Button>
+                      </div>
+                    </div>
                   </div>
                   <Button onClick={handleAddFolder} className="w-full bg-primary">
                     Stwórz Album
@@ -303,8 +347,19 @@ export default function AdminDashboard() {
                         <div className="space-y-4">
                           <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-1">
-                              <Label className="text-xs">Nowe Zdjęcie URL</Label>
-                              <Input size={30} value={imageForm.url} onChange={e => setImageForm({...imageForm, url: e.target.value})} />
+                              <Label className="text-xs">Nowe Zdjęcie (Adres URL lub Prześlij)</Label>
+                              <div className="flex gap-2">
+                                <Input value={imageForm.url} onChange={e => setImageForm({...imageForm, url: e.target.value})} />
+                                <div className="relative">
+                                  <Input 
+                                    type="file" 
+                                    accept="image/*" 
+                                    className="absolute inset-0 opacity-0 cursor-pointer" 
+                                    onChange={(e) => handleFileUpload(e, (url) => setImageForm({...imageForm, url: url}))}
+                                  />
+                                  <Button variant="outline" type="button">Wybierz</Button>
+                                </div>
+                              </div>
                             </div>
                             <div className="space-y-1">
                               <Label className="text-xs">Opis Zdjęcia</Label>
@@ -356,7 +411,7 @@ export default function AdminDashboard() {
                   />
                 </div>
                 <div className="space-y-4">
-                   <Label>Zdjęcia w sekcji O Klubie (URL)</Label>
+                   <Label>Zdjęcia w sekcji O Klubie (Adres URL lub Prześlij)</Label>
                    {historyDraft.images.map((url, idx) => (
                      <div key={idx} className="flex gap-2">
                        <Input value={url} onChange={e => {
@@ -364,6 +419,19 @@ export default function AdminDashboard() {
                          newImages[idx] = e.target.value;
                          setHistoryDraft({...historyDraft, images: newImages});
                        }} />
+                       <div className="relative">
+                        <Input 
+                          type="file" 
+                          accept="image/*" 
+                          className="absolute inset-0 opacity-0 cursor-pointer" 
+                          onChange={(e) => handleFileUpload(e, (uploadedUrl) => {
+                            const newImages = [...historyDraft.images];
+                            newImages[idx] = uploadedUrl;
+                            setHistoryDraft({...historyDraft, images: newImages});
+                          })}
+                        />
+                        <Button variant="outline" type="button">Wybierz</Button>
+                      </div>
                        <Button variant="destructive" size="icon" onClick={() => {
                          setHistoryDraft({...historyDraft, images: historyDraft.images.filter((_, i) => i !== idx)});
                        }}>
