@@ -17,7 +17,8 @@ export default function AdminDashboard() {
     standings, updateStandings,
     leagueMetadata, updateLeagueMetadata,
     galleryFolders, addGalleryFolder, deleteGalleryFolder, addImageToFolder, deleteImageFromFolder,
-    clubHistory, updateClubHistory
+    clubHistory, updateClubHistory,
+    nextMatch, updateNextMatch
   } = useApp();
   const [, setLocation] = useLocation();
 
@@ -32,6 +33,7 @@ export default function AdminDashboard() {
   const [metaDraft, setMetaDraft] = useState(leagueMetadata);
   const [standingsDraft, setStandingsDraft] = useState(standings);
   const [historyDraft, setHistoryDraft] = useState(clubHistory);
+  const [matchDraft, setMatchDraft] = useState(nextMatch);
 
   if (!isAdmin) {
     setLocation("/login");
@@ -86,6 +88,10 @@ export default function AdminDashboard() {
     updateClubHistory(historyDraft);
   };
 
+  const handleSaveMatch = () => {
+    updateNextMatch(matchDraft);
+  };
+
   const updateDraftTeam = (id: string, field: string, value: string | number) => {
     setStandingsDraft(standingsDraft.map(t => 
       t.id === id ? { ...t, [field]: value } : t
@@ -118,6 +124,9 @@ export default function AdminDashboard() {
             </TabsTrigger>
             <TabsTrigger value="about" className="px-6 py-2 uppercase font-display tracking-wider">
               O Klubie
+            </TabsTrigger>
+            <TabsTrigger value="match" className="px-6 py-2 uppercase font-display tracking-wider">
+              Mecz
             </TabsTrigger>
           </TabsList>
 
@@ -442,6 +451,87 @@ export default function AdminDashboard() {
                    <Button variant="outline" onClick={() => setHistoryDraft({...historyDraft, images: [...historyDraft.images, ""]})}>
                      <Plus className="w-4 h-4 mr-2" /> Dodaj URL Zdjęcia
                    </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* MATCH TAB */}
+          <TabsContent value="match">
+            <Card>
+              <CardHeader className="flex flex-row justify-between items-center border-b">
+                <CardTitle>Następny Mecz</CardTitle>
+                <Button onClick={handleSaveMatch} className="bg-green-600 hover:bg-green-700 text-white font-display uppercase tracking-wider">
+                  <Save className="w-4 h-4 mr-2" /> Zapisz Mecz
+                </Button>
+              </CardHeader>
+              <CardContent className="pt-6 space-y-8">
+                <div className="grid md:grid-cols-2 gap-12">
+                  {/* Home Team */}
+                  <div className="space-y-4">
+                    <h3 className="font-display text-xl border-b pb-2">Gospodarz</h3>
+                    <div className="space-y-2">
+                      <Label>Nazwa Drużyny</Label>
+                      <Input value={matchDraft.homeTeam} onChange={e => setMatchDraft({...matchDraft, homeTeam: e.target.value})} />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Logo Drużyny</Label>
+                      <div className="flex gap-2">
+                        <Input value={matchDraft.homeLogo} onChange={e => setMatchDraft({...matchDraft, homeLogo: e.target.value})} placeholder="URL lub Prześlij" />
+                        <div className="relative">
+                          <Input 
+                            type="file" 
+                            accept="image/*" 
+                            className="absolute inset-0 opacity-0 cursor-pointer" 
+                            onChange={(e) => handleFileUpload(e, (url) => setMatchDraft({...matchDraft, homeLogo: url}))}
+                          />
+                          <Button variant="outline" type="button">Wybierz</Button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Away Team */}
+                  <div className="space-y-4">
+                    <h3 className="font-display text-xl border-b pb-2">Gość</h3>
+                    <div className="space-y-2">
+                      <Label>Nazwa Drużyny</Label>
+                      <Input value={matchDraft.awayTeam} onChange={e => setMatchDraft({...matchDraft, awayTeam: e.target.value})} />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Logo Drużyny</Label>
+                      <div className="flex gap-2">
+                        <Input value={matchDraft.awayLogo} onChange={e => setMatchDraft({...matchDraft, awayLogo: e.target.value})} placeholder="URL lub Prześlij" />
+                        <div className="relative">
+                          <Input 
+                            type="file" 
+                            accept="image/*" 
+                            className="absolute inset-0 opacity-0 cursor-pointer" 
+                            onChange={(e) => handleFileUpload(e, (url) => setMatchDraft({...matchDraft, awayLogo: url}))}
+                          />
+                          <Button variant="outline" type="button">Wybierz</Button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid md:grid-cols-3 gap-6 pt-6 border-t">
+                  <div className="space-y-2">
+                    <Label>Data (np. 15 MAJA)</Label>
+                    <Input value={matchDraft.date} onChange={e => setMatchDraft({...matchDraft, date: e.target.value})} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Godzina i Miejsce</Label>
+                    <Input value={matchDraft.time + " • " + matchDraft.location} onChange={e => {
+                      const [time, ...locParts] = e.target.value.split(" • ");
+                      setMatchDraft({...matchDraft, time: time || "", location: locParts.join(" • ") || ""});
+                    }} placeholder="14:00 • Boisko Rzeszów" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Link do Biletów</Label>
+                    <Input value={matchDraft.ticketLink} onChange={e => setMatchDraft({...matchDraft, ticketLink: e.target.value})} />
+                  </div>
                 </div>
               </CardContent>
             </Card>

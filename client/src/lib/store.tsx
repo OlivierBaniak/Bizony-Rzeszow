@@ -54,6 +54,17 @@ export type ClubHistory = {
   images: string[];
 };
 
+export type Match = {
+  homeTeam: string;
+  homeLogo: string;
+  awayTeam: string;
+  awayLogo: string;
+  date: string;
+  time: string;
+  location: string;
+  ticketLink: string;
+};
+
 type AppContextType = {
   news: NewsItem[];
   players: Player[];
@@ -61,6 +72,7 @@ type AppContextType = {
   leagueMetadata: LeagueMetadata;
   galleryFolders: GalleryFolder[];
   clubHistory: ClubHistory;
+  nextMatch: Match;
   isAdmin: boolean;
   login: () => void;
   logout: () => void;
@@ -75,6 +87,7 @@ type AppContextType = {
   addImageToFolder: (folderId: string, image: Omit<GalleryImage, "id">) => void;
   deleteImageFromFolder: (folderId: string, imageId: string) => void;
   updateClubHistory: (history: ClubHistory) => void;
+  updateNextMatch: (match: Match) => void;
 };
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -144,6 +157,17 @@ const INITIAL_HISTORY: ClubHistory = {
   images: [teamImg, heroImg]
 };
 
+const INITIAL_MATCH: Match = {
+  homeTeam: "Bizony",
+  homeLogo: "", // Will use default if empty
+  awayTeam: "Centaurs",
+  awayLogo: "",
+  date: "15 MAJA",
+  time: "14:00",
+  location: "Boisko Rzeszów",
+  ticketLink: "#"
+};
+
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [news, setNews] = useState<NewsItem[]>(INITIAL_NEWS);
   const [players, setPlayers] = useState<Player[]>(INITIAL_PLAYERS);
@@ -151,6 +175,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [leagueMetadata, setLeagueMetadata] = useState<LeagueMetadata>(INITIAL_METADATA);
   const [galleryFolders, setGalleryFolders] = useState<GalleryFolder[]>(INITIAL_GALLERY);
   const [clubHistory, setClubHistory] = useState<ClubHistory>(INITIAL_HISTORY);
+  const [nextMatch, setNextMatch] = useState<Match>(INITIAL_MATCH);
   const [isAdmin, setIsAdmin] = useState(false);
 
   const login = () => setIsAdmin(true);
@@ -227,6 +252,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setClubHistory(history);
   };
 
+  const updateNextMatch = (match: Match) => {
+    setNextMatch(match);
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -236,6 +265,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         leagueMetadata,
         galleryFolders,
         clubHistory,
+        nextMatch,
         isAdmin,
         login,
         logout,
@@ -250,6 +280,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         addImageToFolder,
         deleteImageFromFolder,
         updateClubHistory,
+        updateNextMatch,
       }}
     >
       {children}

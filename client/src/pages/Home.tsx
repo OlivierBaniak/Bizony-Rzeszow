@@ -4,10 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight, Calendar, Trophy } from "lucide-react";
 import heroImg from "@/assets/hero.png";
+import logo from "@assets/bizony--rSs6oZ4_1770847193876.webp";
 import { motion } from "framer-motion";
 
 export default function Home() {
-  const { news, standings } = useApp();
+  const { news, standings, nextMatch } = useApp();
   const latestNews = news.slice(0, 3);
   const topTeams = standings.slice(0, 4);
 
@@ -138,19 +139,45 @@ export default function Home() {
               </CardContent>
             </Card>
 
-            {/* Next Match Promo (Static for Mockup) */}
+            {/* Next Match Promo */}
             <div className="bg-secondary text-white p-6 rounded-lg relative overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 rounded-full blur-3xl -mr-16 -mt-16" />
-              <h3 className="font-display uppercase tracking-widest text-primary mb-4 text-sm font-bold">Następny Mecz</h3>
+              <h3 className="font-display uppercase tracking-widest text-primary mb-4 text-sm font-bold text-center">Następny Mecz</h3>
               <div className="text-center space-y-4">
-                <div className="flex justify-between items-center">
-                  <span className="font-bold text-lg">Bizony</span>
-                  <span className="text-muted-foreground text-sm">VS</span>
-                  <span className="font-bold text-lg">Centaurs</span>
+                <div className="flex justify-between items-center gap-4">
+                  <div className="flex flex-col items-center flex-1">
+                    <div className="w-12 h-12 mb-2 flex items-center justify-center bg-white/5 rounded-full overflow-hidden">
+                      {nextMatch.homeLogo ? (
+                        <img src={nextMatch.homeLogo} alt={nextMatch.homeTeam} className="w-full h-full object-contain" />
+                      ) : (
+                        <img src={logo} alt="Default Logo" className="w-8 h-8 object-contain opacity-50" />
+                      )}
+                    </div>
+                    <span className="font-bold text-sm uppercase tracking-wider">{nextMatch.homeTeam}</span>
+                  </div>
+                  
+                  <span className="text-primary font-display text-2xl font-bold italic">VS</span>
+                  
+                  <div className="flex flex-col items-center flex-1">
+                    <div className="w-12 h-12 mb-2 flex items-center justify-center bg-white/5 rounded-full overflow-hidden">
+                      {nextMatch.awayLogo ? (
+                        <img src={nextMatch.awayLogo} alt={nextMatch.awayTeam} className="w-full h-full object-contain" />
+                      ) : (
+                        <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary text-xs font-bold">VS</div>
+                      )}
+                    </div>
+                    <span className="font-bold text-sm uppercase tracking-wider">{nextMatch.awayTeam}</span>
+                  </div>
                 </div>
-                <div className="text-4xl font-display font-bold">15 MAJA</div>
-                <div className="text-sm text-gray-400">14:00 • Boisko Rzeszów</div>
-                <Button className="w-full bg-primary hover:bg-primary/90 uppercase font-display">
+                
+                <div className="pt-2 border-t border-white/10">
+                  <div className="text-4xl font-display font-bold text-primary">{nextMatch.date}</div>
+                  <div className="text-sm text-gray-400 mt-1 uppercase tracking-widest">
+                    {nextMatch.time} • {nextMatch.location}
+                  </div>
+                </div>
+                
+                <Button className="w-full bg-primary hover:bg-primary/90 uppercase font-display text-lg py-6 shadow-lg shadow-primary/20">
                   Kup Bilety
                 </Button>
               </div>
