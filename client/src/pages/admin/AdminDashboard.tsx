@@ -364,7 +364,10 @@ export default function AdminDashboard() {
                                     type="file" 
                                     accept="image/*" 
                                     className="absolute inset-0 opacity-0 cursor-pointer" 
-                                    onChange={(e) => handleFileUpload(e, (url) => setImageForm({...imageForm, url: url}))}
+                                    onChange={(e) => handleFileUpload(e, (url) => {
+                                      addImageToFolder(folder.id, { url, description: imageForm.description });
+                                      setImageForm({ url: "", description: "" });
+                                    })}
                                   />
                                   <Button variant="outline" type="button">Wybierz</Button>
                                 </div>
