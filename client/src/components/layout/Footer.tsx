@@ -13,24 +13,24 @@ export function Footer() {
               <h3 className="text-2xl font-bold font-display uppercase tracking-wider">Bizony Rzeszów</h3>
             </div>
             <p className="text-secondary-foreground/80 max-w-xs">
-              The premier baseball team of Podkarpacie. Passion, dedication, and community since 20XX.
+              Pierwsza drużyna baseballowa na Podkarpaciu. Pasja, zaangażowanie i społeczność od 2023 roku.
             </p>
           </div>
 
           {/* Links */}
           <div className="space-y-4">
-            <h4 className="text-lg font-bold font-display uppercase tracking-wider text-primary">Quick Links</h4>
+            <h4 className="text-lg font-bold font-display uppercase tracking-wider text-primary">Szybkie Linki</h4>
             <ul className="space-y-2 text-secondary-foreground/80">
-              <li><a href="/news" className="hover:text-primary transition-colors">Latest News</a></li>
-              <li><a href="/team" className="hover:text-primary transition-colors">Team Roster</a></li>
-              <li><a href="/standings" className="hover:text-primary transition-colors">League Standings</a></li>
-              <li><a href="/gallery" className="hover:text-primary transition-colors">Photo Gallery</a></li>
+              <li><a href="/news" className="hover:text-primary transition-colors">Aktualności</a></li>
+              <li><a href="/team" className="hover:text-primary transition-colors">Skład Drużyny</a></li>
+              <li><a href="/standings" className="hover:text-primary transition-colors">Tabela Ligowa</a></li>
+              <li><a href="/gallery" className="hover:text-primary transition-colors">Galeria Zdjęć</a></li>
             </ul>
           </div>
 
           {/* Social / Contact */}
           <div className="space-y-4">
-            <h4 className="text-lg font-bold font-display uppercase tracking-wider text-primary">Follow Us</h4>
+            <h4 className="text-lg font-bold font-display uppercase tracking-wider text-primary">Obserwuj Nas</h4>
             <div className="flex gap-4">
               <a href="#" className="p-2 bg-secondary-foreground/10 rounded-full hover:bg-primary hover:text-white transition-colors">
                 <Facebook className="w-5 h-5" />
