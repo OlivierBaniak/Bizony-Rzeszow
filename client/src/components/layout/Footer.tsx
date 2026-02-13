@@ -1,5 +1,5 @@
 import logo from "@assets/bizony--rSs6oZ4_1770847193876.webp";
-import { Facebook, Instagram, Twitter } from "lucide-react";
+import { Facebook, Instagram } from "lucide-react";
 
 export function Footer() {
   return (
@@ -32,18 +32,15 @@ export function Footer() {
           <div className="space-y-4">
             <h4 className="text-lg font-bold font-display uppercase tracking-wider text-primary">Obserwuj Nas</h4>
             <div className="flex gap-4">
-              <a href="#" className="p-2 bg-secondary-foreground/10 rounded-full hover:bg-primary hover:text-white transition-colors">
+              <a href="https://www.facebook.com/BizonyRzeszow" target="_blank" rel="noopener noreferrer" className="p-2 bg-secondary-foreground/10 rounded-full hover:bg-primary hover:text-white transition-colors">
                 <Facebook className="w-5 h-5" />
               </a>
-              <a href="#" className="p-2 bg-secondary-foreground/10 rounded-full hover:bg-primary hover:text-white transition-colors">
+              <a href="https://www.instagram.com/bizony__rzeszow/" target="_blank" rel="noopener noreferrer" className="p-2 bg-secondary-foreground/10 rounded-full hover:bg-primary hover:text-white transition-colors">
                 <Instagram className="w-5 h-5" />
-              </a>
-              <a href="#" className="p-2 bg-secondary-foreground/10 rounded-full hover:bg-primary hover:text-white transition-colors">
-                <Twitter className="w-5 h-5" />
               </a>
             </div>
             <p className="text-sm text-secondary-foreground/60 mt-4">
-              © 2026 Bizony Rzeszów. All rights reserved.
+              © 2026 Bizony Rzeszów. Wszystkie prawa zastrzeżone.
             </p>
           </div>
         </div>
