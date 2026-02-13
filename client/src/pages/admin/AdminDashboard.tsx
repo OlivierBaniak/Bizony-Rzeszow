@@ -51,6 +51,26 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleMultipleFilesUpload = (e: React.ChangeEvent<HTMLInputElement>, callback: (urls: string[]) => void) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+
+    const urls: string[] = [];
+    let processedCount = 0;
+
+    files.forEach(file => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        urls.push(reader.result as string);
+        processedCount++;
+        if (processedCount === files.length) {
+          callback(urls);
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
   const handleAddNews = () => {
     if (!newsForm.title) return;
     addNews({ ...newsForm, image: newsForm.image || "https://placehold.co/600x400" });
@@ -363,13 +383,16 @@ export default function AdminDashboard() {
                                   <Input 
                                     type="file" 
                                     accept="image/*" 
+                                    multiple
                                     className="absolute inset-0 opacity-0 cursor-pointer" 
-                                    onChange={(e) => handleFileUpload(e, (url) => {
-                                      addImageToFolder(folder.id, { url, description: imageForm.description });
+                                    onChange={(e) => handleMultipleFilesUpload(e, (urls) => {
+                                      urls.forEach(url => {
+                                        addImageToFolder(folder.id, { url, description: imageForm.description });
+                                      });
                                       setImageForm({ url: "", description: "" });
                                     })}
                                   />
-                                  <Button variant="outline" type="button">Wybierz</Button>
+                                  <Button variant="outline" type="button">Wybierz (Wiele)</Button>
                                 </div>
                               </div>
                             </div>
