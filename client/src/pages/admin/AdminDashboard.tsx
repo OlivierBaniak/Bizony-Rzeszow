@@ -380,19 +380,21 @@ export default function AdminDashboard() {
                               <div className="flex gap-2">
                                 <Input value={imageForm.url} onChange={e => setImageForm({...imageForm, url: e.target.value})} />
                                 <div className="relative">
-                                  <Input 
+                                  <input 
                                     type="file" 
                                     accept="image/*" 
                                     multiple
-                                    className="absolute inset-0 opacity-0 cursor-pointer" 
+                                    className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10" 
                                     onChange={(e) => handleMultipleFilesUpload(e, (urls) => {
                                       urls.forEach(url => {
                                         addImageToFolder(folder.id, { url, description: imageForm.description });
                                       });
                                       setImageForm({ url: "", description: "" });
+                                      // Clear the input value so the same files can be selected again if needed
+                                      e.target.value = "";
                                     })}
                                   />
-                                  <Button variant="outline" type="button">Wybierz (Wiele)</Button>
+                                  <Button variant="outline" type="button" className="relative z-0">Wybierz (Wiele)</Button>
                                 </div>
                               </div>
                             </div>
