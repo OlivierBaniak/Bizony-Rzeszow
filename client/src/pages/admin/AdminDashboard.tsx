@@ -18,7 +18,8 @@ export default function AdminDashboard() {
     leagueMetadata, updateLeagueMetadata,
     galleryFolders, addGalleryFolder, deleteGalleryFolder, addImageToFolder, deleteImageFromFolder,
     clubHistory, updateClubHistory,
-    nextMatch, updateNextMatch
+    nextMatch, updateNextMatch,
+    contactDetails, updateContactDetails
   } = useApp();
   const [, setLocation] = useLocation();
 
@@ -34,6 +35,7 @@ export default function AdminDashboard() {
   const [standingsDraft, setStandingsDraft] = useState(standings);
   const [historyDraft, setHistoryDraft] = useState(clubHistory);
   const [matchDraft, setMatchDraft] = useState(nextMatch);
+  const [contactDraft, setContactDraft] = useState(contactDetails);
 
   if (!isAdmin) {
     setLocation("/login");
@@ -121,6 +123,10 @@ export default function AdminDashboard() {
     updateNextMatch(matchDraft);
   };
 
+  const handleSaveContact = () => {
+    updateContactDetails(contactDraft);
+  };
+
   const updateDraftTeam = (id: string, field: string, value: string | number) => {
     setStandingsDraft(standingsDraft.map(t => 
       t.id === id ? { ...t, [field]: value } : t
@@ -156,6 +162,9 @@ export default function AdminDashboard() {
             </TabsTrigger>
             <TabsTrigger value="match" className="px-6 py-2 uppercase font-display tracking-wider">
               Mecz
+            </TabsTrigger>
+            <TabsTrigger value="contact" className="px-6 py-2 uppercase font-display tracking-wider">
+              Kontakt
             </TabsTrigger>
           </TabsList>
 
@@ -578,6 +587,44 @@ export default function AdminDashboard() {
                       const [time, ...locParts] = e.target.value.split(" • ");
                       setMatchDraft({...matchDraft, time: time || "", location: locParts.join(" • ") || ""});
                     }} placeholder="14:00 • Boisko Rzeszów" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* CONTACT TAB */}
+          <TabsContent value="contact">
+            <Card>
+              <CardHeader className="flex flex-row justify-between items-center border-b">
+                <CardTitle>Dane Kontaktowe</CardTitle>
+                <Button onClick={handleSaveContact} className="bg-green-600 hover:bg-green-700 text-white font-display uppercase tracking-wider">
+                  <Save className="w-4 h-4 mr-2" /> Zapisz Kontakt
+                </Button>
+              </CardHeader>
+              <CardContent className="pt-6 space-y-6">
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label>Adres</Label>
+                    <Input value={contactDraft.address} onChange={e => setContactDraft({...contactDraft, address: e.target.value})} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Email</Label>
+                    <Input value={contactDraft.email} onChange={e => setContactDraft({...contactDraft, email: e.target.value})} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Telefon</Label>
+                    <Input value={contactDraft.phone} onChange={e => setContactDraft({...contactDraft, phone: e.target.value})} />
+                  </div>
+                </div>
+                <div className="grid md:grid-cols-2 gap-6 pt-6 border-t">
+                  <div className="space-y-2">
+                    <Label>Facebook URL</Label>
+                    <Input value={contactDraft.facebook} onChange={e => setContactDraft({...contactDraft, facebook: e.target.value})} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Instagram URL</Label>
+                    <Input value={contactDraft.instagram} onChange={e => setContactDraft({...contactDraft, instagram: e.target.value})} />
                   </div>
                 </div>
               </CardContent>

@@ -65,6 +65,14 @@ export type Match = {
   ticketLink: string;
 };
 
+export type ContactDetails = {
+  address: string;
+  email: string;
+  phone: string;
+  facebook: string;
+  instagram: string;
+};
+
 type AppContextType = {
   news: NewsItem[];
   players: Player[];
@@ -73,6 +81,7 @@ type AppContextType = {
   galleryFolders: GalleryFolder[];
   clubHistory: ClubHistory;
   nextMatch: Match;
+  contactDetails: ContactDetails;
   isAdmin: boolean;
   login: () => void;
   logout: () => void;
@@ -89,6 +98,7 @@ type AppContextType = {
   deleteImageFromFolder: (folderId: string, imageId: string) => void;
   updateClubHistory: (history: ClubHistory) => void;
   updateNextMatch: (match: Match) => void;
+  updateContactDetails: (details: ContactDetails) => void;
 };
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -169,6 +179,14 @@ const INITIAL_MATCH: Match = {
   ticketLink: "#"
 };
 
+const INITIAL_CONTACT: ContactDetails = {
+  address: "ul. Sportowa 1, 35-001 Rzeszów",
+  email: "kontakt@bizonyrzeszow.pl",
+  phone: "+48 123 456 789",
+  facebook: "https://www.facebook.com/BizonyRzeszow",
+  instagram: "https://www.instagram.com/bizony__rzeszow/"
+};
+
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [news, setNews] = useState<NewsItem[]>(INITIAL_NEWS);
   const [players, setPlayers] = useState<Player[]>(INITIAL_PLAYERS);
@@ -177,6 +195,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [galleryFolders, setGalleryFolders] = useState<GalleryFolder[]>(INITIAL_GALLERY);
   const [clubHistory, setClubHistory] = useState<ClubHistory>(INITIAL_HISTORY);
   const [nextMatch, setNextMatch] = useState<Match>(INITIAL_MATCH);
+  const [contactDetails, setContactDetails] = useState<ContactDetails>(INITIAL_CONTACT);
   const [isAdmin, setIsAdmin] = useState(false);
 
   const login = () => setIsAdmin(true);
@@ -261,6 +280,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setNextMatch(match);
   };
 
+  const updateContactDetails = (details: ContactDetails) => {
+    setContactDetails(details);
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -271,6 +294,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         galleryFolders,
         clubHistory,
         nextMatch,
+        contactDetails,
         isAdmin,
         login,
         logout,
@@ -287,6 +311,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         deleteImageFromFolder,
         updateClubHistory,
         updateNextMatch,
+        updateContactDetails,
       }}
     >
       {children}

@@ -19,6 +19,7 @@ export function Navbar() {
     { label: "Drużyna", href: "/team" },
     { label: "Tabela", href: "/standings" },
     { label: "Galeria", href: "/gallery" },
+    { label: "Kontakt", href: "/contact" },
   ];
 
   const NavLink = ({ href, label, mobile = false }: { href: string; label: string; mobile?: boolean }) => {
