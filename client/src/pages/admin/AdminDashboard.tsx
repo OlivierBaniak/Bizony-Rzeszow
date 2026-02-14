@@ -12,7 +12,7 @@ import { Plus, Trash, Save, LayoutDashboard, Newspaper, Users, Trophy, Image as 
 export default function AdminDashboard() {
   const { 
     isAdmin, 
-    news, addNews, deleteNews,
+    news, addNews, deleteNews, updateNews,
     players, addPlayer, deletePlayer,
     standings, updateStandings,
     leagueMetadata, updateLeagueMetadata,
@@ -23,7 +23,7 @@ export default function AdminDashboard() {
   const [, setLocation] = useLocation();
 
   // Form States
-  const [newsForm, setNewsForm] = useState({ title: "", excerpt: "", content: "", image: "" });
+  const [newsForm, setNewsForm] = useState({ id: "", title: "", excerpt: "", content: "", image: "" });
   const [playerForm, setPlayerForm] = useState({ name: "", number: "", position: "", image: "" });
   const [folderForm, setFolderForm] = useState({ title: "", description: "", mainImage: "" });
   const [imageForm, setImageForm] = useState({ url: "", description: "" });
@@ -73,8 +73,17 @@ export default function AdminDashboard() {
 
   const handleAddNews = () => {
     if (!newsForm.title) return;
-    addNews({ ...newsForm, image: newsForm.image || "https://placehold.co/600x400" });
-    setNewsForm({ title: "", excerpt: "", content: "", image: "" });
+    if (newsForm.id) {
+      updateNews(newsForm as NewsItem);
+      setNewsForm({ id: "", title: "", excerpt: "", content: "", image: "" });
+    } else {
+      addNews({ ...newsForm, image: newsForm.image || "https://placehold.co/600x400" });
+      setNewsForm({ id: "", title: "", excerpt: "", content: "", image: "" });
+    }
+  };
+
+  const handleEditNews = (item: any) => {
+    setNewsForm(item);
   };
 
   const handleAddPlayer = () => {
@@ -154,7 +163,9 @@ export default function AdminDashboard() {
           <TabsContent value="news" className="space-y-6">
             <div className="grid md:grid-cols-3 gap-6">
               <Card className="md:col-span-1 h-fit">
-                <CardHeader><CardTitle>Dodaj Artykuł</CardTitle></CardHeader>
+                <CardHeader>
+                  <CardTitle>{newsForm.id ? 'Edytuj Artykuł' : 'Dodaj Artykuł'}</CardTitle>
+                </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
                     <Label>Tytuł</Label>
@@ -183,9 +194,16 @@ export default function AdminDashboard() {
                       </div>
                     </div>
                   </div>
-                  <Button onClick={handleAddNews} className="w-full bg-primary hover:bg-primary/90 text-white">
-                    <Plus className="w-4 h-4 mr-2" /> Opublikuj
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button onClick={handleAddNews} className="flex-1 bg-primary hover:bg-primary/90 text-white">
+                      {newsForm.id ? <><Save className="w-4 h-4 mr-2" /> Zapisz</> : <><Plus className="w-4 h-4 mr-2" /> Opublikuj</>}
+                    </Button>
+                    {newsForm.id && (
+                      <Button variant="outline" onClick={() => setNewsForm({ id: "", title: "", excerpt: "", content: "", image: "" })}>
+                        Anuluj
+                      </Button>
+                    )}
+                  </div>
                 </CardContent>
               </Card>
 
@@ -197,9 +215,14 @@ export default function AdminDashboard() {
                       <h3 className="font-bold">{item.title}</h3>
                       <p className="text-sm text-muted-foreground">{item.date}</p>
                     </div>
-                    <Button variant="destructive" size="icon" onClick={() => deleteNews(item.id)}>
-                      <Trash className="w-4 h-4" />
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button variant="outline" size="icon" onClick={() => handleEditNews(item)}>
+                        <LayoutDashboard className="w-4 h-4" />
+                      </Button>
+                      <Button variant="destructive" size="icon" onClick={() => deleteNews(item.id)}>
+                        <Trash className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </Card>
                 ))}
               </div>

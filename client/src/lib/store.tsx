@@ -78,6 +78,7 @@ type AppContextType = {
   logout: () => void;
   addNews: (item: Omit<NewsItem, "id" | "date">) => void;
   deleteNews: (id: string) => void;
+  updateNews: (item: NewsItem) => void;
   addPlayer: (item: Omit<Player, "id">) => void;
   deletePlayer: (id: string) => void;
   updateStandings: (items: Standing[]) => void;
@@ -194,6 +195,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setNews(news.filter((n) => n.id !== id));
   };
 
+  const updateNews = (updatedItem: NewsItem) => {
+    setNews(news.map(n => n.id === updatedItem.id ? updatedItem : n));
+  };
+
   const addPlayer = (item: Omit<Player, "id">) => {
     const newItem: Player = { ...item, id: Math.random().toString(36).substr(2, 9) };
     setPlayers([...players, newItem]);
@@ -271,6 +276,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         logout,
         addNews,
         deleteNews,
+        updateNews,
         addPlayer,
         deletePlayer,
         updateStandings,
