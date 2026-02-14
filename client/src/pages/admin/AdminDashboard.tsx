@@ -579,10 +579,6 @@ export default function AdminDashboard() {
                       setMatchDraft({...matchDraft, time: time || "", location: locParts.join(" • ") || ""});
                     }} placeholder="14:00 • Boisko Rzeszów" />
                   </div>
-                  <div className="space-y-2">
-                    <Label>Link do Biletów</Label>
-                    <Input value={matchDraft.ticketLink} onChange={e => setMatchDraft({...matchDraft, ticketLink: e.target.value})} />
-                  </div>
                 </div>
               </CardContent>
             </Card>

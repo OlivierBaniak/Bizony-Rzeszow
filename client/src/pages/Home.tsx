@@ -176,10 +176,6 @@ export default function Home() {
                     {nextMatch.time} • {nextMatch.location}
                   </div>
                 </div>
-                
-                <Button className="w-full bg-primary hover:bg-primary/90 uppercase font-display text-lg py-6 shadow-lg shadow-primary/20">
-                  Kup Bilety
-                </Button>
               </div>
             </div>
           </div>
