@@ -3,7 +3,7 @@ import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight, Calendar, Trophy } from "lucide-react";
-import heroImg from "@/assets/hero.png";
+import heroImg from "@assets/1771073775355_1771144286177.jpg";
 import logo from "@assets/bizony--rSs6oZ4_1770847193876.webp";
 import { motion } from "framer-motion";
 
