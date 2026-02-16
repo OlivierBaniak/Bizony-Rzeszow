@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight, Calendar, Trophy } from "lucide-react";
 import heroImg from "@assets/1771073775355_1771144286177.jpg";
 import logo from "@assets/bizony--rSs6oZ4_1770847193876.webp";
+import mainSign from "@assets/BIZONY-_4__1771227737965.webp";
 import { motion } from "framer-motion";
 
 export default function Home() {
@@ -31,15 +32,16 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <span className="inline-block py-1 px-3 border border-primary/50 bg-primary/20 text-primary backdrop-blur-md rounded-full text-sm font-bold uppercase tracking-widest mb-4">
+            <span className="inline-block py-1 px-3 border border-primary/50 bg-primary/20 text-primary backdrop-blur-md rounded-full text-sm font-bold uppercase tracking-widest mb-8">
               Oficjalna Strona Drużyny
             </span>
-            <h1 className="text-6xl md:text-8xl font-display font-bold uppercase tracking-tighter drop-shadow-lg">
-              Bizony <span className="text-primary">Rzeszów</span>
-            </h1>
-            <p className="text-xl md:text-2xl font-light text-gray-200 max-w-2xl mx-auto mt-4 mb-8">
-              Pasja. Siła. Duma. Duch baseballu na Podkarpaciu.
-            </p>
+            <div className="flex justify-center mb-8">
+              <img 
+                src={mainSign} 
+                alt="Bizony Rzeszów Sign" 
+                className="max-w-[300px] md:max-w-[500px] w-full h-auto drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]"
+              />
+            </div>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/standings">
                 <Button size="lg" className="bg-primary hover:bg-primary/90 text-white font-display text-xl uppercase px-8 h-14">
