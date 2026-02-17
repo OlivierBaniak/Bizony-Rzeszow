@@ -5,7 +5,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu, Shield } from "lucide-react";
 import { useState } from "react";
 
-import logo from "@assets/bizony--rSs6oZ4_1770847193876.webp";
+import logo from "@assets/bizony--rSs6oZ4_1771290235849.jpg";
 
 export function Navbar() {
   const [location] = useLocation();
@@ -64,23 +64,12 @@ export function Navbar() {
             <NavLink key={item.href} {...item} />
           ))}
           
-          {isAdmin ? (
+          {isAdmin && (
             <div className="flex items-center gap-4 ml-4 pl-4 border-l border-border">
-               <Link href="/admin">
-                <Button variant="outline" size="sm" className="font-display uppercase tracking-wider">
-                  Admin Panel
-                </Button>
-              </Link>
               <Button onClick={logout} variant="ghost" size="sm" className="text-muted-foreground hover:text-destructive">
                 Logout
               </Button>
             </div>
-          ) : (
-             <Link href="/login">
-                <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary">
-                  <Shield className="w-4 h-4" />
-                </Button>
-             </Link>
           )}
         </div>
 
@@ -98,23 +87,10 @@ export function Navbar() {
                   <NavLink key={item.href} {...item} mobile />
                 ))}
                 <div className="h-px bg-border my-2" />
-                {isAdmin ? (
-                  <>
-                    <Link href="/admin">
-                      <Button className="w-full font-display uppercase" onClick={() => setIsOpen(false)}>
-                        Admin Panel
-                      </Button>
-                    </Link>
-                    <Button variant="outline" onClick={() => { logout(); setIsOpen(false); }} className="w-full">
-                      Logout
-                    </Button>
-                  </>
-                ) : (
-                  <Link href="/login">
-                    <Button variant="outline" className="w-full" onClick={() => setIsOpen(false)}>
-                      Admin Login
-                    </Button>
-                  </Link>
+                {isAdmin && (
+                  <Button variant="outline" onClick={() => { logout(); setIsOpen(false); }} className="w-full">
+                    Logout
+                  </Button>
                 )}
               </div>
             </SheetContent>

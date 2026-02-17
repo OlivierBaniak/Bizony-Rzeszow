@@ -1,7 +1,6 @@
-import logo from "@assets/bizony--rSs6oZ4_1770847193876.webp";
-import { Facebook, Instagram } from "lucide-react";
-
-import bizony__rSs6oZ4 from "@assets/bizony--rSs6oZ4.jpg";
+import logo from "@assets/bizony--rSs6oZ4_1771290235849.jpg";
+import { Facebook, Instagram, Shield } from "lucide-react";
+import { Link } from "wouter";
 
 export function Footer() {
   return (
@@ -11,7 +10,7 @@ export function Footer() {
           {/* Brand */}
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <img src={bizony__rSs6oZ4} alt="Logo" className="h-12 w-auto brightness-0 invert" />
+              <img src={logo} alt="Logo" className="h-12 w-auto" />
               <h3 className="text-2xl font-bold font-display uppercase tracking-wider">Bizony Rzeszów</h3>
             </div>
             <p className="text-secondary-foreground/80 max-w-xs">
@@ -23,10 +22,19 @@ export function Footer() {
           <div className="space-y-4">
             <h4 className="text-lg font-bold font-display uppercase tracking-wider text-primary">Szybkie Linki</h4>
             <ul className="space-y-2 text-secondary-foreground/80">
-              <li><a href="/news" className="hover:text-primary transition-colors">Aktualności</a></li>
-              <li><a href="/team" className="hover:text-primary transition-colors">Skład Drużyny</a></li>
-              <li><a href="/standings" className="hover:text-primary transition-colors">Tabela Ligowa</a></li>
-              <li><a href="/gallery" className="hover:text-primary transition-colors">Galeria Zdjęć</a></li>
+              <li><Link href="/news"><a className="hover:text-primary transition-colors">Aktualności</a></Link></li>
+              <li><Link href="/about"><a className="hover:text-primary transition-colors">O Klubie</a></Link></li>
+              <li><Link href="/team"><a className="hover:text-primary transition-colors">Drużyna</a></Link></li>
+              <li><Link href="/standings"><a className="hover:text-primary transition-colors">Tabela</a></Link></li>
+              <li><Link href="/gallery"><a className="hover:text-primary transition-colors">Galeria</a></Link></li>
+              <li><Link href="/contact"><a className="hover:text-primary transition-colors">Kontakt</a></Link></li>
+              <li className="pt-4 border-t border-secondary-foreground/10">
+                <Link href="/admin">
+                  <a className="flex items-center gap-2 text-xs opacity-50 hover:opacity-100 transition-opacity">
+                    <Shield className="w-3 h-3" /> Panel CMS
+                  </a>
+                </Link>
+              </li>
             </ul>
           </div>
 
