@@ -126,7 +126,8 @@ const INITIAL_NEWS: NewsItem[] = [
 const INITIAL_PLAYERS: Player[] = [
   { id: "1", name: "Jan Kowalski", number: 23, position: "Miotacz", image: "https://images.unsplash.com/photo-1556637482-fa587f893e48?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3" },
   { id: "2", name: "Mike Smith", number: 12, position: "Łapacz", image: "https://images.unsplash.com/photo-1619472624508-41cb76503c5d?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3" },
-  { id: "3", name: "Adam Nowak", number: 5, position: "Łącznik", image: "https://images.unsplash.com/photo-1522778119026-d647f0565c6d?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3" },
+  { id: "3", name: "Adam Nowak", number: 5, position: "Gracz z pola", image: "https://images.unsplash.com/photo-1522778119026-d647f0565c6d?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3" },
+  { id: "4", name: "Piotr Zieliński", number: 7, position: "Zapolowy", image: "https://images.unsplash.com/photo-1508341591423-4347099e1f19?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3" },
 ];
 
 const INITIAL_STANDINGS: Standing[] = [

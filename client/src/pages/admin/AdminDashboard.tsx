@@ -255,7 +255,17 @@ export default function AdminDashboard() {
                     </div>
                     <div className="space-y-2">
                       <Label>Pozycja</Label>
-                      <Input value={playerForm.position} onChange={e => setPlayerForm({...playerForm, position: e.target.value})} />
+                      <select 
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        value={playerForm.position} 
+                        onChange={e => setPlayerForm({...playerForm, position: e.target.value})}
+                      >
+                        <option value="">Wybierz pozycję</option>
+                        <option value="Miotacz">Miotacz</option>
+                        <option value="Łapacz">Łapacz</option>
+                        <option value="Gracz z pola">Gracz z pola</option>
+                        <option value="Zapolowy">Zapolowy</option>
+                      </select>
                     </div>
                   </div>
                   <div className="space-y-2">
