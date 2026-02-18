@@ -1,4 +1,4 @@
-import logo from "@assets/bizony--rSs6oZ4_1771290235849.jpg";
+import logo from "@assets/BIZONY_(6)_1771387532198.png";
 import { Facebook, Instagram, Shield } from "lucide-react";
 import { Link } from "wouter";
 

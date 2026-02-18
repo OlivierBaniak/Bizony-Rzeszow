@@ -5,7 +5,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu, Shield } from "lucide-react";
 import { useState } from "react";
 
-import logo from "@assets/bizony--rSs6oZ4_1771290235849.jpg";
+import logo from "@assets/BIZONY_(6)_1771387532198.png";
 
 export function Navbar() {
   const [location] = useLocation();
