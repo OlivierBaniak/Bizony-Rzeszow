@@ -13,7 +13,7 @@ export default function AdminDashboard() {
   const { 
     isAdmin, 
     news, addNews, deleteNews, updateNews,
-    players, addPlayer, deletePlayer,
+    players, addPlayer, deletePlayer, updatePlayer,
     standings, updateStandings,
     leagueMetadata, updateLeagueMetadata,
     galleryFolders, addGalleryFolder, deleteGalleryFolder, addImageToFolder, deleteImageFromFolder,
@@ -25,7 +25,7 @@ export default function AdminDashboard() {
 
   // Form States
   const [newsForm, setNewsForm] = useState({ id: "", title: "", excerpt: "", content: "", image: "" });
-  const [playerForm, setPlayerForm] = useState({ name: "", number: "", position: "", image: "" });
+  const [playerForm, setPlayerForm] = useState({ id: "", name: "", number: "", position: "", image: "" });
   const [folderForm, setFolderForm] = useState({ title: "", description: "", mainImage: "" });
   const [imageForm, setImageForm] = useState({ url: "", description: "" });
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
@@ -90,12 +90,32 @@ export default function AdminDashboard() {
 
   const handleAddPlayer = () => {
     if (!playerForm.name) return;
-    addPlayer({ 
-      ...playerForm, 
-      number: parseInt(playerForm.number) || 0,
-      image: playerForm.image || "https://placehold.co/400x600" 
+    
+    if (playerForm.id) {
+      updatePlayer({
+        ...playerForm,
+        number: parseInt(playerForm.number as any) || 0
+      });
+      setPlayerForm({ id: "", name: "", number: "", position: "", image: "" });
+    } else {
+      addPlayer({ 
+        name: playerForm.name,
+        number: parseInt(playerForm.number as any) || 0,
+        position: playerForm.position,
+        image: playerForm.image || "https://placehold.co/400x600" 
+      });
+      setPlayerForm({ id: "", name: "", number: "", position: "", image: "" });
+    }
+  };
+
+  const handleEditPlayer = (player: any) => {
+    setPlayerForm({
+      id: player.id,
+      name: player.name,
+      number: player.number.toString(),
+      position: player.position,
+      image: player.image
     });
-    setPlayerForm({ name: "", number: "", position: "", image: "" });
   };
 
   const handleAddFolder = () => {
@@ -242,7 +262,7 @@ export default function AdminDashboard() {
           <TabsContent value="team" className="space-y-6">
             <div className="grid md:grid-cols-3 gap-6">
               <Card className="md:col-span-1 h-fit">
-                <CardHeader><CardTitle>Dodaj Zawodnika</CardTitle></CardHeader>
+                <CardHeader><CardTitle>{playerForm.id ? 'Edytuj Zawodnika' : 'Dodaj Zawodnika'}</CardTitle></CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
                     <Label>Imię i Nazwisko</Label>
@@ -283,11 +303,20 @@ export default function AdminDashboard() {
                       </div>
                     </div>
                   </div>
-                  <Button onClick={handleAddPlayer} className="w-full bg-primary">Dodaj</Button>
+                  <div className="flex gap-2">
+                    <Button onClick={handleAddPlayer} className="flex-1 bg-primary">
+                      {playerForm.id ? 'Zapisz' : 'Dodaj'}
+                    </Button>
+                    {playerForm.id && (
+                      <Button variant="outline" onClick={() => setPlayerForm({ id: "", name: "", number: "", position: "", image: "" })}>
+                        Anuluj
+                      </Button>
+                    )}
+                  </div>
                 </CardContent>
               </Card>
 
-              <div className="md:col-span-2 grid grid-cols-2 gap-4">
+              <div className="md:col-span-2 grid grid-cols-1 gap-4">
                 {players.map(player => (
                   <Card key={player.id} className="flex items-center p-4 gap-4">
                     <img src={player.image} className="w-16 h-16 object-cover rounded-full bg-muted" />
@@ -295,9 +324,14 @@ export default function AdminDashboard() {
                       <h3 className="font-bold">{player.name}</h3>
                       <p className="text-sm text-muted-foreground">#{player.number} • {player.position}</p>
                     </div>
-                    <Button variant="destructive" size="icon" onClick={() => deletePlayer(player.id)}>
-                      <Trash className="w-4 h-4" />
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button variant="outline" size="icon" onClick={() => handleEditPlayer(player)}>
+                        <LayoutDashboard className="w-4 h-4" />
+                      </Button>
+                      <Button variant="destructive" size="icon" onClick={() => deletePlayer(player.id)}>
+                        <Trash className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </Card>
                 ))}
               </div>

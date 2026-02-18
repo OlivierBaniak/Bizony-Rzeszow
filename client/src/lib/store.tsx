@@ -90,6 +90,7 @@ type AppContextType = {
   updateNews: (item: NewsItem) => void;
   addPlayer: (item: Omit<Player, "id">) => void;
   deletePlayer: (id: string) => void;
+  updatePlayer: (item: Player) => void;
   updateStandings: (items: Standing[]) => void;
   updateLeagueMetadata: (metadata: LeagueMetadata) => void;
   addGalleryFolder: (folder: Omit<GalleryFolder, "id" | "images">) => void;
@@ -228,6 +229,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setPlayers(players.filter((p) => p.id !== id));
   };
 
+  const updatePlayer = (updatedItem: Player) => {
+    setPlayers(players.map(p => p.id === updatedItem.id ? updatedItem : p));
+  };
+
   const updateStandings = (items: Standing[]) => {
     setStandings(items);
   };
@@ -304,6 +309,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         updateNews,
         addPlayer,
         deletePlayer,
+        updatePlayer,
         updateStandings,
         updateLeagueMetadata,
         addGalleryFolder,
