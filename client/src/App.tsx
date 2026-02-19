@@ -11,6 +11,7 @@ import Home from "@/pages/Home";
 import News from "@/pages/News";
 import Team from "@/pages/Team";
 import Standings from "@/pages/Standings";
+import Results from "@/pages/Results";
 import Gallery from "@/pages/Gallery";
 import About from "@/pages/About";
 import Contact from "@/pages/Contact";
@@ -28,6 +29,7 @@ function Router() {
           <Route path="/news" component={News} />
           <Route path="/team" component={Team} />
           <Route path="/standings" component={Standings} />
+          <Route path="/results" component={Results} />
           <Route path="/gallery" component={Gallery} />
           <Route path="/about" component={About} />
           <Route path="/contact" component={Contact} />

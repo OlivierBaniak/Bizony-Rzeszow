@@ -2,7 +2,13 @@ import { Link, useLocation } from "wouter";
 import { useApp } from "@/lib/store";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, Shield } from "lucide-react";
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
+import { Menu, Shield, ChevronDown } from "lucide-react";
 import { useState } from "react";
 
 import logo from "@assets/BIZONY_(6)_1771387532198.png";
@@ -17,15 +23,73 @@ export function Navbar() {
     { label: "Aktualności", href: "/news" },
     { label: "O Klubie", href: "/about" },
     { label: "Drużyna", href: "/team" },
-    { label: "Tabela", href: "/standings" },
+    { 
+      label: "Rozgrywki", 
+      href: "#",
+      children: [
+        { label: "Tabela", href: "/standings" },
+        { label: "Wyniki", href: "/results" },
+      ]
+    },
     { label: "Galeria", href: "/gallery" },
     { label: "Kontakt", href: "/contact" },
   ];
 
-  const NavLink = ({ href, label, mobile = false }: { href: string; label: string; mobile?: boolean }) => {
-    const isActive = location === href;
+  const NavLink = ({ item, mobile = false }: { item: any; mobile?: boolean }) => {
+    const isActive = location === item.href || (item.children?.some((child: any) => location === child.href));
+    
+    if (item.children && !mobile) {
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger className={`
+            uppercase font-display tracking-wider transition-colors duration-200 flex items-center gap-1 outline-none
+            text-lg hover:text-primary
+            ${isActive ? "text-primary font-bold" : "text-foreground"}
+          `}>
+            {item.label} <ChevronDown className="w-4 h-4" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="bg-background border-border">
+            {item.children.map((child: any) => (
+              <DropdownMenuItem key={child.href} asChild>
+                <Link href={child.href}>
+                  <a className="uppercase font-display tracking-wider text-sm px-4 py-2 hover:bg-primary hover:text-white transition-colors cursor-pointer block">
+                    {child.label}
+                  </a>
+                </Link>
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    }
+
+    if (item.children && mobile) {
+      return (
+        <div className="flex flex-col gap-4">
+          <span className="uppercase font-display tracking-wider text-2xl py-2 text-muted-foreground">
+            {item.label}
+          </span>
+          <div className="pl-6 flex flex-col gap-4 border-l-2 border-primary/20">
+            {item.children.map((child: any) => (
+              <Link key={child.href} href={child.href}>
+                <a
+                  onClick={() => setIsOpen(false)}
+                  className={`
+                    uppercase font-display tracking-wider transition-colors duration-200 text-xl
+                    ${location === child.href ? "text-primary font-bold" : "text-foreground"}
+                  `}
+                >
+                  {child.label}
+                </a>
+              </Link>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
     return (
-      <Link href={href}>
+      <Link href={item.href}>
         <a
           onClick={() => mobile && setIsOpen(false)}
           className={`
@@ -34,7 +98,7 @@ export function Navbar() {
             ${isActive ? "text-primary font-bold" : "text-foreground"}
           `}
         >
-          {label}
+          {item.label}
         </a>
       </Link>
     );
@@ -61,7 +125,7 @@ export function Navbar() {
         {/* Desktop Nav */}
         <div className="hidden md:flex items-center gap-8">
           {navItems.map((item) => (
-            <NavLink key={item.href} {...item} />
+            <NavLink key={item.label} item={item} />
           ))}
           
           {isAdmin && (
@@ -84,7 +148,7 @@ export function Navbar() {
             <SheetContent side="right" className="w-[300px] sm:w-[400px]">
               <div className="flex flex-col gap-6 mt-10">
                 {navItems.map((item) => (
-                  <NavLink key={item.href} {...item} mobile />
+                  <NavLink key={item.label} item={item} mobile />
                 ))}
                 <div className="h-px bg-border my-2" />
                 {isAdmin && (
