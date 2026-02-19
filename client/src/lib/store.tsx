@@ -84,6 +84,12 @@ export type GameResult = {
   pointsConceded: number;
 };
 
+export type User = {
+  id: string;
+  email: string;
+  role: "admin" | "editor";
+};
+
 type AppContextType = {
   news: NewsItem[];
   players: Player[];
@@ -95,8 +101,13 @@ type AppContextType = {
   nextMatch: Match;
   contactDetails: ContactDetails;
   isAdmin: boolean;
-  login: () => void;
+  userRole: "admin" | "editor" | null;
+  users: User[];
+  login: (email: string) => void;
   logout: () => void;
+  addUser: (user: Omit<User, "id">) => void;
+  deleteUser: (id: string) => void;
+  updateUserRole: (id: string, role: "admin" | "editor") => void;
   addNews: (item: Omit<NewsItem, "id" | "date">) => void;
   deleteNews: (id: string) => void;
   updateNews: (item: NewsItem) => void;
@@ -211,6 +222,11 @@ const INITIAL_RESULTS: GameResult[] = [
   { id: "4", date: "2025.03.22", location: "Żory", opponent: "Wizards Opole", competition: "Towarzyski", result: "W", pointsScored: 5, pointsConceded: 3 },
 ];
 
+const INITIAL_USERS: User[] = [
+  { id: "1", email: "admin@bizonyrzeszow.pl", role: "admin" },
+  { id: "2", email: "editor@bizonyrzeszow.pl", role: "editor" },
+];
+
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [news, setNews] = useState<NewsItem[]>(INITIAL_NEWS);
   const [players, setPlayers] = useState<Player[]>(INITIAL_PLAYERS);
@@ -222,9 +238,42 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [nextMatch, setNextMatch] = useState<Match>(INITIAL_MATCH);
   const [contactDetails, setContactDetails] = useState<ContactDetails>(INITIAL_CONTACT);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [userRole, setUserRole] = useState<"admin" | "editor" | null>(null);
+  const [users, setUsers] = useState<User[]>(INITIAL_USERS);
 
-  const login = () => setIsAdmin(true);
-  const logout = () => setIsAdmin(false);
+  const login = (email: string) => {
+    const user = users.find(u => u.email === email);
+    if (user) {
+      setUserRole(user.role);
+      setIsAdmin(true);
+    } else {
+      // Fallback for prototype: default to editor if not found in list but email matches pattern
+      if (email.includes("admin")) {
+        setUserRole("admin");
+      } else {
+        setUserRole("editor");
+      }
+      setIsAdmin(true);
+    }
+  };
+
+  const logout = () => {
+    setIsAdmin(false);
+    setUserRole(null);
+  };
+
+  const addUser = (user: Omit<User, "id">) => {
+    const newUser = { ...user, id: Math.random().toString(36).substr(2, 9) };
+    setUsers([...users, newUser]);
+  };
+
+  const deleteUser = (id: string) => {
+    setUsers(users.filter(u => u.id !== id));
+  };
+
+  const updateUserRole = (id: string, role: "admin" | "editor") => {
+    setUsers(users.map(u => u.id === id ? { ...u, role } : u));
+  };
 
   const addNews = (item: Omit<NewsItem, "id" | "date">) => {
     const newItem: NewsItem = {
@@ -338,8 +387,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         nextMatch,
         contactDetails,
         isAdmin,
+        userRole,
+        users,
         login,
         logout,
+        addUser,
+        deleteUser,
+        updateUserRole,
         addNews,
         deleteNews,
         updateNews,

@@ -9,6 +9,7 @@ import { useState, useEffect } from "react";
 export default function Login() {
   const { login } = useApp();
   const [, setLocation] = useLocation();
+  const [email, setEmail] = useState("");
   const [captcha, setCaptcha] = useState("");
   const [userInput, setUserInput] = useState("");
   const [error, setError] = useState(false);
@@ -37,7 +38,7 @@ export default function Login() {
     }
     // In this prototype, any login works. 
     // In a real app, this would be validated against a backend.
-    login();
+    login(email);
     setLocation("/admin");
   };
 
@@ -56,7 +57,14 @@ export default function Login() {
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-2">
-              <Input type="email" placeholder="admin@bizonyrzeszow.pl" required className="bg-white" />
+              <Input 
+                type="email" 
+                placeholder="admin@bizonyrzeszow.pl" 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required 
+                className="bg-white" 
+              />
             </div>
             <div className="space-y-2">
               <Input type="password" placeholder="••••••••" required className="bg-white" />

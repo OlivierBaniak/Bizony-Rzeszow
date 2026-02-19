@@ -12,6 +12,8 @@ import { Plus, Trash, Save, LayoutDashboard, Newspaper, Users, Trophy, Image as 
 export default function AdminDashboard() {
   const { 
     isAdmin, 
+    userRole,
+    users, addUser, deleteUser, updateUserRole,
     news, addNews, deleteNews, updateNews,
     players, addPlayer, deletePlayer, updatePlayer,
     results, addResult, deleteResult, updateResult,
@@ -28,6 +30,7 @@ export default function AdminDashboard() {
   const [newsForm, setNewsForm] = useState({ id: "", title: "", excerpt: "", content: "", image: "" });
   const [playerForm, setPlayerForm] = useState({ id: "", name: "", number: "", position: "", image: "" });
   const [resultForm, setResultForm] = useState({ id: "", date: "", location: "", opponent: "", competition: "", result: "W", pointsScored: "", pointsConceded: "" });
+  const [userForm, setUserForm] = useState({ email: "", role: "editor" as "admin" | "editor" });
   const [folderForm, setFolderForm] = useState({ title: "", description: "", mainImage: "" });
   const [imageForm, setImageForm] = useState({ url: "", description: "" });
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
@@ -182,6 +185,12 @@ export default function AdminDashboard() {
     updateContactDetails(contactDraft);
   };
 
+  const handleAddUser = () => {
+    if (!userForm.email) return;
+    addUser(userForm);
+    setUserForm({ email: "", role: "editor" });
+  };
+
   const updateDraftTeam = (id: string, field: string, value: string | number) => {
     setStandingsDraft(standingsDraft.map(t => 
       t.id === id ? { ...t, [field]: value } : t
@@ -224,6 +233,11 @@ export default function AdminDashboard() {
             <TabsTrigger value="contact" className="px-6 py-2 uppercase font-display tracking-wider">
               Kontakt
             </TabsTrigger>
+            {userRole === "admin" && (
+              <TabsTrigger value="users" className="px-6 py-2 uppercase font-display tracking-wider">
+                Użytkownicy
+              </TabsTrigger>
+            )}
           </TabsList>
 
           {/* NEWS TAB */}
@@ -801,6 +815,69 @@ export default function AdminDashboard() {
               </CardContent>
             </Card>
           </TabsContent>
+
+          {userRole === "admin" && (
+            <TabsContent value="users" className="space-y-6">
+              <div className="grid md:grid-cols-3 gap-6">
+                <Card className="md:col-span-1 h-fit">
+                  <CardHeader><CardTitle>Dodaj Użytkownika</CardTitle></CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                      <Label>Email</Label>
+                      <Input 
+                        value={userForm.email} 
+                        onChange={e => setUserForm({...userForm, email: e.target.value})} 
+                        placeholder="user@example.com"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Rola</Label>
+                      <select 
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        value={userForm.role} 
+                        onChange={e => setUserForm({...userForm, role: e.target.value as "admin" | "editor"})}
+                      >
+                        <option value="editor">Editor</option>
+                        <option value="admin">Admin</option>
+                      </select>
+                    </div>
+                    <Button onClick={handleAddUser} className="w-full bg-primary">Dodaj</Button>
+                  </CardContent>
+                </Card>
+
+                <div className="md:col-span-2 space-y-4">
+                  {users.map(user => (
+                    <Card key={user.id} className="flex items-center p-4 gap-4">
+                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                        <Users className="w-5 h-5" />
+                      </div>
+                      <div className="flex-grow">
+                        <h3 className="font-bold">{user.email}</h3>
+                        <p className="text-xs uppercase tracking-wider text-muted-foreground">{user.role}</p>
+                      </div>
+                      <div className="flex gap-2">
+                        <select 
+                          className="h-8 rounded border text-xs px-2"
+                          value={user.role}
+                          onChange={(e) => updateUserRole(user.id, e.target.value as "admin" | "editor")}
+                        >
+                          <option value="editor">Editor</option>
+                          <option value="admin">Admin</option>
+                        </select>
+                        <Button 
+                          variant="destructive" size="icon" 
+                          onClick={() => deleteUser(user.id)}
+                          disabled={users.length <= 1}
+                        >
+                          <Trash className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            </TabsContent>
+          )}
 
         </Tabs>
       </div>
