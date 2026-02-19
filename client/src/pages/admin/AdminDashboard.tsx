@@ -14,6 +14,7 @@ export default function AdminDashboard() {
     isAdmin, 
     news, addNews, deleteNews, updateNews,
     players, addPlayer, deletePlayer, updatePlayer,
+    results, addResult, deleteResult, updateResult,
     standings, updateStandings,
     leagueMetadata, updateLeagueMetadata,
     galleryFolders, addGalleryFolder, deleteGalleryFolder, addImageToFolder, deleteImageFromFolder,
@@ -26,6 +27,7 @@ export default function AdminDashboard() {
   // Form States
   const [newsForm, setNewsForm] = useState({ id: "", title: "", excerpt: "", content: "", image: "" });
   const [playerForm, setPlayerForm] = useState({ id: "", name: "", number: "", position: "", image: "" });
+  const [resultForm, setResultForm] = useState({ id: "", date: "", location: "", opponent: "", competition: "", result: "W", pointsScored: "", pointsConceded: "" });
   const [folderForm, setFolderForm] = useState({ title: "", description: "", mainImage: "" });
   const [imageForm, setImageForm] = useState({ url: "", description: "" });
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
@@ -118,6 +120,39 @@ export default function AdminDashboard() {
     });
   };
 
+  const handleAddResult = () => {
+    if (!resultForm.date || !resultForm.opponent) return;
+    const itemData = {
+      date: resultForm.date,
+      location: resultForm.location,
+      opponent: resultForm.opponent,
+      competition: resultForm.competition,
+      result: resultForm.result as "W" | "L",
+      pointsScored: parseInt(resultForm.pointsScored) || 0,
+      pointsConceded: parseInt(resultForm.pointsConceded) || 0,
+    };
+
+    if (resultForm.id) {
+      updateResult({ ...itemData, id: resultForm.id });
+    } else {
+      addResult(itemData);
+    }
+    setResultForm({ id: "", date: "", location: "", opponent: "", competition: "", result: "W", pointsScored: "", pointsConceded: "" });
+  };
+
+  const handleEditResult = (item: any) => {
+    setResultForm({
+      id: item.id,
+      date: item.date,
+      location: item.location,
+      opponent: item.opponent,
+      competition: item.competition,
+      result: item.result,
+      pointsScored: item.pointsScored.toString(),
+      pointsConceded: item.pointsConceded.toString()
+    });
+  };
+
   const handleAddFolder = () => {
     if (!folderForm.title) return;
     addGalleryFolder(folderForm);
@@ -170,6 +205,9 @@ export default function AdminDashboard() {
             </TabsTrigger>
             <TabsTrigger value="team" className="px-6 py-2 uppercase font-display tracking-wider">
               Skład
+            </TabsTrigger>
+            <TabsTrigger value="results" className="px-6 py-2 uppercase font-display tracking-wider">
+              Wyniki
             </TabsTrigger>
             <TabsTrigger value="standings" className="px-6 py-2 uppercase font-display tracking-wider">
               Tabela
@@ -329,6 +367,95 @@ export default function AdminDashboard() {
                         <LayoutDashboard className="w-4 h-4" />
                       </Button>
                       <Button variant="destructive" size="icon" onClick={() => deletePlayer(player.id)}>
+                        <Trash className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          </TabsContent>
+
+          {/* RESULTS TAB */}
+          <TabsContent value="results" className="space-y-6">
+            <div className="grid md:grid-cols-3 gap-6">
+              <Card className="md:col-span-1 h-fit">
+                <CardHeader><CardTitle>{resultForm.id ? 'Edytuj Wynik' : 'Dodaj Wynik'}</CardTitle></CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Termin (RRRR.MM.DD)</Label>
+                      <Input value={resultForm.date} onChange={e => setResultForm({...resultForm, date: e.target.value})} placeholder="2025.04.13" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Miejsce</Label>
+                      <Input value={resultForm.location} onChange={e => setResultForm({...resultForm, location: e.target.value})} placeholder="Rybnik" />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Przeciwnik</Label>
+                    <Input value={resultForm.opponent} onChange={e => setResultForm({...resultForm, opponent: e.target.value})} placeholder="Wizards Opole" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Rozgrywki</Label>
+                    <Input value={resultForm.competition} onChange={e => setResultForm({...resultForm, competition: e.target.value})} placeholder="BLB" />
+                  </div>
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="space-y-2">
+                      <Label>Wynik</Label>
+                      <select 
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        value={resultForm.result} 
+                        onChange={e => setResultForm({...resultForm, result: e.target.value})}
+                      >
+                        <option value="W">W (Win)</option>
+                        <option value="L">L (Loss)</option>
+                      </select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Pkt +</Label>
+                      <Input type="number" value={resultForm.pointsScored} onChange={e => setResultForm({...resultForm, pointsScored: e.target.value})} />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Pkt -</Label>
+                      <Input type="number" value={resultForm.pointsConceded} onChange={e => setResultForm({...resultForm, pointsConceded: e.target.value})} />
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button onClick={handleAddResult} className="flex-1 bg-primary">
+                      {resultForm.id ? 'Zapisz' : 'Dodaj'}
+                    </Button>
+                    {resultForm.id && (
+                      <Button variant="outline" onClick={() => setResultForm({ id: "", date: "", location: "", opponent: "", competition: "", result: "W", pointsScored: "", pointsConceded: "" })}>
+                        Anuluj
+                      </Button>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+
+              <div className="md:col-span-2 space-y-4">
+                {results.map(item => (
+                  <Card key={item.id} className="flex items-center p-4 gap-4">
+                    <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-white ${item.result === 'W' ? 'bg-green-600' : 'bg-red-600'}`}>
+                      {item.result}
+                    </div>
+                    <div className="flex-grow">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h3 className="font-bold">{item.opponent}</h3>
+                          <p className="text-xs text-muted-foreground uppercase tracking-wider">{item.date} • {item.location} • {item.competition}</p>
+                        </div>
+                        <div className="text-right">
+                          <div className="font-display font-bold text-lg">{item.pointsScored} : {item.pointsConceded}</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button variant="outline" size="icon" onClick={() => handleEditResult(item)}>
+                        <LayoutDashboard className="w-4 h-4" />
+                      </Button>
+                      <Button variant="destructive" size="icon" onClick={() => deleteResult(item.id)}>
                         <Trash className="w-4 h-4" />
                       </Button>
                     </div>

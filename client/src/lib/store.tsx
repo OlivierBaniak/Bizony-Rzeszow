@@ -73,9 +73,21 @@ export type ContactDetails = {
   instagram: string;
 };
 
+export type GameResult = {
+  id: string;
+  date: string;
+  location: string;
+  opponent: string;
+  competition: string;
+  result: "W" | "L";
+  pointsScored: number;
+  pointsConceded: number;
+};
+
 type AppContextType = {
   news: NewsItem[];
   players: Player[];
+  results: GameResult[];
   standings: Standing[];
   leagueMetadata: LeagueMetadata;
   galleryFolders: GalleryFolder[];
@@ -91,6 +103,9 @@ type AppContextType = {
   addPlayer: (item: Omit<Player, "id">) => void;
   deletePlayer: (id: string) => void;
   updatePlayer: (item: Player) => void;
+  addResult: (item: Omit<GameResult, "id">) => void;
+  deleteResult: (id: string) => void;
+  updateResult: (item: GameResult) => void;
   updateStandings: (items: Standing[]) => void;
   updateLeagueMetadata: (metadata: LeagueMetadata) => void;
   addGalleryFolder: (folder: Omit<GalleryFolder, "id" | "images">) => void;
@@ -189,9 +204,17 @@ const INITIAL_CONTACT: ContactDetails = {
   instagram: "https://www.instagram.com/bizony__rzeszow/"
 };
 
+const INITIAL_RESULTS: GameResult[] = [
+  { id: "1", date: "2025.04.13", location: "Rybnik", opponent: "Wizards Opole", competition: "BLB", result: "L", pointsScored: 13, pointsConceded: 20 },
+  { id: "2", date: "2025.04.13", location: "Rybnik", opponent: "Wizards Opole", competition: "BLB", result: "W", pointsScored: 14, pointsConceded: 13 },
+  { id: "3", date: "2025.03.22", location: "Żory", opponent: "Wizards Opole", competition: "Towarzyski", result: "L", pointsScored: 11, pointsConceded: 15 },
+  { id: "4", date: "2025.03.22", location: "Żory", opponent: "Wizards Opole", competition: "Towarzyski", result: "W", pointsScored: 5, pointsConceded: 3 },
+];
+
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [news, setNews] = useState<NewsItem[]>(INITIAL_NEWS);
   const [players, setPlayers] = useState<Player[]>(INITIAL_PLAYERS);
+  const [results, setResults] = useState<GameResult[]>(INITIAL_RESULTS);
   const [standings, setStandings] = useState<Standing[]>(INITIAL_STANDINGS);
   const [leagueMetadata, setLeagueMetadata] = useState<LeagueMetadata>(INITIAL_METADATA);
   const [galleryFolders, setGalleryFolders] = useState<GalleryFolder[]>(INITIAL_GALLERY);
@@ -231,6 +254,19 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const updatePlayer = (updatedItem: Player) => {
     setPlayers(players.map(p => p.id === updatedItem.id ? updatedItem : p));
+  };
+
+  const addResult = (item: Omit<GameResult, "id">) => {
+    const newItem: GameResult = { ...item, id: Math.random().toString(36).substr(2, 9) };
+    setResults([newItem, ...results]);
+  };
+
+  const deleteResult = (id: string) => {
+    setResults(results.filter((r) => r.id !== id));
+  };
+
+  const updateResult = (updatedItem: GameResult) => {
+    setResults(results.map(r => r.id === updatedItem.id ? updatedItem : r));
   };
 
   const updateStandings = (items: Standing[]) => {
@@ -310,6 +346,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         addPlayer,
         deletePlayer,
         updatePlayer,
+        results,
+        addResult,
+        deleteResult,
+        updateResult,
         updateStandings,
         updateLeagueMetadata,
         addGalleryFolder,
