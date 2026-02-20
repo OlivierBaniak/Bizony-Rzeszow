@@ -92,6 +92,14 @@ export type User = {
   twoFASecret?: string;
 };
 
+export type LoginLog = {
+  id: string;
+  email: string;
+  timestamp: string;
+  ip: string;
+  status: "success" | "failure";
+};
+
 type AppContextType = {
   news: NewsItem[];
   players: Player[];
@@ -106,7 +114,8 @@ type AppContextType = {
   userRole: "admin" | "editor" | null;
   currentUser: User | null;
   users: User[];
-  login: (email: string) => void;
+  loginLogs: LoginLog[];
+  login: (email: string, success?: boolean) => void;
   logout: () => void;
   addUser: (user: Omit<User, "id">) => void;
   deleteUser: (id: string) => void;
@@ -245,15 +254,26 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [userRole, setUserRole] = useState<"admin" | "editor" | null>(null);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [users, setUsers] = useState<User[]>(INITIAL_USERS);
+  const [loginLogs, setLoginLogs] = useState<LoginLog[]>([]);
 
-  const login = (email: string) => {
+  const login = (email: string, success: boolean = true) => {
+    const newLog: LoginLog = {
+      id: Math.random().toString(36).substr(2, 9),
+      email,
+      timestamp: new Date().toLocaleString("pl-PL"),
+      ip: `192.168.1.${Math.floor(Math.random() * 255)}`, // Mock IP for prototype
+      status: success ? "success" : "failure"
+    };
+    setLoginLogs(prev => [newLog, ...prev]);
+
+    if (!success) return;
+
     const user = users.find(u => u.email === email);
     if (user) {
       setUserRole(user.role);
       setCurrentUser(user);
       setIsAdmin(true);
     } else {
-      // Fallback for prototype: default to editor if not found in list but email matches pattern
       const role = email.includes("admin") ? "admin" : "editor";
       const newUser: User = { id: Math.random().toString(36).substr(2, 9), email, role };
       setUserRole(role);
@@ -407,6 +427,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         userRole,
         currentUser,
         users,
+        loginLogs,
         login,
         logout,
         addUser,
