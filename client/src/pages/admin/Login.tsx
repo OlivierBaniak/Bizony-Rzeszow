@@ -38,6 +38,10 @@ export default function Login() {
     }
     // In this prototype, any login works. 
     // In a real app, this would be validated against a backend.
+    if (!email || !email.includes("@")) {
+      setError(true);
+      return;
+    }
     login(email);
     setLocation("/admin");
   };
@@ -56,6 +60,11 @@ export default function Login() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">
+            {error && (
+              <div className="bg-destructive/10 border border-destructive/20 text-destructive text-sm p-3 rounded-md text-center font-medium animate-in fade-in zoom-in-95">
+                Logowanie jest niemożliwe
+              </div>
+            )}
             <div className="space-y-2">
               <Input 
                 type="email" 
