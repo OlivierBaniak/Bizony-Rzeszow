@@ -88,6 +88,8 @@ export type User = {
   id: string;
   email: string;
   role: "admin" | "editor";
+  is2FAEnabled?: boolean;
+  twoFASecret?: string;
 };
 
 type AppContextType = {
@@ -102,12 +104,14 @@ type AppContextType = {
   contactDetails: ContactDetails;
   isAdmin: boolean;
   userRole: "admin" | "editor" | null;
+  currentUser: User | null;
   users: User[];
   login: (email: string) => void;
   logout: () => void;
   addUser: (user: Omit<User, "id">) => void;
   deleteUser: (id: string) => void;
   updateUserRole: (id: string, role: "admin" | "editor") => void;
+  toggle2FA: () => void;
   addNews: (item: Omit<NewsItem, "id" | "date">) => void;
   deleteNews: (id: string) => void;
   updateNews: (item: NewsItem) => void;
@@ -239,20 +243,21 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [contactDetails, setContactDetails] = useState<ContactDetails>(INITIAL_CONTACT);
   const [isAdmin, setIsAdmin] = useState(false);
   const [userRole, setUserRole] = useState<"admin" | "editor" | null>(null);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [users, setUsers] = useState<User[]>(INITIAL_USERS);
 
   const login = (email: string) => {
     const user = users.find(u => u.email === email);
     if (user) {
       setUserRole(user.role);
+      setCurrentUser(user);
       setIsAdmin(true);
     } else {
       // Fallback for prototype: default to editor if not found in list but email matches pattern
-      if (email.includes("admin")) {
-        setUserRole("admin");
-      } else {
-        setUserRole("editor");
-      }
+      const role = email.includes("admin") ? "admin" : "editor";
+      const newUser: User = { id: Math.random().toString(36).substr(2, 9), email, role };
+      setUserRole(role);
+      setCurrentUser(newUser);
       setIsAdmin(true);
     }
   };
@@ -260,6 +265,18 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const logout = () => {
     setIsAdmin(false);
     setUserRole(null);
+    setCurrentUser(null);
+  };
+
+  const toggle2FA = () => {
+    if (!currentUser) return;
+    const updatedUser = { 
+      ...currentUser, 
+      is2FAEnabled: !currentUser.is2FAEnabled,
+      twoFASecret: !currentUser.is2FAEnabled ? Math.random().toString(36).substr(2, 10).toUpperCase() : undefined
+    };
+    setCurrentUser(updatedUser);
+    setUsers(users.map(u => u.id === currentUser.id ? updatedUser : u));
   };
 
   const addUser = (user: Omit<User, "id">) => {
@@ -388,12 +405,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         contactDetails,
         isAdmin,
         userRole,
+        currentUser,
         users,
         login,
         logout,
         addUser,
         deleteUser,
         updateUserRole,
+        toggle2FA,
         addNews,
         deleteNews,
         updateNews,

@@ -7,13 +7,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, Trash, Save, LayoutDashboard, Newspaper, Users, Trophy, Image as ImageIcon, FolderOpen, Info } from "lucide-react";
+import { Plus, Trash, Save, LayoutDashboard, Newspaper, Users, Trophy, Image as ImageIcon, FolderOpen, Info, ShieldCheck, ShieldAlert, QrCode } from "lucide-react";
 
 export default function AdminDashboard() {
   const { 
     isAdmin, 
     userRole,
+    currentUser,
     users, addUser, deleteUser, updateUserRole,
+    toggle2FA,
     news, addNews, deleteNews, updateNews,
     players, addPlayer, deletePlayer, updatePlayer,
     results, addResult, deleteResult, updateResult,
@@ -232,6 +234,9 @@ export default function AdminDashboard() {
             </TabsTrigger>
             <TabsTrigger value="contact" className="px-6 py-2 uppercase font-display tracking-wider">
               Kontakt
+            </TabsTrigger>
+            <TabsTrigger value="settings" className="px-6 py-2 uppercase font-display tracking-wider">
+              Ustawienia
             </TabsTrigger>
             {userRole === "admin" && (
               <TabsTrigger value="users" className="px-6 py-2 uppercase font-display tracking-wider">
@@ -812,6 +817,84 @@ export default function AdminDashboard() {
                     <Input value={contactDraft.instagram} onChange={e => setContactDraft({...contactDraft, instagram: e.target.value})} />
                   </div>
                 </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="settings" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <ShieldCheck className="w-5 h-5 text-primary" />
+                  Bezpieczeństwo Konta (2FA)
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 p-6 bg-muted/30 rounded-lg border">
+                  <div className="space-y-1">
+                    <h3 className="text-lg font-bold flex items-center gap-2">
+                      Uwierzytelnianie dwuskładnikowe (2FA)
+                      {currentUser?.is2FAEnabled ? (
+                        <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full flex items-center gap-1">
+                          <ShieldCheck className="w-3 h-3" /> Aktywne
+                        </span>
+                      ) : (
+                        <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full flex items-center gap-1">
+                          <ShieldAlert className="w-3 h-3" /> Nieaktywne
+                        </span>
+                      )}
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      Dodaj dodatkową warstwę bezpieczeństwa do swojego konta, wymagając kodu z aplikacji uwierzytelniającej przy każdym logowaniu.
+                    </p>
+                  </div>
+                  <Button 
+                    onClick={toggle2FA} 
+                    variant={currentUser?.is2FAEnabled ? "destructive" : "default"}
+                    className="font-display uppercase tracking-wider"
+                  >
+                    {currentUser?.is2FAEnabled ? "Wyłącz 2FA" : "Skonfiguruj 2FA"}
+                  </Button>
+                </div>
+
+                {currentUser?.is2FAEnabled && !currentUser?.twoFASecret && (
+                   <div className="p-4 bg-green-50 border border-green-200 rounded-md text-green-800 text-sm">
+                     Twoje konto jest chronione przez 2FA.
+                   </div>
+                )}
+
+                {currentUser?.is2FAEnabled && currentUser?.twoFASecret && (
+                  <div className="grid md:grid-cols-2 gap-8 p-6 border rounded-lg animate-in fade-in slide-in-from-top-4">
+                    <div className="space-y-4">
+                      <h4 className="font-bold uppercase text-sm tracking-wider flex items-center gap-2">
+                        <QrCode className="w-4 h-4" /> Krok 1: Zeskanuj kod QR
+                      </h4>
+                      <div className="bg-white p-4 border rounded aspect-square w-48 flex items-center justify-center shadow-inner mx-auto md:mx-0 relative">
+                         <div className="w-full h-full bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:10px_10px] opacity-20" />
+                         <span className="absolute font-mono text-[10px] text-muted-foreground uppercase text-center px-2">Mock QR Code for {currentUser.email}</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        Zeskanuj ten kod w swojej aplikacji (np. Google Authenticator lub Authy).
+                      </p>
+                    </div>
+                    <div className="space-y-4">
+                      <h4 className="font-bold uppercase text-sm tracking-wider">Krok 2: Wpisz klucz ręcznie</h4>
+                      <div className="bg-muted p-4 rounded font-mono text-xl tracking-widest text-center select-all border border-dashed">
+                        {currentUser.twoFASecret}
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        Jeśli nie możesz zeskanować kodu, wpisz powyższy klucz w aplikacji.
+                      </p>
+                      <div className="pt-4 border-t space-y-2">
+                        <Label className="text-xs uppercase tracking-tighter">Kod Weryfikacyjny</Label>
+                        <div className="flex gap-2">
+                          <Input placeholder="000 000" className="text-center font-mono text-lg tracking-widest" maxLength={6} />
+                          <Button className="bg-primary px-8">Weryfikuj</Button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
