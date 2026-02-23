@@ -23,15 +23,15 @@ export function Footer() {
             <h4 className="text-lg font-bold font-display uppercase tracking-wider text-primary">Szybkie Linki</h4>
             <ul className="space-y-2 text-secondary-foreground/80">
               <li><Link href="/news"><a className="hover:text-primary transition-colors">Aktualności</a></Link></li>
-              <li><Link href="/about"><a className="hover:text-primary transition-colors">O Klubie</a></Link></li>
-              <li><Link href="/team"><a className="hover:text-primary transition-colors">Drużyna</a></Link></li>
+              <li><Link href="/results"><a className="hover:text-primary transition-colors">Wyniki</a></Link></li>
               <li><Link href="/standings"><a className="hover:text-primary transition-colors">Tabela</a></Link></li>
+              <li><Link href="/team"><a className="hover:text-primary transition-colors">Drużyna</a></Link></li>
               <li><Link href="/gallery"><a className="hover:text-primary transition-colors">Galeria</a></Link></li>
               <li><Link href="/contact"><a className="hover:text-primary transition-colors">Kontakt</a></Link></li>
               <li className="pt-4 border-t border-secondary-foreground/10">
                 <Link href="/admin">
-                  <a className="flex items-center gap-2 text-xs opacity-50 hover:opacity-100 transition-opacity">
-                    <Shield className="w-3 h-3" /> Panel CMS
+                  <a className="inline-flex items-center gap-2 text-xs opacity-30 hover:opacity-100 transition-opacity">
+                    <Shield className="w-3 h-3" />
                   </a>
                 </Link>
               </li>
