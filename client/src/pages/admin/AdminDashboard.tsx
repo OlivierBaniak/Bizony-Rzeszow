@@ -1,4 +1,4 @@
-import { useApp } from "@/lib/store";
+import { useApp, NewsItem } from "@/lib/store";
 import { useLocation } from "wouter";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -7,6 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import ReactQuill from 'react-quill-new';
+import 'react-quill-new/dist/quill.snow.css';
 import { Plus, Trash, Save, LayoutDashboard, Newspaper, Users, Trophy, Image as ImageIcon, FolderOpen, Info, ShieldCheck, ShieldAlert, QrCode, ScrollText } from "lucide-react";
 
 export default function AdminDashboard() {
@@ -269,7 +271,22 @@ export default function AdminDashboard() {
                   </div>
                   <div className="space-y-2">
                     <Label>Treść</Label>
-                    <Textarea className="h-32" value={newsForm.content} onChange={e => setNewsForm({...newsForm, content: e.target.value})} placeholder="Pełna treść..." />
+                    <div className="bg-white rounded-md border min-h-[200px] overflow-hidden">
+                      <ReactQuill 
+                        theme="snow" 
+                        value={newsForm.content} 
+                        onChange={(content) => setNewsForm({ ...newsForm, content })}
+                        className="h-48 mb-12"
+                        modules={{
+                          toolbar: [
+                            [{ 'header': [1, 2, false] }],
+                            ['bold', 'italic', 'underline', 'strike'],
+                            [{'list': 'ordered'}, {'list': 'bullet'}],
+                            ['link', 'clean']
+                          ],
+                        }}
+                      />
+                    </div>
                   </div>
                   <div className="space-y-2">
                     <Label>Obraz (Adres URL lub Prześlij)</Label>

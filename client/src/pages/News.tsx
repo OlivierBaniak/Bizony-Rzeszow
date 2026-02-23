@@ -44,9 +44,10 @@ export default function News() {
               </p>
             </div>
 
-            <div className="prose prose-lg max-w-none text-foreground leading-relaxed font-sans whitespace-pre-wrap py-8 border-t border-border">
-              {selectedItem.content}
-            </div>
+            <div 
+              className="prose prose-lg max-w-none text-foreground leading-relaxed font-sans py-8 border-t border-border"
+              dangerouslySetInnerHTML={{ __html: selectedItem.content }}
+            />
           </article>
         </div>
       </div>
