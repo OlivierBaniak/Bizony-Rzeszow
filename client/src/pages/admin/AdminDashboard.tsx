@@ -36,7 +36,7 @@ export default function AdminDashboard() {
   const [newsForm, setNewsForm] = useState({ id: "", title: "", excerpt: "", content: "", image: "" });
   const [playerForm, setPlayerForm] = useState({ id: "", name: "", number: "", position: "", image: "" });
   const [resultForm, setResultForm] = useState({ id: "", date: "", location: "", opponent: "", competition: "", result: "W", pointsScored: "", pointsConceded: "" });
-  const [userForm, setUserForm] = useState({ email: "", role: "editor" as "admin" | "editor" });
+  const [userForm, setUserForm] = useState({ email: "", role: "editor" as "admin" | "editor", password: "" });
   const [folderForm, setFolderForm] = useState({ title: "", description: "", mainImage: "" });
   const [imageForm, setImageForm] = useState({ url: "", description: "" });
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
@@ -1009,6 +1009,15 @@ export default function AdminDashboard() {
                         <option value="editor">Editor</option>
                         <option value="admin">Admin</option>
                       </select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Hasło startowe</Label>
+                      <Input 
+                        type="password"
+                        value={userForm.password} 
+                        onChange={e => setUserForm({...userForm, password: e.target.value})} 
+                        placeholder="••••••••"
+                      />
                     </div>
                     <Button onClick={handleAddUser} className="w-full bg-primary">Dodaj</Button>
                   </CardContent>
