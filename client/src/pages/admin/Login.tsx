@@ -31,7 +31,6 @@ export default function Login() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    const { users } = require("@/lib/store");
     
     if (userInput.toUpperCase() !== captcha) {
       login(email, false);
