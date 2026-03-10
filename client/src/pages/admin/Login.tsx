@@ -31,19 +31,21 @@ export default function Login() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
+    const { users } = require("@/lib/store");
+    
     if (userInput.toUpperCase() !== captcha) {
       login(email, false);
       setError(true);
       generateCaptcha();
       return;
     }
-    // In this prototype, any login works. 
-    // In a real app, this would be validated against a backend.
+    
     if (!email || !email.includes("@")) {
       login(email, false);
       setError(true);
       return;
     }
+    
     login(email, true);
     setLocation("/admin");
   };

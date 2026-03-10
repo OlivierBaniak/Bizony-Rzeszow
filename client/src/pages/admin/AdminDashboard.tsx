@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
-import { Plus, Trash, Save, LayoutDashboard, Newspaper, Users, Trophy, Image as ImageIcon, FolderOpen, Info, ShieldCheck, ShieldAlert, QrCode, ScrollText } from "lucide-react";
+import { Plus, Trash, Save, LayoutDashboard, Newspaper, Users, Trophy, Image as ImageIcon, FolderOpen, Info, ShieldCheck, ShieldAlert, QrCode, ScrollText, Lock } from "lucide-react";
 
 export default function AdminDashboard() {
   const { 
@@ -18,6 +18,7 @@ export default function AdminDashboard() {
     currentUser,
     users, addUser, deleteUser, updateUserRole,
     loginLogs,
+    changePassword,
     toggle2FA,
     news, addNews, deleteNews, updateNews,
     players, addPlayer, deletePlayer, updatePlayer,
@@ -39,6 +40,8 @@ export default function AdminDashboard() {
   const [folderForm, setFolderForm] = useState({ title: "", description: "", mainImage: "" });
   const [imageForm, setImageForm] = useState({ url: "", description: "" });
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
+  const [passwordForm, setPasswordForm] = useState({ newPassword: "", confirmPassword: "" });
+  const [passwordMessage, setPasswordMessage] = useState<{ type: "success" | "error", text: string } | null>(null);
   
   // Local states for metadata and history
   const [metaDraft, setMetaDraft] = useState(leagueMetadata);
@@ -51,6 +54,25 @@ export default function AdminDashboard() {
     setLocation("/login");
     return null;
   }
+
+  const handleChangePassword = () => {
+    if (!passwordForm.newPassword || !passwordForm.confirmPassword) {
+      setPasswordMessage({ type: "error", text: "Oba pola są wymagane" });
+      return;
+    }
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      setPasswordMessage({ type: "error", text: "Hasła się nie zgadzają" });
+      return;
+    }
+    if (passwordForm.newPassword.length < 8) {
+      setPasswordMessage({ type: "error", text: "Hasło musi mieć co najmniej 8 znaków" });
+      return;
+    }
+    changePassword(passwordForm.newPassword);
+    setPasswordForm({ newPassword: "", confirmPassword: "" });
+    setPasswordMessage({ type: "success", text: "Hasło zmieniono pomyślnie!" });
+    setTimeout(() => setPasswordMessage(null), 3000);
+  };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, callback: (url: string) => void) => {
     const file = e.target.files?.[0];
@@ -918,6 +940,47 @@ export default function AdminDashboard() {
                     </div>
                   </div>
                 )}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Lock className="w-5 h-5 text-primary" />
+                  Zmiana Hasła
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {passwordMessage && (
+                  <div className={`p-3 rounded-md text-sm ${
+                    passwordMessage.type === "success" 
+                      ? "bg-green-50 text-green-700 border border-green-200" 
+                      : "bg-red-50 text-red-700 border border-red-200"
+                  }`}>
+                    {passwordMessage.text}
+                  </div>
+                )}
+                <div className="space-y-2">
+                  <Label>Nowe Hasło</Label>
+                  <Input 
+                    type="password" 
+                    placeholder="••••••••" 
+                    value={passwordForm.newPassword}
+                    onChange={e => setPasswordForm({...passwordForm, newPassword: e.target.value})}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Potwierdź Hasło</Label>
+                  <Input 
+                    type="password" 
+                    placeholder="••••••••" 
+                    value={passwordForm.confirmPassword}
+                    onChange={e => setPasswordForm({...passwordForm, confirmPassword: e.target.value})}
+                  />
+                </div>
+                <Button onClick={handleChangePassword} className="w-full bg-primary">
+                  Zmień Hasło
+                </Button>
               </CardContent>
             </Card>
           </TabsContent>

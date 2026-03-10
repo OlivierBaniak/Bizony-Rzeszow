@@ -88,6 +88,7 @@ export type User = {
   id: string;
   email: string;
   role: "admin" | "editor";
+  password: string;
   is2FAEnabled?: boolean;
   twoFASecret?: string;
 };
@@ -120,6 +121,7 @@ type AppContextType = {
   addUser: (user: Omit<User, "id">) => void;
   deleteUser: (id: string) => void;
   updateUserRole: (id: string, role: "admin" | "editor") => void;
+  changePassword: (newPassword: string) => void;
   toggle2FA: () => void;
   addNews: (item: Omit<NewsItem, "id" | "date">) => void;
   deleteNews: (id: string) => void;
@@ -236,8 +238,8 @@ const INITIAL_RESULTS: GameResult[] = [
 ];
 
 const INITIAL_USERS: User[] = [
-  { id: "1", email: "admin@bizonyrzeszow.pl", role: "admin" },
-  { id: "2", email: "editor@bizonyrzeszow.pl", role: "editor" },
+  { id: "1", email: "admin@bizonyrzeszow.pl", role: "admin", password: "Duzy1Bizon@9" },
+  { id: "2", email: "editor@bizonyrzeszow.pl", role: "editor", password: "Maly3Bizon&5" },
 ];
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
@@ -310,6 +312,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const updateUserRole = (id: string, role: "admin" | "editor") => {
     setUsers(users.map(u => u.id === id ? { ...u, role } : u));
+  };
+
+  const changePassword = (newPassword: string) => {
+    if (!currentUser) return;
+    const updatedUser = { ...currentUser, password: newPassword };
+    setCurrentUser(updatedUser);
+    setUsers(users.map(u => u.id === currentUser.id ? updatedUser : u));
   };
 
   const addNews = (item: Omit<NewsItem, "id" | "date">) => {
@@ -433,6 +442,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         addUser,
         deleteUser,
         updateUserRole,
+        changePassword,
         toggle2FA,
         addNews,
         deleteNews,
