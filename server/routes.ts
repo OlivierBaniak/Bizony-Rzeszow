@@ -27,6 +27,8 @@ function requireAdmin(req: Request, res: Response, next: Function) {
 export async function registerRoutes(httpServer: Server, app: Express): Promise<Server> {
   const MemStore = MemoryStore(session);
 
+  app.set("trust proxy", 1);
+
   app.use(session({
     store: new MemStore({
       checkPeriod: 86400000,
@@ -35,7 +37,7 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: process.env.NODE_ENV === "production",
+      secure: false,
       httpOnly: true,
       maxAge: 7 * 24 * 60 * 60 * 1000,
     },
