@@ -43,6 +43,12 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     },
   }));
 
+  app.use((req, res, next) => {
+    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+    res.setHeader("Pragma", "no-cache");
+    next();
+  });
+
   // ── Auth ──────────────────────────────────────────────
   app.post("/api/auth/login", async (req, res) => {
     const { username, password } = req.body;
