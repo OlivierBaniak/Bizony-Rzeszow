@@ -108,7 +108,10 @@ const DEFAULT_CONTACT: ContactDetails = { address: "", email: "", phone: "", fac
 async function api(method: string, url: string, data?: any) {
   const res = await fetch(url, {
     method,
-    headers: data ? { "Content-Type": "application/json" } : {},
+    headers: {
+      ...(data ? { "Content-Type": "application/json" } : {}),
+      "Cache-Control": "no-cache",
+    },
     body: data ? JSON.stringify(data) : undefined,
     credentials: "include",
   });
@@ -202,11 +205,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     async function loadAll() {
       try {
         const [n, p, r, s, g, meta, history, match, contact] = await Promise.all([
-          api("GET", "/api/news"),
-          api("GET", "/api/players"),
-          api("GET", "/api/results"),
-          api("GET", "/api/standings"),
-          api("GET", "/api/gallery"),
+          api("GET", "/api/news").catch(() => []),
+          api("GET", "/api/players").catch(() => []),
+          api("GET", "/api/results").catch(() => []),
+          api("GET", "/api/standings").catch(() => []),
+          api("GET", "/api/gallery").catch(() => []),
           api("GET", "/api/settings/leagueMetadata").catch(() => DEFAULT_METADATA),
           api("GET", "/api/settings/clubHistory").catch(() => DEFAULT_HISTORY),
           api("GET", "/api/settings/nextMatch").catch(() => DEFAULT_MATCH),
