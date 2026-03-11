@@ -74,35 +74,22 @@ export default function AdminDashboard() {
     setTimeout(() => setPasswordMessage(null), 3000);
   };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, callback: (url: string) => void) => {
+  import { uploadImage } from "@/lib/store";
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, callback: (url: string) => void) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        callback(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+      const url = await uploadImage(file);
+      callback(url);
     }
   };
 
-  const handleMultipleFilesUpload = (e: React.ChangeEvent<HTMLInputElement>, callback: (urls: string[]) => void) => {
+  const handleMultipleFilesUpload = async (e: React.ChangeEvent<HTMLInputElement>, callback: (urls: string[]) => void) => {
     const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
-
-    const urls: string[] = [];
-    let processedCount = 0;
-
-    files.forEach(file => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        urls.push(reader.result as string);
-        processedCount++;
-        if (processedCount === files.length) {
-          callback(urls);
-        }
-      };
-      reader.readAsDataURL(file);
-    });
+    const urls = await Promise.all(files.map(uploadImage));
+    callback(urls);
+    e.target.value = "";
   };
 
   const handleAddNews = () => {
