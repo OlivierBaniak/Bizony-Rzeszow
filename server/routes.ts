@@ -119,6 +119,11 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
   });
 
   // ── Players ──────────────────────────────────────────────
+  app.get("/api/players", async (_req, res) => {
+    const items = await storage.getAllPlayers();
+    res.json(items);
+  });
+  
   app.post("/api/players", requireAuth, async (req, res) => {
     const { id, ...data } = req.body;
     const item = await storage.createPlayer(data);
@@ -141,6 +146,11 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
   });
 
   // ── Results ──────────────────────────────────────────────
+  app.get("/api/results", async (_req, res) => {
+    const items = await storage.getAllResults();
+    res.json(items);
+  });
+  
   app.post("/api/results", requireAuth, async (req, res) => {
     const { id, ...data } = req.body;
     const item = await storage.createResult(data);
@@ -174,6 +184,11 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
   });
 
   // ── Gallery ──────────────────────────────────────────────
+  app.get("/api/gallery", async (_req, res) => {
+    const items = await storage.getAllGalleryFolders();
+    res.json(items);
+  });
+  
   app.post("/api/gallery", requireAuth, async (req, res) => {
     const { id, ...data } = req.body;
     const folder = await storage.createGalleryFolder({ ...data, images: [] });
