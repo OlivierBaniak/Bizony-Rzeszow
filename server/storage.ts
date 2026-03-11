@@ -151,3 +151,7 @@ export async function addLoginLog(data: Omit<LoginLog, "id">): Promise<void> {
 export async function getLoginLogs(): Promise<LoginLog[]> {
   return db.select().from(loginLogs).orderBy(desc(loginLogs.timestamp)).limit(100);
 }
+
+export async function updateUserPassword(id: string, password: string): Promise<void> {
+  await db.update(users).set({ password }).where(eq(users.id, id));
+}

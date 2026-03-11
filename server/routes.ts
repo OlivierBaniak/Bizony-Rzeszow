@@ -234,6 +234,16 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
       uploadPreset: process.env.CLOUDINARY_UPLOAD_PRESET,
     });
   });
-
+  
+  app.put("/api/auth/password", requireAuth, async (req, res) => {
+    const { password } = req.body;
+    if (!password || password.length < 8) {
+      return res.status(400).json({ message: "Hasło za krótkie" });
+    }
+    const hashed = await bcrypt.hash(password, 10);
+    await storage.updateUserPassword(req.session.userId!, hashed);
+    res.json({ ok: true });
+  });
+  
   return httpServer;
 }

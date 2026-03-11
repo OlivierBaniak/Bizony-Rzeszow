@@ -143,6 +143,7 @@ type AppContextType = {
   leagueMetadata: LeagueMetadata;
   galleryFolders: GalleryFolder[];
   clubHistory: ClubHistory;
+  changePassword: (password: string) => Promise<void>;
   nextMatch: Match;
   contactDetails: ContactDetails;
   isAdmin: boolean;
@@ -262,6 +263,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     } catch {
       return false;
     }
+  };
+
+  const changePassword = async (newPassword: string) => {
+    await api("PUT", "/api/auth/password", { password: newPassword });
   };
 
   const logout = async () => {
@@ -403,7 +408,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       news, players, results, standings, leagueMetadata,
       galleryFolders, clubHistory, nextMatch, contactDetails,
       isAdmin, userRole, currentUser, users, loginLogs, loading,
-      login, logout, toggle2FA,
+      login, logout, toggle2FA, changePassword,
       addUser, deleteUser, updateUserRole,
       addNews, deleteNews, updateNews,
       addPlayer, deletePlayer, updatePlayer,
