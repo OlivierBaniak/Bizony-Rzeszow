@@ -102,7 +102,8 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
   });
 
   app.put("/api/news/:id", requireAuth, async (req, res) => {
-    const item = await storage.updateNews(req.params.id, req.body);
+    const { id, createdAt, ...data } = req.body;
+    const item = await storage.updateNews(req.params.id, data);
     res.json(item);
   });
 
