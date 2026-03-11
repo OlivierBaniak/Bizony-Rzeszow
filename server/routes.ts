@@ -93,8 +93,9 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
   });
 
   app.post("/api/news", requireAuth, async (req, res) => {
+    const { id, createdAt, ...data } = req.body;
     const item = await storage.createNews({
-      ...req.body,
+      ...data,
       date: new Date().toISOString().split("T")[0],
     });
     res.json(item);
@@ -111,8 +112,10 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
   });
 
   // ── Players ──────────────────────────────────────────────
-  app.get("/api/players", async (_req, res) => {
-    res.json(await storage.getAllPlayers());
+  app.post("/api/players", requireAuth, async (req, res) => {
+    const { id, ...data } = req.body;
+    const item = await storage.createPlayer(data);
+    res.json(item);
   });
 
   app.post("/api/players", requireAuth, async (req, res) => {
@@ -131,8 +134,10 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
   });
 
   // ── Results ──────────────────────────────────────────────
-  app.get("/api/results", async (_req, res) => {
-    res.json(await storage.getAllResults());
+  app.post("/api/results", requireAuth, async (req, res) => {
+    const { id, ...data } = req.body;
+    const item = await storage.createResult(data);
+    res.json(item);
   });
 
   app.post("/api/results", requireAuth, async (req, res) => {
@@ -162,8 +167,10 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
   });
 
   // ── Gallery ──────────────────────────────────────────────
-  app.get("/api/gallery", async (_req, res) => {
-    res.json(await storage.getAllGalleryFolders());
+  app.post("/api/gallery", requireAuth, async (req, res) => {
+    const { id, ...data } = req.body;
+    const folder = await storage.createGalleryFolder({ ...data, images: [] });
+    res.json(folder);
   });
 
   app.post("/api/gallery", requireAuth, async (req, res) => {
