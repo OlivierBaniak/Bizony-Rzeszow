@@ -2,7 +2,7 @@ import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import bcrypt from "bcryptjs";
 import session from "express-session";
-import connectPgSimple from "connect-pg-simple";
+import MemoryStore from "memorystore";
 import * as storage from "./storage";
 
 declare module "express-session" {
@@ -25,13 +25,11 @@ function requireAdmin(req: Request, res: Response, next: Function) {
 }
 
 export async function registerRoutes(httpServer: Server, app: Express): Promise<Server> {
-  const PgSession = connectPgSimple(session);
+  const MemStore = MemoryStore(session);
 
   app.use(session({
-    store: new PgSession({
-      conString: process.env.DATABASE_URL,
-      tableName: "session",
-      createTableIfMissing: true,
+    store: new MemStore({
+      checkPeriod: 86400000,
     }),
     secret: process.env.SESSION_SECRET || "bizony-secret-2026",
     resave: false,
@@ -39,7 +37,7 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     cookie: {
       secure: process.env.NODE_ENV === "production",
       httpOnly: true,
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     },
   }));
 
