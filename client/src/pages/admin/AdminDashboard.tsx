@@ -1,4 +1,5 @@
 import { useApp, NewsItem } from "@/lib/store";
+import { uploadImage } from "@/lib/store";
 import { useLocation } from "wouter";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -73,8 +74,6 @@ export default function AdminDashboard() {
     setPasswordMessage({ type: "success", text: "Hasło zmieniono pomyślnie!" });
     setTimeout(() => setPasswordMessage(null), 3000);
   };
-
-  import { uploadImage } from "@/lib/store";
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, callback: (url: string) => void) => {
     const file = e.target.files?.[0];
