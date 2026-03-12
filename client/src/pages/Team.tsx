@@ -35,16 +35,16 @@ export default function Team() {
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-secondary/90 via-transparent to-transparent opacity-80" />
                         <div className="absolute bottom-0 left-0 w-full p-6 text-white">
-                          <div className="text-6xl font-display font-bold text-white/10 absolute -top-12 right-4 select-none group-hover:text-primary/20 transition-colors">
+                          <div className="text-6xl font-display font-bold text-white/20 absolute -top-12 right-4 select-none group-hover:text-white/40 transition-colors">
                             {player.number}
                           </div>
                           {player.fieldPosition && (
-                            <div className="text-6xl font-display font-bold text-white/10 absolute -top-12 left-4 select-none group-hover:text-primary/20 transition-colors">
+                            <div className="text-6xl font-display font-bold text-white/20 absolute -top-12 left-4 select-none group-hover:text-white/40 transition-colors">
                               {player.fieldPosition}
                             </div>
                           )}
                           <div className="relative z-10">
-                            <div className="text-primary font-bold uppercase tracking-widest text-xs mb-1">
+                            <div className="text-white/70 font-bold uppercase tracking-widest text-xs mb-1">
                               {player.position}
                             </div>
                             <h3 className="text-3xl font-display uppercase font-bold leading-none">
