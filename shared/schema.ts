@@ -27,6 +27,7 @@ export const players = pgTable("players", {
   name: text("name").notNull(),
   number: integer("number").notNull().default(0),
   position: text("position").notNull().default(""),
+  fieldPosition: text("field_position").default(""),
   image: text("image").notNull().default(""),
 });
 

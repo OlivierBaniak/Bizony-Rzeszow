@@ -40,9 +40,19 @@ export default function Team() {
                         <div className="absolute inset-0 bg-gradient-to-t from-secondary/90 via-transparent to-transparent opacity-80" />
                         
                         <div className="absolute bottom-0 left-0 w-full p-6 text-white">
-                           <div className="text-6xl font-display font-bold text-white/10 absolute -top-12 right-4 select-none group-hover:text-primary/20 transition-colors">
+                          <div className="text-6xl font-display font-bold text-white/10 absolute -top-12 right-4 select-none group-hover:text-primary/20 transition-colors">
                             {player.number}
-                           </div>
+                          </div>
+                          {player.fieldPosition && (
+                            <div className="text-primary font-bold uppercase tracking-widest text-xs absolute bottom-0 right-6 opacity-0 group-hover:opacity-100 transition-opacity">
+                              {player.fieldPosition}
+                            </div>
+                          )}
+                          {player.fieldPosition && (
+                            <div className="text-primary/70 font-bold uppercase tracking-widest text-xs mb-1 text-right">
+                              {player.fieldPosition}
+                            </div>
+                          )}
                           <div className="relative z-10">
                             <div className="text-primary font-bold uppercase tracking-widest text-xs mb-1">
                               {player.position}

@@ -35,7 +35,7 @@ export default function AdminDashboard() {
 
   // Form States
   const [newsForm, setNewsForm] = useState({ id: "", title: "", excerpt: "", content: "", image: "" });
-  const [playerForm, setPlayerForm] = useState({ id: "", name: "", number: "", position: "", image: "" });
+  const [playerForm, setPlayerForm] = useState({ id: "", name: "", number: "", position: "", fieldPosition: "", image: "" });
   const [resultForm, setResultForm] = useState({ id: "", date: "", location: "", opponent: "", competition: "", result: "W", pointsScored: "", pointsConceded: "" });
   const [userForm, setUserForm] = useState({ email: "", role: "editor" as "admin" | "editor", password: "" });
   const [folderForm, setFolderForm] = useState({ title: "", description: "", mainImage: "" });
@@ -114,7 +114,7 @@ export default function AdminDashboard() {
         ...playerForm,
         number: parseInt(playerForm.number as any) || 0
       });
-      setPlayerForm({ id: "", name: "", number: "", position: "", image: "" });
+      setPlayerForm({ id: "", name: "", number: "", position: "", fieldPosition: "", image: "" });
     } else {
       addPlayer({ 
         name: playerForm.name,
@@ -122,7 +122,7 @@ export default function AdminDashboard() {
         position: playerForm.position,
         image: playerForm.image || "https://placehold.co/400x600" 
       });
-      setPlayerForm({ id: "", name: "", number: "", position: "", image: "" });
+      setPlayerForm({ id: "", name: "", number: "", position: "", fieldPosition: "", image: "" });
     }
   };
 
@@ -132,6 +132,7 @@ export default function AdminDashboard() {
       name: player.name,
       number: player.number.toString(),
       position: player.position,
+      fieldPosition: player.fieldPosition || "",
       image: player.image
     });
   };
@@ -375,6 +376,14 @@ export default function AdminDashboard() {
                         <option value="Zapolowy">Zapolowy</option>
                       </select>
                     </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Pozycja na boisku (np. 1B, OF)</Label>
+                    <Input 
+                      value={playerForm.fieldPosition} 
+                      onChange={e => setPlayerForm({...playerForm, fieldPosition: e.target.value})}
+                      placeholder="np. 1B, OF/2B"
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label>Zdjęcie (Adres URL lub Prześlij)</Label>
