@@ -1,5 +1,6 @@
 import { useApp } from "@/lib/store";
 import { Card } from "@/components/ui/card";
+
 export default function Team() {
   const { players } = useApp();
   const categories = [
@@ -27,9 +28,9 @@ export default function Team() {
                   {categoryPlayers.map((player) => (
                     <Card key={player.id} className="group overflow-hidden border-none shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                       <div className="relative aspect-[3/4] overflow-hidden bg-muted">
-                        <img 
-                          src={player.image} 
-                          alt={player.name} 
+                        <img
+                          src={player.image}
+                          alt={player.name}
                           className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-secondary/90 via-transparent to-transparent opacity-80" />
@@ -46,3 +47,20 @@ export default function Team() {
                             <div className="text-primary font-bold uppercase tracking-widest text-xs mb-1">
                               {player.position}
                             </div>
+                            <h3 className="text-3xl font-display uppercase font-bold leading-none">
+                              {player.name}
+                            </h3>
+                          </div>
+                        </div>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
