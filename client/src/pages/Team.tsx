@@ -1,4 +1,4 @@
-import { useApp } from "@/lib/store";
+import { useApp, optimizeImage } from "@/lib/store";
 import { Card } from "@/components/ui/card";
 
 export default function Team() {
@@ -29,7 +29,7 @@ export default function Team() {
                     <Card key={player.id} className="group overflow-hidden border-none shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                       <div className="relative aspect-[3/4] overflow-hidden bg-muted">
                         <img
-                          src={player.image}
+                          src={optimizeImage(player.image, 400)}
                           alt={player.name}
                           className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
                         />
