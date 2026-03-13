@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight, Calendar, Trophy } from "lucide-react";
 import heroImg from "@assets/1771073775355_1771144286177.jpg";
 import logo from "@assets/bizony--rSs6oZ4_1770847193876.webp";
-import mainSign from "@assets/BIZONY-_4__1771227907952.bmp";
+import mainSign from "@assets/bizony-sign.webp";
 import { motion } from "framer-motion";
 
 export default function Home() {
