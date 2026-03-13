@@ -32,7 +32,7 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <span className="inline-block py-1 px-3 border border-primary/50 bg-primary/20 text-primary backdrop-blur-md rounded-full text-sm font-bold uppercase tracking-widest mb-8">
+            <span className="inline-block py-1 px-3 border border-primary/50 bg-primary rounded-full text-sm font-bold uppercase tracking-widest mb-8 text-white">
               Oficjalna Strona Drużyny
             </span>
             <div className="flex justify-center mb-8">
