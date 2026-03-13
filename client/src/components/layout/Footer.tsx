@@ -14,7 +14,7 @@ export function Footer() {
               <h3 className="text-2xl font-bold font-display uppercase tracking-wider">Bizony Rzeszów</h3>
             </div>
             <p className="text-secondary-foreground/80 max-w-xs">
-              Pierwsza drużyna baseballowa na Podkarpaciu. Pasja, zaangażowanie i społeczność od 2023 roku.
+              Jedyna drużyna baseballowa na Podkarpaciu. Pasja, zaangażowanie i społeczność od 2023 roku.
             </p>
           </div>
 
