@@ -1,4 +1,4 @@
-import { useApp } from "@/lib/store";
+import { useApp, optimizeImage } from "@/lib/store";
 import { useState } from "react";
 import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Card, CardContent } from "@/components/ui/card";
@@ -61,7 +61,7 @@ export default function Gallery() {
                 className="group relative aspect-square cursor-zoom-in overflow-hidden rounded-lg shadow-md border border-border"
               >
                 <img
-                  src={img.url}
+                  src={optimizeImage(img.url, 600)}
                   alt={img.description}
                   className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
@@ -100,7 +100,7 @@ export default function Gallery() {
 
             <div className="relative max-w-[90vw] max-h-[85vh] flex flex-col items-center">
               <img
-                src={selectedFolder.images[viewerImageIndex].url}
+                src={optimizeImage(selectedFolder.images[viewerImageIndex].url, 1200)}
                 alt={selectedFolder.images[viewerImageIndex].description}
                 className="max-w-full max-h-[80vh] object-contain shadow-2xl"
                 onClick={(e) => e.stopPropagation()}
@@ -143,7 +143,7 @@ export default function Gallery() {
             >
               <div className="relative aspect-[4/3] overflow-hidden">
                 <img
-                  src={folder.mainImage}
+                  src={optimizeImage(folder.mainImage, 800)}
                   alt={folder.title}
                   className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
