@@ -26,16 +26,16 @@ export default function Home() {
           <div className="absolute inset-0 bg-gradient-to-t from-background via-secondary/50 to-secondary/30" />
         </div>
         
-        <div className="relative container mx-auto px-4 text-center text-white space-y-6">
-          <div>
-            <span className="inline-block py-1 px-3 border border-primary/50 bg-primary rounded-full text-sm font-bold uppercase tracking-widest mb-8 text-white">
+            <div className="relative container mx-auto px-4 text-center text-white">
+              <div className="flex flex-col items-center">
+            <span className="inline-block py-1 px-3 border border-primary/50 bg-primary rounded-full text-sm font-bold uppercase tracking-widest mb-4 text-white">
               Oficjalna Strona Drużyny
             </span>
-            <div className="flex justify-center mb-8">
+            <div className="flex justify-center mb-4">
               <img 
                 src={mainSign} 
                 alt="Bizony Rzeszów Sign" 
-                className="max-w-[300px] md:max-w-[500px] w-full h-auto drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]"
+                className="max-w-[200px] sm:max-w-[300px] md:max-w-[500px] w-full h-auto drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]"
               />
             </div>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
