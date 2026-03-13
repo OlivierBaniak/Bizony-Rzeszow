@@ -27,11 +27,7 @@ export default function Home() {
         </div>
         
         <div className="relative container mx-auto px-4 text-center text-white space-y-6">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-          >
+          <div>
             <span className="inline-block py-1 px-3 border border-primary/50 bg-primary rounded-full text-sm font-bold uppercase tracking-widest mb-8 text-white">
               Oficjalna Strona Drużyny
             </span>
@@ -54,7 +50,7 @@ export default function Home() {
                 </Button>
               </Link>
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
 
