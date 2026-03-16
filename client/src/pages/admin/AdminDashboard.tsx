@@ -20,7 +20,6 @@ export default function AdminDashboard() {
     users, addUser, deleteUser, updateUserRole,
     loginLogs,
     changePassword,
-    toggle2FA,
     news, addNews, deleteNews, updateNews,
     players, addPlayer, deletePlayer, updatePlayer,
     results, addResult, deleteResult, updateResult,
@@ -30,6 +29,11 @@ export default function AdminDashboard() {
     clubHistory, updateClubHistory,
     nextMatch, updateNextMatch,
     contactDetails, updateContactDetails
+    toggle2FA,
+    changePassword,
+    setup2FA, 
+    verify2FA, 
+    disable2FA,
   } = useApp();
   const [, setLocation] = useLocation();
 
@@ -50,6 +54,9 @@ export default function AdminDashboard() {
   const [historyDraft, setHistoryDraft] = useState(clubHistory);
   const [matchDraft, setMatchDraft] = useState(nextMatch);
   const [contactDraft, setContactDraft] = useState(contactDetails);
+  const [twoFASetup, setTwoFASetup] = useState<{ secret: string; qrCode: string } | null>(null);
+  const [twoFAToken, setTwoFAToken] = useState("");
+  const [twoFAError, setTwoFAError] = useState("");
 
   if (!isAdmin) {
     setLocation("/login");
@@ -885,54 +892,84 @@ export default function AdminDashboard() {
                       )}
                     </h3>
                     <p className="text-sm text-muted-foreground">
-                      Dodaj dodatkową warstwę bezpieczeństwa do swojego konta, wymagając kodu z aplikacji uwierzytelniającej przy każdym logowaniu.
+                      Dodaj dodatkową warstwę bezpieczeństwa do swojego konta.
                     </p>
                   </div>
-                  <Button 
-                    onClick={toggle2FA} 
-                    variant={currentUser?.is2FAEnabled ? "destructive" : "default"}
-                    className="font-display uppercase tracking-wider"
-                  >
-                    {currentUser?.is2FAEnabled ? "Wyłącz 2FA" : "Skonfiguruj 2FA"}
-                  </Button>
+                  {!currentUser?.is2FAEnabled && (
+                    <Button onClick={async () => {
+                      const result = await setup2FA();
+                      setTwoFASetup(result);
+                    }} className="font-display uppercase tracking-wider">
+                      Skonfiguruj 2FA
+                    </Button>
+                  )}
                 </div>
 
-                {currentUser?.is2FAEnabled && !currentUser?.twoFASecret && (
-                   <div className="p-4 bg-green-50 border border-green-200 rounded-md text-green-800 text-sm">
-                     Twoje konto jest chronione przez 2FA.
-                   </div>
-                )}
-
-                {currentUser?.is2FAEnabled && currentUser?.twoFASecret && (
-                  <div className="grid md:grid-cols-2 gap-8 p-6 border rounded-lg animate-in fade-in slide-in-from-top-4">
+                {twoFASetup && !currentUser?.is2FAEnabled && (
+                  <div className="grid md:grid-cols-2 gap-8 p-6 border rounded-lg">
                     <div className="space-y-4">
                       <h4 className="font-bold uppercase text-sm tracking-wider flex items-center gap-2">
                         <QrCode className="w-4 h-4" /> Krok 1: Zeskanuj kod QR
                       </h4>
-                      <div className="bg-white p-4 border rounded aspect-square w-48 flex items-center justify-center shadow-inner mx-auto md:mx-0 relative">
-                         <div className="w-full h-full bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:10px_10px] opacity-20" />
-                         <span className="absolute font-mono text-[10px] text-muted-foreground uppercase text-center px-2">Mock QR Code for {currentUser.email}</span>
-                      </div>
+                      <img src={twoFASetup.qrCode} alt="QR Code" className="w-48 h-48 border rounded" />
                       <p className="text-xs text-muted-foreground">
-                        Zeskanuj ten kod w swojej aplikacji (np. Google Authenticator lub Authy).
+                        Zeskanuj ten kod w aplikacji (Google Authenticator, Authy, Ping ID itp.)
                       </p>
+                      <div className="p-3 bg-muted rounded text-xs font-mono break-all">
+                        {twoFASetup.secret}
+                      </div>
                     </div>
                     <div className="space-y-4">
-                      <h4 className="font-bold uppercase text-sm tracking-wider">Krok 2: Wpisz klucz ręcznie</h4>
-                      <div className="bg-muted p-4 rounded font-mono text-xl tracking-widest text-center select-all border border-dashed">
-                        {currentUser.twoFASecret}
-                      </div>
-                      <p className="text-xs text-muted-foreground">
-                        Jeśli nie możesz zeskanować kodu, wpisz powyższy klucz w aplikacji.
-                      </p>
-                      <div className="pt-4 border-t space-y-2">
-                        <Label className="text-xs uppercase tracking-tighter">Kod Weryfikacyjny</Label>
-                        <div className="flex gap-2">
-                          <Input placeholder="000 000" className="text-center font-mono text-lg tracking-widest" maxLength={6} />
-                          <Button className="bg-primary px-8">Weryfikuj</Button>
-                        </div>
-                      </div>
+                      <h4 className="font-bold uppercase text-sm tracking-wider">Krok 2: Potwierdź kod</h4>
+                      <p className="text-sm text-muted-foreground">Wpisz 6-cyfrowy kod z aplikacji aby potwierdzić konfigurację.</p>
+                      <Input
+                        placeholder="000000"
+                        maxLength={6}
+                        value={twoFAToken}
+                        onChange={e => setTwoFAToken(e.target.value)}
+                      />
+                      {twoFAError && <p className="text-sm text-red-500">{twoFAError}</p>}
+                      <Button onClick={async () => {
+                        const ok = await verify2FA(twoFAToken);
+                        if (ok) {
+                          setTwoFASetup(null);
+                          setTwoFAToken("");
+                          setTwoFAError("");
+                        } else {
+                          setTwoFAError("Nieprawidłowy kod. Spróbuj ponownie.");
+                        }
+                      }} className="w-full bg-primary">
+                        Aktywuj 2FA
+                      </Button>
                     </div>
+                  </div>
+                )}
+
+                {currentUser?.is2FAEnabled && (
+                  <div className="space-y-4 p-6 border rounded-lg">
+                    <div className="p-4 bg-green-50 border border-green-200 rounded-md text-green-800 text-sm">
+                      ✓ Twoje konto jest chronione przez 2FA.
+                    </div>
+                    <h4 className="font-bold uppercase text-sm tracking-wider">Wyłącz 2FA</h4>
+                    <p className="text-sm text-muted-foreground">Wpisz kod z aplikacji aby wyłączyć 2FA.</p>
+                    <Input
+                      placeholder="000000"
+                      maxLength={6}
+                      value={twoFAToken}
+                      onChange={e => setTwoFAToken(e.target.value)}
+                    />
+                    {twoFAError && <p className="text-sm text-red-500">{twoFAError}</p>}
+                    <Button variant="destructive" onClick={async () => {
+                      const ok = await disable2FA(twoFAToken);
+                      if (ok) {
+                        setTwoFAToken("");
+                        setTwoFAError("");
+                      } else {
+                        setTwoFAError("Nieprawidłowy kod. Spróbuj ponownie.");
+                      }
+                    }}>
+                      Wyłącz 2FA
+                    </Button>
                   </div>
                 )}
               </CardContent>

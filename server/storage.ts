@@ -155,3 +155,12 @@ export async function getLoginLogs(): Promise<LoginLog[]> {
 export async function updateUserPassword(id: string, password: string): Promise<void> {
   await db.update(users).set({ password }).where(eq(users.id, id));
 }
+
+export async function getUserById(id: string) {
+  const result = await db.select().from(users).where(eq(users.id, id)).limit(1);
+  return result[0] || null;
+}
+
+export async function updateUser2FA(id: string, enabled: boolean, secret: string | null): Promise<void> {
+  await db.update(users).set({ is2FAEnabled: enabled, twoFASecret: secret }).where(eq(users.id, id));
+}

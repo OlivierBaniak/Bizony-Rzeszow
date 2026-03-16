@@ -167,6 +167,9 @@ type AppContextType = {
   deleteUser: (id: string) => Promise<void>;
   updateUserRole: (id: string, role: "admin" | "editor") => Promise<void>;
   toggle2FA: () => Promise<void>;
+  setup2FA: () => Promise<{ secret: string; qrCode: string }>;
+  verify2FA: (token: string) => Promise<boolean>;
+  disable2FA: (token: string) => Promise<boolean>;
   addNews: (item: Omit<NewsItem, "id" | "date">) => Promise<void>;
   deleteNews: (id: string) => Promise<void>;
   updateNews: (item: NewsItem) => Promise<void>;
@@ -264,10 +267,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   // ── Auth ──────────────────────────────────────────────
   const login = async (username: string, password: string): Promise<boolean> => {
     try {
-      const user = await api("POST", "/api/auth/login", { username, password });
-      setCurrentUser(user);
-      setUserRole(user.role);
-      setIsAdmin(true);
+      const data = await api("POST", "/api/auth/login", { username, password });
+      if (data.requires2FA) {
+        return "2fa_required" as any;
+      }
+      setCurrentUser(data);
+      setUserRole(data.role);
+      setIsAdmin(data.role === "admin");
       return true;
     } catch {
       return false;
@@ -285,10 +291,32 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setCurrentUser(null);
   };
 
-  const toggle2FA = async () => {
-    if (!currentUser) return;
-    const enabled = !currentUser.is2FAEnabled;
-    const secret = enabled ? Math.random().toString(36).substr(2, 10).toUpperCase() : undefined;
+  const setup2FA = async (): Promise<{ secret: string; qrCode: string }> => {
+    return await api("POST", "/api/auth/2fa/setup");
+  };
+
+  const verify2FA = async (token: string): Promise<boolean> => {
+    try {
+      await api("POST", "/api/auth/2fa/verify", { token });
+      if (currentUser) setCurrentUser({ ...currentUser, is2FAEnabled: true });
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+  const disable2FA = async (token: string): Promise<boolean> => {
+    try {
+      await api("POST", "/api/auth/2fa/disable", { token });
+      if (currentUser) setCurrentUser({ ...currentUser, is2FAEnabled: false });
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+  const toggle2FA = async () => {};
+  
     // In production replace with real TOTP library
     setCurrentUser({ ...currentUser, is2FAEnabled: enabled, twoFASecret: secret });
   };

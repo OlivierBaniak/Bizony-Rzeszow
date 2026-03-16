@@ -4,6 +4,8 @@ import bcrypt from "bcryptjs";
 import session from "express-session";
 import MemoryStore from "memorystore";
 import * as storage from "./storage";
+import { authenticator } from "otplib";
+import QRCode from "qrcode";
 
 declare module "express-session" {
   interface SessionData {
@@ -66,6 +68,16 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
         return res.status(401).json({ message: "Nieprawidłowe dane logowania" });
       }
 
+      if (user.is2FAEnabled) {
+        // Zwróć info że potrzebny jest kod 2FA
+        return res.json({ 
+          id: user.id, 
+          username: user.username, 
+          role: user.role, 
+          is2FAEnabled: true,
+          requires2FA: true 
+        });
+      }
       req.session.userId = user.id;
       req.session.role = user.role;
 
@@ -93,6 +105,57 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     res.json({ id: user.id, username: user.username, role: user.role, is2FAEnabled: user.is2FAEnabled });
   });
 
+  // Generuj secret i QR kod
+  app.post("/api/auth/2fa/setup", requireAuth, async (req, res) => {
+    const user = await storage.getUserById(req.session.userId!);
+    if (!user) return res.status(404).json({ message: "Nie znaleziono użytkownika" });
+    const secret = authenticator.generateSecret();
+    const otpauth = authenticator.keyuri(user.username, "Bizony Rzeszów", secret);
+    const qrCode = await QRCode.toDataURL(otpauth);
+    // Zapisz tymczasowo secret (niezweryfikowany jeszcze)
+    await storage.updateUser2FA(user.id, false, secret);
+    res.json({ secret, qrCode });
+  });
+
+  // Weryfikuj kod i włącz 2FA
+  app.post("/api/auth/2fa/verify", requireAuth, async (req, res) => {
+    const { token } = req.body;
+    const user = await storage.getUserById(req.session.userId!);
+    if (!user || !user.twoFASecret) return res.status(400).json({ message: "Brak skonfigurowanego 2FA" });
+    const isValid = authenticator.verify({ token, secret: user.twoFASecret });
+    if (!isValid) return res.status(400).json({ message: "Nieprawidłowy kod" });
+    await storage.updateUser2FA(user.id, true, user.twoFASecret);
+    res.json({ ok: true });
+  });
+
+  // Wyłącz 2FA
+  app.post("/api/auth/2fa/disable", requireAuth, async (req, res) => {
+    const { token } = req.body;
+    const user = await storage.getUserById(req.session.userId!);
+    if (!user || !user.twoFASecret) return res.status(400).json({ message: "Brak skonfigurowanego 2FA" });
+    const isValid = authenticator.verify({ token, secret: user.twoFASecret });
+    if (!isValid) return res.status(400).json({ message: "Nieprawidłowy kod" });
+    await storage.updateUser2FA(user.id, false, null);
+    res.json({ ok: true });
+  });
+
+  app.post("/api/auth/2fa/login", async (req, res) => {
+    const { userId, token } = req.body;
+    const user = await storage.getUserById(userId);
+    if (!user || !user.twoFASecret) return res.status(400).json({ message: "Błąd" });
+    const isValid = authenticator.verify({ token, secret: user.twoFASecret });
+    if (!isValid) return res.status(401).json({ message: "Nieprawidłowy kod 2FA" });
+    req.session.userId = user.id;
+    req.session.role = user.role;
+    await storage.addLoginLog({
+      email: user.username,
+      timestamp: new Date().toLocaleString("pl-PL"),
+      ip: req.ip || "unknown",
+      status: "success",
+    });
+    res.json({ id: user.id, username: user.username, role: user.role, is2FAEnabled: true });
+  });
+  
   // ── News ──────────────────────────────────────────────
   app.get("/api/news", async (_req, res) => {
     res.json(await storage.getAllNews());
