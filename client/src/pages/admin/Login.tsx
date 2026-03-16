@@ -21,12 +21,13 @@ export default function Login() {
     if (!username || !password) return;
     setLoading(true);
     setError("");
-    const result = await login(username, password);
+  const result = await login(username, password);
     setLoading(false);
     if (result === true) {
       setLocation("/admin");
-    } else if (result === "2fa_required") {
+    } else if (result && typeof result === "object" && result.requires2FA) {
       setRequires2FA(true);
+      setUserId(result.id);
     } else {
       setError("Nieprawidłowa nazwa użytkownika lub hasło.");
     }

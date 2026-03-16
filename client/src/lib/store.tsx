@@ -265,11 +265,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }, [isAdmin]);
 
   // ── Auth ──────────────────────────────────────────────
-  const login = async (username: string, password: string): Promise<boolean> => {
+  const login = async (username: string, password: string): Promise<any> => {
     try {
       const data = await api("POST", "/api/auth/login", { username, password });
       if (data.requires2FA) {
-        return "2fa_required" as any;
+        return { requires2FA: true, id: data.id };
       }
       setCurrentUser(data);
       setUserRole(data.role);
