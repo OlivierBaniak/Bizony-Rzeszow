@@ -30,7 +30,6 @@ export default function AdminDashboard() {
     nextMatch, updateNextMatch,
     contactDetails, updateContactDetails,
     toggle2FA,
-    changePassword,
     setup2FA, 
     verify2FA, 
     disable2FA,
