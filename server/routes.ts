@@ -4,7 +4,8 @@ import bcrypt from "bcryptjs";
 import session from "express-session";
 import MemoryStore from "memorystore";
 import * as storage from "./storage";
-import { authenticator } from "otplib";
+import * as OTPLib from "otplib";
+const authenticator = OTPLib.authenticator;
 import QRCode from "qrcode";
 
 declare module "express-session" {
