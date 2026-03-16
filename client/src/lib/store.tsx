@@ -317,10 +317,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const toggle2FA = async () => {};
   
-    // In production replace with real TOTP library
-    setCurrentUser({ ...currentUser, is2FAEnabled: enabled, twoFASecret: secret });
-  };
-
   // ── Users ──────────────────────────────────────────────
   const addUser = async (data: { username: string; password: string; role: "admin" | "editor" }) => {
     const user = await api("POST", "/api/users", data);
