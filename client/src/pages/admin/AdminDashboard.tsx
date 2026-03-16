@@ -41,7 +41,7 @@ export default function AdminDashboard() {
   const [newsForm, setNewsForm] = useState({ id: "", title: "", excerpt: "", content: "", image: "" });
   const [playerForm, setPlayerForm] = useState({ id: "", name: "", number: "", position: "", fieldPosition: "", image: "" });
   const [resultForm, setResultForm] = useState({ id: "", date: "", location: "", opponent: "", competition: "", result: "W", pointsScored: "", pointsConceded: "" });
-  const [userForm, setUserForm] = useState({ email: "", role: "editor" as "admin" | "editor", password: "" });
+  const [userForm, setUserForm] = useState({ username: "", role: "editor" as "admin" | "editor", password: "" });
   const [folderForm, setFolderForm] = useState({ title: "", description: "", mainImage: "" });
   const [imageForm, setImageForm] = useState({ url: "", description: "" });
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
@@ -208,9 +208,9 @@ export default function AdminDashboard() {
   };
 
   const handleAddUser = () => {
-    if (!userForm.email) return;
+    if (!userForm.username) return;   // było: email
     addUser(userForm);
-    setUserForm({ email: "", role: "editor" });
+    setUserForm({ username: "", password: "", role: "editor" });  // było: email
   };
 
   const updateDraftTeam = (id: string, field: string, value: string | number) => {
@@ -1044,6 +1044,15 @@ export default function AdminDashboard() {
                       </select>
                     </div>
                     <div className="space-y-2">
+                      <Label>Nazwa użytkownika</Label>
+                      <Input 
+                        type="text"
+                        value={userForm.username} 
+                        onChange={e => setUserForm({...userForm, username: e.target.value})} 
+                        placeholder="login"
+                      />
+                    </div>
+                    <div className="space-y-2">
                       <Label>Hasło startowe</Label>
                       <Input 
                         type="password"
@@ -1063,7 +1072,7 @@ export default function AdminDashboard() {
                         <Users className="w-5 h-5" />
                       </div>
                       <div className="flex-grow">
-                        <h3 className="font-bold">{user.email}</h3>
+                        <h3 className="font-bold">{user.username}</h3>
                         <p className="text-xs uppercase tracking-wider text-muted-foreground">{user.role}</p>
                       </div>
                       <div className="flex gap-2">
