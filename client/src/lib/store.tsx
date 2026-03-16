@@ -243,7 +243,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         if (user) {
           setCurrentUser(user);
           setUserRole(user.role);
-          setIsAdmin(true);
+          setIsAdmin(user.role === "admin");  // ← tylko dla admina
         }
       } catch {}
 
@@ -254,7 +254,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   // Load admin data when logged in
   useEffect(() => {
-    if (!isAdmin) return;
+    if (!isAdmin || userRole !== "admin") return;
     Promise.all([
       api("GET", "/api/users"),
       api("GET", "/api/logs"),
