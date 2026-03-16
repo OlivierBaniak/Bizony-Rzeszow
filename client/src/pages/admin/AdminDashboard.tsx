@@ -59,7 +59,7 @@ export default function AdminDashboard() {
   const [twoFAError, setTwoFAError] = useState("");
 
   if (loading) return null;
-  if (!isAdmin) {
+  if (!currentUser) {
     setLocation("/login");
     return null;
   }
@@ -260,12 +260,16 @@ export default function AdminDashboard() {
             </TabsTrigger>
             {userRole === "admin" && (
               <>
-                <TabsTrigger value="users" className="px-6 py-2 uppercase font-display tracking-wider">
-                  Użytkownicy
-                </TabsTrigger>
-                <TabsTrigger value="logs" className="px-6 py-2 uppercase font-display tracking-wider">
-                  Logi
-                </TabsTrigger>
+                {userRole === "admin" && (
+                  <TabsTrigger value="users" className="px-6 py-2 uppercase font-display tracking-wider">
+                    Użytkownicy
+                  </TabsTrigger>
+                )}
+                {userRole === "admin" && (
+                  <TabsTrigger value="logs" className="px-6 py-2 uppercase font-display tracking-wider">
+                    Logi
+                  </TabsTrigger>
+                )}
               </>
             )}
           </TabsList>
