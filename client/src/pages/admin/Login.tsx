@@ -45,7 +45,7 @@ export default function Login() {
         body: JSON.stringify({ userId, token: twoFAToken }),
       });
       if (res.ok) {
-        setLocation("/admin");
+        window.location.href = "/admin";
       } else {
         setError("Nieprawidłowy kod 2FA.");
       }
