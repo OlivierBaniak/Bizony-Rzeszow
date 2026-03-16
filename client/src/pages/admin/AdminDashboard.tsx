@@ -14,7 +14,8 @@ import { Plus, Trash, Save, LayoutDashboard, Newspaper, Users, Trophy, Image as 
 
 export default function AdminDashboard() {
   const { 
-    isAdmin, 
+    isAdmin,
+    loading,
     userRole,
     currentUser,
     users, addUser, deleteUser, updateUserRole,
@@ -57,6 +58,7 @@ export default function AdminDashboard() {
   const [twoFAToken, setTwoFAToken] = useState("");
   const [twoFAError, setTwoFAError] = useState("");
 
+  if (loading) return null;
   if (!isAdmin) {
     setLocation("/login");
     return null;
