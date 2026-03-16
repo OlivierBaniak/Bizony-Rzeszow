@@ -4,8 +4,7 @@ import bcrypt from "bcryptjs";
 import session from "express-session";
 import MemoryStore from "memorystore";
 import * as storage from "./storage";
-import * as OTPLib from "otplib";
-const authenticator = OTPLib.authenticator;
+import speakeasy from "speakeasy";
 import QRCode from "qrcode";
 
 declare module "express-session" {
@@ -110,8 +109,8 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
   app.post("/api/auth/2fa/setup", requireAuth, async (req, res) => {
     const user = await storage.getUserById(req.session.userId!);
     if (!user) return res.status(404).json({ message: "Nie znaleziono użytkownika" });
-    const secret = authenticator.generateSecret();
-    const otpauth = authenticator.keyuri(user.username, "Bizony Rzeszów", secret);
+    const secret = speakeasy.generateSecret({ length: 20 }).base32;
+    const otpauth = speakeasy.otpauthURL({ secret, label: user.username, issuer: "Bizony Rzeszów", encoding: "base32" });
     const qrCode = await QRCode.toDataURL(otpauth);
     // Zapisz tymczasowo secret (niezweryfikowany jeszcze)
     await storage.updateUser2FA(user.id, false, secret);
@@ -123,7 +122,7 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     const { token } = req.body;
     const user = await storage.getUserById(req.session.userId!);
     if (!user || !user.twoFASecret) return res.status(400).json({ message: "Brak skonfigurowanego 2FA" });
-    const isValid = authenticator.verify({ token, secret: user.twoFASecret });
+    const isValid = speakeasy.totp.verify({ secret: user.twoFASecret, encoding: "base32", token });
     if (!isValid) return res.status(400).json({ message: "Nieprawidłowy kod" });
     await storage.updateUser2FA(user.id, true, user.twoFASecret);
     res.json({ ok: true });
@@ -134,7 +133,7 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     const { token } = req.body;
     const user = await storage.getUserById(req.session.userId!);
     if (!user || !user.twoFASecret) return res.status(400).json({ message: "Brak skonfigurowanego 2FA" });
-    const isValid = authenticator.verify({ token, secret: user.twoFASecret });
+    const isValid = speakeasy.totp.verify({ secret: user.twoFASecret, encoding: "base32", token });
     if (!isValid) return res.status(400).json({ message: "Nieprawidłowy kod" });
     await storage.updateUser2FA(user.id, false, null);
     res.json({ ok: true });
@@ -144,7 +143,7 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     const { userId, token } = req.body;
     const user = await storage.getUserById(userId);
     if (!user || !user.twoFASecret) return res.status(400).json({ message: "Błąd" });
-    const isValid = authenticator.verify({ token, secret: user.twoFASecret });
+    const isValid = speakeasy.totp.verify({ secret: user.twoFASecret, encoding: "base32", token });
     if (!isValid) return res.status(401).json({ message: "Nieprawidłowy kod 2FA" });
     req.session.userId = user.id;
     req.session.role = user.role;
