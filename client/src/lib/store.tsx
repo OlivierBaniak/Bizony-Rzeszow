@@ -446,6 +446,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       galleryFolders, clubHistory, nextMatch, contactDetails,
       isAdmin, userRole, currentUser, users, loginLogs, loading,
       login, logout, toggle2FA, changePassword,
+      setup2FA, verify2FA, disable2FA,
       addUser, deleteUser, updateUserRole,
       addNews, deleteNews, updateNews,
       addPlayer, deletePlayer, updatePlayer,
