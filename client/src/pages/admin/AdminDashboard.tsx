@@ -28,7 +28,7 @@ export default function AdminDashboard() {
     galleryFolders, addGalleryFolder, deleteGalleryFolder, addImageToFolder, deleteImageFromFolder,
     clubHistory, updateClubHistory,
     nextMatch, updateNextMatch,
-    contactDetails, updateContactDetails
+    contactDetails, updateContactDetails,
     toggle2FA,
     changePassword,
     setup2FA, 
