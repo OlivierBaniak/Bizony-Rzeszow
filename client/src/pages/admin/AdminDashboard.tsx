@@ -34,6 +34,7 @@ export default function AdminDashboard() {
     setup2FA, 
     verify2FA, 
     disable2FA,
+    logout,
   } = useApp();
   const [, setLocation] = useLocation();
 
@@ -225,6 +226,11 @@ export default function AdminDashboard() {
         <div className="container mx-auto px-4 flex items-center gap-4">
           <LayoutDashboard className="w-8 h-8 text-primary" />
           <h1 className="text-3xl font-display font-bold uppercase tracking-wider">CMS Dashboard</h1>
+          <div className="ml-auto">
+            <Button onClick={() => logout().then(() => setLocation("/login"))} variant="outline" className="text-white border-white hover:bg-white/10">
+              Wyloguj
+            </Button>
+          </div>
         </div>
       </div>
 
