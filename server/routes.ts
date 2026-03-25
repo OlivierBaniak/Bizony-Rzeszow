@@ -122,7 +122,7 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     const { token } = req.body;
     const user = await storage.getUserById(req.session.userId!);
     if (!user || !user.twoFASecret) return res.status(400).json({ message: "Brak skonfigurowanego 2FA" });
-    const isValid = speakeasy.totp.verify({ secret: user.twoFASecret, encoding: "base32", token });
+    const isValid = speakeasy.totp.verify({ secret: user.twoFASecret, encoding: "base32", token, window: 2 });
     if (!isValid) return res.status(400).json({ message: "Nieprawidłowy kod" });
     await storage.updateUser2FA(user.id, true, user.twoFASecret);
     res.json({ ok: true });
@@ -133,7 +133,7 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     const { token } = req.body;
     const user = await storage.getUserById(req.session.userId!);
     if (!user || !user.twoFASecret) return res.status(400).json({ message: "Brak skonfigurowanego 2FA" });
-    const isValid = speakeasy.totp.verify({ secret: user.twoFASecret, encoding: "base32", token });
+    const isValid = speakeasy.totp.verify({ secret: user.twoFASecret, encoding: "base32", token, window: 2 });
     if (!isValid) return res.status(400).json({ message: "Nieprawidłowy kod" });
     await storage.updateUser2FA(user.id, false, null);
     res.json({ ok: true });
@@ -143,7 +143,7 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     const { userId, token } = req.body;
     const user = await storage.getUserById(userId);
     if (!user || !user.twoFASecret) return res.status(400).json({ message: "Błąd" });
-    const isValid = speakeasy.totp.verify({ secret: user.twoFASecret, encoding: "base32", token });
+    const isValid = speakeasy.totp.verify({ secret: user.twoFASecret, encoding: "base32", token, window: 2 });
     if (!isValid) return res.status(401).json({ message: "Nieprawidłowy kod 2FA" });
     req.session.userId = user.id;
     req.session.role = user.role;
