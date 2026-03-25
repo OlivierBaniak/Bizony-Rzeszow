@@ -328,6 +328,9 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     await storage.updateUserPassword(req.session.userId!, hashed);
     res.json({ ok: true });
   });
-  
+  // ── Keep-alive ping ──────────────────────────────────────────────
+  app.get("/ping", (_req, res) => {
+    res.status(200).send("pong");
+  });
   return httpServer;
 }
