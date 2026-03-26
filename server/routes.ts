@@ -15,7 +15,8 @@ declare module "express-session" {
 }
 
 function requireAuth(req: Request, res: Response, next: Function) {
-  if (!req.session.userId) return res.status(401).json({ message: "Unauthorized" });
+  if (!req.session.userId)
+    return res.status(401).json({ message: "Unauthorized" });
   next();
 }
 
@@ -26,24 +27,29 @@ function requireAdmin(req: Request, res: Response, next: Function) {
   next();
 }
 
-export async function registerRoutes(httpServer: Server, app: Express): Promise<Server> {
+export async function registerRoutes(
+  httpServer: Server,
+  app: Express,
+): Promise<Server> {
   const MemStore = MemoryStore(session);
 
   app.set("trust proxy", 1);
 
-  app.use(session({
-    store: new MemStore({
-      checkPeriod: 86400000,
+  app.use(
+    session({
+      store: new MemStore({
+        checkPeriod: 86400000,
+      }),
+      secret: process.env.SESSION_SECRET || "bizony-secret-2026",
+      resave: false,
+      saveUninitialized: false,
+      cookie: {
+        secure: false,
+        httpOnly: true,
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      },
     }),
-    secret: process.env.SESSION_SECRET || "bizony-secret-2026",
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      secure: false,
-      httpOnly: true,
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    },
-  }));
+  );
 
   app.use((req, res, next) => {
     res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
@@ -65,17 +71,19 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
           ip,
           status: "failure",
         });
-        return res.status(401).json({ message: "Nieprawidłowe dane logowania" });
+        return res
+          .status(401)
+          .json({ message: "Nieprawidłowe dane logowania" });
       }
 
       if (user.is2FAEnabled) {
         // Zwróć info że potrzebny jest kod 2FA
-        return res.json({ 
-          id: user.id, 
-          username: user.username, 
-          role: user.role, 
+        return res.json({
+          id: user.id,
+          username: user.username,
+          role: user.role,
           is2FAEnabled: true,
-          requires2FA: true 
+          requires2FA: true,
         });
       }
       req.session.userId = user.id;
@@ -88,7 +96,12 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
         status: "success",
       });
 
-      res.json({ id: user.id, username: user.username, role: user.role, is2FAEnabled: user.is2FAEnabled });
+      res.json({
+        id: user.id,
+        username: user.username,
+        role: user.role,
+        is2FAEnabled: user.is2FAEnabled,
+      });
     } catch (err) {
       res.status(500).json({ message: "Błąd serwera" });
     }
@@ -102,15 +115,26 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     if (!req.session.userId) return res.status(401).json(null);
     const user = await storage.getUserById(req.session.userId);
     if (!user) return res.status(401).json(null);
-    res.json({ id: user.id, username: user.username, role: user.role, is2FAEnabled: user.is2FAEnabled });
+    res.json({
+      id: user.id,
+      username: user.username,
+      role: user.role,
+      is2FAEnabled: user.is2FAEnabled,
+    });
   });
 
   // Generuj secret i QR kod
   app.post("/api/auth/2fa/setup", requireAuth, async (req, res) => {
     const user = await storage.getUserById(req.session.userId!);
-    if (!user) return res.status(404).json({ message: "Nie znaleziono użytkownika" });
+    if (!user)
+      return res.status(404).json({ message: "Nie znaleziono użytkownika" });
     const secret = speakeasy.generateSecret({ length: 20 }).base32;
-    const otpauth = speakeasy.otpauthURL({ secret, label: user.username, issuer: "Bizony Rzeszów", encoding: "base32" });
+    const otpauth = speakeasy.otpauthURL({
+      secret,
+      label: user.username,
+      issuer: "Bizony Rzeszów",
+      encoding: "base32",
+    });
     const qrCode = await QRCode.toDataURL(otpauth);
     // Zapisz tymczasowo secret (niezweryfikowany jeszcze)
     await storage.updateUser2FA(user.id, false, secret);
@@ -121,8 +145,14 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
   app.post("/api/auth/2fa/verify", requireAuth, async (req, res) => {
     const { token } = req.body;
     const user = await storage.getUserById(req.session.userId!);
-    if (!user || !user.twoFASecret) return res.status(400).json({ message: "Brak skonfigurowanego 2FA" });
-    const isValid = speakeasy.totp.verify({ secret: user.twoFASecret, encoding: "base32", token, window: 2 });
+    if (!user || !user.twoFASecret)
+      return res.status(400).json({ message: "Brak skonfigurowanego 2FA" });
+    const isValid = speakeasy.totp.verify({
+      secret: user.twoFASecret,
+      encoding: "base32",
+      token,
+      window: 2,
+    });
     if (!isValid) return res.status(400).json({ message: "Nieprawidłowy kod" });
     await storage.updateUser2FA(user.id, true, user.twoFASecret);
     res.json({ ok: true });
@@ -132,8 +162,14 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
   app.post("/api/auth/2fa/disable", requireAuth, async (req, res) => {
     const { token } = req.body;
     const user = await storage.getUserById(req.session.userId!);
-    if (!user || !user.twoFASecret) return res.status(400).json({ message: "Brak skonfigurowanego 2FA" });
-    const isValid = speakeasy.totp.verify({ secret: user.twoFASecret, encoding: "base32", token, window: 2 });
+    if (!user || !user.twoFASecret)
+      return res.status(400).json({ message: "Brak skonfigurowanego 2FA" });
+    const isValid = speakeasy.totp.verify({
+      secret: user.twoFASecret,
+      encoding: "base32",
+      token,
+      window: 2,
+    });
     if (!isValid) return res.status(400).json({ message: "Nieprawidłowy kod" });
     await storage.updateUser2FA(user.id, false, null);
     res.json({ ok: true });
@@ -142,9 +178,16 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
   app.post("/api/auth/2fa/login", async (req, res) => {
     const { userId, token } = req.body;
     const user = await storage.getUserById(userId);
-    if (!user || !user.twoFASecret) return res.status(400).json({ message: "Błąd" });
-    const isValid = speakeasy.totp.verify({ secret: user.twoFASecret, encoding: "base32", token, window: 2 });
-    if (!isValid) return res.status(401).json({ message: "Nieprawidłowy kod 2FA" });
+    if (!user || !user.twoFASecret)
+      return res.status(400).json({ message: "Błąd" });
+    const isValid = speakeasy.totp.verify({
+      secret: user.twoFASecret,
+      encoding: "base32",
+      token,
+      window: 2,
+    });
+    if (!isValid)
+      return res.status(401).json({ message: "Nieprawidłowy kod 2FA" });
     req.session.userId = user.id;
     req.session.role = user.role;
     await storage.addLoginLog({
@@ -153,9 +196,14 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
       ip: req.ip || "unknown",
       status: "success",
     });
-    res.json({ id: user.id, username: user.username, role: user.role, is2FAEnabled: true });
+    res.json({
+      id: user.id,
+      username: user.username,
+      role: user.role,
+      is2FAEnabled: true,
+    });
   });
-  
+
   // ── News ──────────────────────────────────────────────
   app.get("/api/news", async (_req, res) => {
     res.json(await storage.getAllNews());
@@ -186,7 +234,7 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     const items = await storage.getAllPlayers();
     res.json(items);
   });
-  
+
   app.post("/api/players", requireAuth, async (req, res) => {
     const { id, ...data } = req.body;
     const item = await storage.createPlayer(data);
@@ -213,7 +261,7 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     const items = await storage.getAllResults();
     res.json(items);
   });
-  
+
   app.post("/api/results", requireAuth, async (req, res) => {
     const { id, ...data } = req.body;
     const item = await storage.createResult(data);
@@ -241,7 +289,10 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
   });
 
   app.put("/api/standings", requireAuth, async (req, res) => {
-    const items = req.body.map((item: any, index: number) => ({ ...item, sortOrder: index }));
+    const items = req.body.map((item: any, index: number) => ({
+      ...item,
+      sortOrder: index,
+    }));
     const result = await storage.replaceStandings(items);
     res.json(result);
   });
@@ -251,7 +302,7 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     const items = await storage.getAllGalleryFolders();
     res.json(items);
   });
-  
+
   app.post("/api/gallery", requireAuth, async (req, res) => {
     const { id, ...data } = req.body;
     const folder = await storage.createGalleryFolder({ ...data, images: [] });
@@ -259,7 +310,10 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
   });
 
   app.post("/api/gallery", requireAuth, async (req, res) => {
-    const folder = await storage.createGalleryFolder({ ...req.body, images: [] });
+    const folder = await storage.createGalleryFolder({
+      ...req.body,
+      images: [],
+    });
     res.json(folder);
   });
 
@@ -287,7 +341,14 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
   // ── Users (admin only) ──────────────────────────────────────────────
   app.get("/api/users", requireAdmin, async (_req, res) => {
     const all = await storage.getAllUsers();
-    res.json(all.map(u => ({ id: u.id, username: u.username, role: u.role, is2FAEnabled: u.is2FAEnabled })));
+    res.json(
+      all.map((u) => ({
+        id: u.id,
+        username: u.username,
+        role: u.role,
+        is2FAEnabled: u.is2FAEnabled,
+      })),
+    );
   });
 
   app.post("/api/users", requireAdmin, async (req, res) => {
@@ -318,7 +379,7 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
       uploadPreset: process.env.CLOUDINARY_UPLOAD_PRESET,
     });
   });
-  
+
   app.put("/api/auth/password", requireAuth, async (req, res) => {
     const { password } = req.body;
     if (!password || password.length < 8) {
@@ -331,6 +392,15 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
   // ── Keep-alive ping ──────────────────────────────────────────────
   app.get("/ping", (_req, res) => {
     res.status(200).send("pong");
+  });
+  // ── Warmup (budzi połączenie z Neon DB) ──────────────────────────
+  app.get("/warmup", async (_req, res) => {
+    try {
+      await storage.getAllPlayers();
+      res.status(200).json({ ok: true });
+    } catch (e) {
+      res.status(500).json({ ok: false });
+    }
   });
   return httpServer;
 }
