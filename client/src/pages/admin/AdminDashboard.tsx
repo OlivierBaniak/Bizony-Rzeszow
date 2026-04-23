@@ -565,28 +565,53 @@ export default function AdminDashboard() {
 
                 <div className="space-y-2 pt-4 border-t">
                    <Label className="text-lg font-display uppercase mb-4 block">Wyniki Drużyn</Label>
-                   <div className="grid grid-cols-7 font-bold text-xs uppercase bg-muted p-3 rounded">
-                      <div className="col-span-2">Drużyna</div>
-                      <div className="text-center">Mecze</div>
-                      <div className="text-center">W</div>
-                      <div className="text-center">P</div>
-                      <div className="text-center">Pkt</div>
-                      <div></div>
-                   </div>
-                   {standingsDraft.map(team => (
-                     <div key={team.id} className="grid grid-cols-7 gap-2 items-center p-2 border-b">
-                        <div className="col-span-2">
-                          <Input value={team.team} onChange={e => updateDraftTeam(team.id, 'team', e.target.value)} />
-                        </div>
-                        <Input type="number" value={team.played} onChange={e => updateDraftTeam(team.id, 'played', parseInt(e.target.value))} className="text-center" />
-                        <Input type="number" value={team.won} onChange={e => updateDraftTeam(team.id, 'won', parseInt(e.target.value))} className="text-center" />
-                        <Input type="number" value={team.lost} onChange={e => updateDraftTeam(team.id, 'lost', parseInt(e.target.value))} className="text-center" />
-                        <Input type="number" value={team.points} onChange={e => updateDraftTeam(team.id, 'points', parseInt(e.target.value))} className="text-center font-bold" />
-                        <Button variant="ghost" size="icon" onClick={() => setStandingsDraft(standingsDraft.filter(t => t.id !== team.id))}>
-                          <Trash className="w-4 h-4 text-destructive" />
+                  <div className="grid grid-cols-8 font-bold text-xs uppercase bg-muted p-3 rounded">
+                    <div className="col-span-2">Drużyna</div>
+                    <div className="text-center">Mecze</div>
+                    <div className="text-center">W</div>
+                    <div className="text-center">P</div>
+                    <div className="text-center">Pkt</div>
+                    <div className="text-center">Kolejność</div>
+                    <div></div>
+                  </div>
+                  {standingsDraft.map((team, index) => (
+                    <div key={team.id} className="grid grid-cols-8 gap-2 items-center p-2 border-b">
+                      <div className="col-span-2">
+                        <Input value={team.team} onChange={e => updateDraftTeam(team.id, 'team', e.target.value)} />
+                      </div>
+                      <Input type="number" value={team.played} onChange={e => updateDraftTeam(team.id, 'played', parseInt(e.target.value))} className="text-center" />
+                      <Input type="number" value={team.won} onChange={e => updateDraftTeam(team.id, 'won', parseInt(e.target.value))} className="text-center" />
+                      <Input type="number" value={team.lost} onChange={e => updateDraftTeam(team.id, 'lost', parseInt(e.target.value))} className="text-center" />
+                      <Input type="number" value={team.points} onChange={e => updateDraftTeam(team.id, 'points', parseInt(e.target.value))} className="text-center font-bold" />
+                      <div className="flex justify-center gap-1">
+                        <Button
+                          variant="ghost" size="icon"
+                          disabled={index === 0}
+                          onClick={() => {
+                            const updated = [...standingsDraft];
+                            [updated[index - 1], updated[index]] = [updated[index], updated[index - 1]];
+                            setStandingsDraft(updated);
+                          }}
+                        >
+                          ▲
                         </Button>
-                     </div>
-                   ))}
+                        <Button
+                          variant="ghost" size="icon"
+                          disabled={index === standingsDraft.length - 1}
+                          onClick={() => {
+                            const updated = [...standingsDraft];
+                            [updated[index + 1], updated[index]] = [updated[index], updated[index + 1]];
+                            setStandingsDraft(updated);
+                          }}
+                        >
+                          ▼
+                        </Button>
+                      </div>
+                      <Button variant="ghost" size="icon" onClick={() => setStandingsDraft(standingsDraft.filter(t => t.id !== team.id))}>
+                        <Trash className="w-4 h-4 text-destructive" />
+                      </Button>
+                    </div>
+                  ))}
                    <Button variant="outline" className="mt-4" onClick={() => setStandingsDraft([...standingsDraft, { id: Math.random().toString(), team: "Nowa Drużyna", played: 0, won: 0, lost: 0, points: 0 }])}>
                      <Plus className="w-4 h-4 mr-2" /> Dodaj Wiersz
                    </Button>
