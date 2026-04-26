@@ -4,11 +4,14 @@ import { Calendar, ChevronLeft } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import 'react-quill-new/dist/quill.snow.css';
+import { Calendar, ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function News() {
   const { news } = useApp();
   const [selectedNewsId, setSelectedNewsId] = useState<string | null>(null);
-
+  const [viewerIndex, setViewerIndex] = useState<number | null>(null);
+  const [viewerImages, setViewerImages] = useState<string[]>([]);
+  
   const selectedItem = news.find(n => n.id === selectedNewsId);
 
   if (selectedItem) {
@@ -55,11 +58,39 @@ export default function News() {
                 <h2 className="text-2xl font-display font-bold uppercase text-secondary mb-6">Galeria</h2>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   {selectedItem.images.filter(url => url).map((url, idx) => (
-                    <div key={idx} className="aspect-video overflow-hidden rounded-lg border border-border shadow-sm">
+                    <div 
+                      key={idx} 
+                      onClick={() => { setViewerImages(selectedItem.images!.filter(u => u)); setViewerIndex(idx); }}
+                      className="aspect-video overflow-hidden rounded-lg border border-border shadow-sm cursor-zoom-in"
+                    >
                       <img src={url} alt={`Zdjęcie ${idx + 1}`} className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
                     </div>
                   ))}
                 </div>
+              </div>
+            )}
+
+            {/* Lightbox */}
+            {viewerIndex !== null && (
+              <div className="fixed inset-0 bg-black/95 z-[100] flex items-center justify-center" onClick={() => setViewerIndex(null)}>
+                <button onClick={() => setViewerIndex(null)} className="absolute top-4 right-4 text-white/70 hover:text-white z-[110] p-2">✕</button>
+                <button 
+                  onClick={(e) => { e.stopPropagation(); setViewerIndex((viewerIndex - 1 + viewerImages.length) % viewerImages.length); }}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white z-[110] p-2 bg-white/10 rounded-full hover:bg-white/20"
+                >
+                  <ChevronLeft className="w-8 h-8" />
+                </button>
+                <img 
+                  src={viewerImages[viewerIndex]} 
+                  className="max-h-[90vh] max-w-[90vw] object-contain rounded-lg shadow-2xl"
+                  onClick={(e) => e.stopPropagation()}
+                />
+                <button 
+                  onClick={(e) => { e.stopPropagation(); setViewerIndex((viewerIndex + 1) % viewerImages.length); }}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white z-[110] p-2 bg-white/10 rounded-full hover:bg-white/20"
+                >
+                  <ChevronRight className="w-8 h-8" />
+                </button>
               </div>
             )}
           </article>
