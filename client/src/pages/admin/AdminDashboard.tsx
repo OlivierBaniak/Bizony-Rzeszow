@@ -114,10 +114,10 @@ export default function AdminDashboard() {
     if (!newsForm.title) return;
     if (newsForm.id) {
       updateNews(newsForm as NewsItem);
-      setNewsForm({ id: "", title: "", excerpt: "", content: "", image: "" });
+      setNewsForm({ id: "", title: "", excerpt: "", content: "", image: "", images: [] });
     } else {
       addNews({ ...newsForm, image: newsForm.image || "https://placehold.co/600x400" });
-      setNewsForm({ id: "", title: "", excerpt: "", content: "", image: "" });
+      setNewsForm({ id: "", title: "", excerpt: "", content: "", image: "", images: [] });
     }
   };
 
