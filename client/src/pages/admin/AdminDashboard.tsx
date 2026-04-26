@@ -12,6 +12,16 @@ import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import { Plus, Trash, Save, LayoutDashboard, Newspaper, Users, Trophy, Image as ImageIcon, FolderOpen, Info, ShieldCheck, ShieldAlert, QrCode, ScrollText, Lock } from "lucide-react";
 
+const quillModules = {
+  toolbar: [
+    [{ 'header': [1, 2, false] }],
+    ['bold', 'italic', 'underline', 'strike'],
+    [{ 'align': [] }],
+    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+    ['link', 'clean']
+  ],
+};
+
 export default function AdminDashboard() {
   const { 
     isAdmin,
@@ -304,14 +314,7 @@ export default function AdminDashboard() {
                         value={newsForm.content} 
                         onChange={(content) => setNewsForm({ ...newsForm, content })}
                         className="h-48 mb-12"
-                        modules={{
-                          toolbar: [
-                            [{ 'header': [1, 2, false] }],
-                            ['bold', 'italic', 'underline', 'strike'],
-                            [{'list': 'ordered'}, {'list': 'bullet'}],
-                            ['link', 'clean']
-                          ],
-                        }}
+                        modules={quillModules}
                       />
                     </div>
                   </div>
