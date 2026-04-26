@@ -122,7 +122,7 @@ export default function AdminDashboard() {
   };
 
   const handleEditNews = (item: any) => {
-    setNewsForm(item);
+    setNewsForm({...item, images: item.images || []});
   };
 
   const handleAddPlayer = () => {
