@@ -49,7 +49,7 @@ export default function AdminDashboard() {
   const [, setLocation] = useLocation();
 
   // Form States
-  const [newsForm, setNewsForm] = useState({ id: "", title: "", excerpt: "", content: "", image: "" });
+  const [newsForm, setNewsForm] = useState({ id: "", title: "", excerpt: "", content: "", image: "", images: [] as string[] });
   const [playerForm, setPlayerForm] = useState({ id: "", name: "", number: "", position: "", fieldPosition: "", image: "" });
   const [resultForm, setResultForm] = useState({ id: "", date: "", location: "", opponent: "", competition: "", result: "W", pointsScored: "", pointsConceded: "" });
   const [userForm, setUserForm] = useState({ username: "", role: "editor" as "admin" | "editor", password: "" });
@@ -332,6 +332,39 @@ export default function AdminDashboard() {
                         <Button variant="outline" type="button">Wybierz</Button>
                       </div>
                     </div>
+                  </div>
+                  {/* TO DODAJESZ - galeria */}
+                  <div className="space-y-2">
+                    <Label>Galeria zdjęć pod artykułem</Label>
+                    {newsForm.images.map((url, idx) => (
+                      <div key={idx} className="flex gap-2">
+                        <Input value={url} onChange={e => {
+                          const newImages = [...newsForm.images];
+                          newImages[idx] = e.target.value;
+                          setNewsForm({...newsForm, images: newImages});
+                        }} placeholder="https://..." />
+                        <div className="relative">
+                          <Input 
+                            type="file" accept="image/*"
+                            className="absolute inset-0 opacity-0 cursor-pointer"
+                            onChange={(e) => handleFileUpload(e, (uploadedUrl) => {
+                              const newImages = [...newsForm.images];
+                              newImages[idx] = uploadedUrl;
+                              setNewsForm({...newsForm, images: newImages});
+                            })}
+                          />
+                          <Button variant="outline" type="button">Wybierz</Button>
+                        </div>
+                        <Button variant="destructive" size="icon" onClick={() => {
+                          setNewsForm({...newsForm, images: newsForm.images.filter((_, i) => i !== idx)});
+                        }}>
+                          <Trash className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    ))}
+                    <Button variant="outline" onClick={() => setNewsForm({...newsForm, images: [...newsForm.images, ""]})}>
+                      <Plus className="w-4 h-4 mr-2" /> Dodaj zdjęcie do galerii
+                    </Button>
                   </div>
                   <div className="flex gap-2">
                     <Button onClick={handleAddNews} className="flex-1 bg-primary hover:bg-primary/90 text-white">

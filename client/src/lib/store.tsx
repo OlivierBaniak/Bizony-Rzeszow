@@ -8,6 +8,7 @@ export type NewsItem = {
   content: string;
   date: string;
   image: string;
+  images?: string[];
 };
 
 export type Player = {

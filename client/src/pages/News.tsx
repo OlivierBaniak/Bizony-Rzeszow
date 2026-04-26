@@ -50,6 +50,18 @@ export default function News() {
               style={{ wordBreak: 'keep-all', overflowWrap: 'break-word' }}
               dangerouslySetInnerHTML={{ __html: selectedItem.content }}
             />
+            {selectedItem.images && selectedItem.images.length > 0 && (
+              <div className="py-8 border-t border-border">
+                <h2 className="text-2xl font-display font-bold uppercase text-secondary mb-6">Galeria</h2>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  {selectedItem.images.filter(url => url).map((url, idx) => (
+                    <div key={idx} className="aspect-video overflow-hidden rounded-lg border border-border shadow-sm">
+                      <img src={url} alt={`Zdjęcie ${idx + 1}`} className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </article>
         </div>
       </div>
