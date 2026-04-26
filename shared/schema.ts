@@ -19,7 +19,7 @@ export const news = pgTable("news", {
   content: text("content").notNull().default(""),
   date: text("date").notNull(),
   image: text("image").notNull().default(""),
-  images: json("images").$type<string[]>().default([]),
+  images: jsonb("images").$type<string[]>().default([]),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
