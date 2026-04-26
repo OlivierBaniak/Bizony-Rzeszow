@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar, ChevronLeft } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import 'react-quill-new/dist/quill.snow.css';
 
 export default function News() {
   const { news } = useApp();
@@ -45,7 +46,7 @@ export default function News() {
             </div>
 
             <div 
-              className="prose prose-lg max-w-none text-foreground leading-relaxed font-sans py-8 border-t border-border"
+              className="prose prose-lg max-w-none text-foreground leading-relaxed font-sans py-8 border-t border-border ql-editor"
               dangerouslySetInnerHTML={{ __html: selectedItem.content }}
             />
           </article>
