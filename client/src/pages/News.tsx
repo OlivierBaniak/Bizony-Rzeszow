@@ -46,7 +46,7 @@ export default function News() {
             </div>
 
             <div 
-              className="prose prose-lg max-w-none text-foreground leading-relaxed font-sans py-8 border-t border-border [&_ul]:list-disc [&_ul]:ml-6 [&_ol]:list-decimal [&_ol]:ml-6 [&_li]:mb-1 [&_p]:mb-4"
+              className="prose prose-lg max-w-none text-foreground leading-relaxed font-sans py-8 border-t border-border [&_ul]:list-disc [&_ul]:ml-6 [&_ol]:list-decimal [&_ol]:ml-6 [&_li]:mb-1 [&_p]:mb-4 break-words overflow-hidden"
               dangerouslySetInnerHTML={{ __html: selectedItem.content }}
             />
           </article>
