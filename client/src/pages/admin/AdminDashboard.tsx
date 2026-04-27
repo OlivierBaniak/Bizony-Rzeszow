@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
-import { Plus, Trash, Save, LayoutDashboard, Newspaper, Users, Trophy, Image as ImageIcon, FolderOpen, Info, ShieldCheck, ShieldAlert, QrCode, ScrollText, Lock } from "lucide-react";
+import { Plus, Trash, Save, LayoutDashboard, Newspaper, Users, Trophy, Image as ImageIcon, FolderOpen, Info, ShieldCheck, ShieldAlert, QrCode, ScrollText, Lock, Pencil } from "lucide-react";
 
 const quillModules = {
   toolbar: [
@@ -388,8 +388,8 @@ export default function AdminDashboard() {
                       <p className="text-sm text-muted-foreground">{item.date}</p>
                     </div>
                     <div className="flex gap-2">
-                      <Button variant="outline" size="icon" onClick={() => handleEditNews(item)}>
-                        <LayoutDashboard className="w-4 h-4" />
+                      <Button variant="outline" onClick={() => handleEditNews(item)} className="flex items-center gap-2">
+                        <Pencil className="w-4 h-4" /> Edytuj
                       </Button>
                       <Button variant="destructive" size="icon" onClick={() => deleteNews(item.id)}>
                         <Trash className="w-4 h-4" />
