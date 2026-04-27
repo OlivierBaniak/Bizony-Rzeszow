@@ -48,11 +48,13 @@ export default function News() {
               </p>
             </div>
 
-            <div 
-              className="prose prose-lg max-w-none text-foreground leading-relaxed font-sans py-8 border-t border-border [&_ul]:list-disc [&_ul]:ml-6 [&_ol]:list-decimal [&_ol]:ml-6 [&_li]:mb-1 [&_p]:mb-4"
-              style={{ wordBreak: 'keep-all', overflowWrap: 'break-word' }}
-              dangerouslySetInnerHTML={{ __html: selectedItem.content }}
-            />
+            <div className="ql-snow py-8 border-t border-border">
+              <div 
+                className="ql-editor prose prose-lg max-w-none text-foreground leading-relaxed font-sans [&_ul]:list-disc [&_ul]:ml-6 [&_ol]:list-decimal [&_ol]:ml-6 [&_li]:mb-1 [&_p]:mb-4"
+                style={{ overflowWrap: 'break-word', wordBreak: 'normal', whiteSpace: 'normal' }}
+                dangerouslySetInnerHTML={{ __html: selectedItem.content }}
+              />
+            </div>
             {selectedItem.images && selectedItem.images.length > 0 && (
               <div className="py-8 border-t border-border">
                 <h2 className="text-2xl font-display font-bold uppercase text-secondary mb-6">Galeria</h2>
