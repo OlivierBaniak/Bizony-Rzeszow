@@ -4,6 +4,9 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { serveStatic } from "./static";
 import { createServer } from "http";
+import { pool } from "./db";
+import fs from "fs";
+import path from "path";
 
 const app = express();
 app.set("trust proxy", 1);
@@ -63,6 +66,21 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  // Uruchom migracje SQL przy starcie
+  try {
+    const migrationsDir = path.join(process.cwd(), "migrations");
+    if (fs.existsSync(migrationsDir)) {
+      const files = fs.readdirSync(migrationsDir).filter(f => f.endsWith(".sql")).sort();
+      for (const file of files) {
+        const sql = fs.readFileSync(path.join(migrationsDir, file), "utf-8");
+        await pool.query(sql);
+        log(`Migracja wykonana: ${file}`, "db");
+      }
+    }
+  } catch (err) {
+    console.error("Błąd migracji:", err);
+  }
+
   await registerRoutes(httpServer, app);
 
   app.use((err: any, _req: Request, res: Response, next: NextFunction) => {

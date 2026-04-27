@@ -72,6 +72,7 @@ export const loginLogs = pgTable("login_logs", {
   timestamp: text("timestamp").notNull(),
   ip: text("ip").notNull(),
   status: text("status").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 // Insert schemas
