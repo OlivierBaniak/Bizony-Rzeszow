@@ -371,7 +371,7 @@ export default function AdminDashboard() {
                       {newsForm.id ? <><Save className="w-4 h-4 mr-2" /> Zapisz</> : <><Plus className="w-4 h-4 mr-2" /> Opublikuj</>}
                     </Button>
                     {newsForm.id && (
-                      <Button variant="outline" onClick={() => setNewsForm({ id: "", title: "", excerpt: "", content: "", image: "" })}>
+                      <Button variant="outline" onClick={() => setNewsForm({ id: "", title: "", excerpt: "", content: "", image: "", images: [] })}>
                         Anuluj
                       </Button>
                     )}
