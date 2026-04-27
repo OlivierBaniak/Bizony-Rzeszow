@@ -77,6 +77,12 @@ export async function registerRoutes(
       }
 
       if (user.is2FAEnabled) {
+        await storage.addLoginLog({
+          email: username,
+          timestamp: new Date().toLocaleString("pl-PL"),
+          ip,
+          status: "2fa_pending",
+        });
         // Zwróć info że potrzebny jest kod 2FA
         return res.json({
           id: user.id,

@@ -145,11 +145,15 @@ export async function setSetting(key: string, value: any): Promise<void> {
 
 // ── Login Logs ──────────────────────────────────────────────
 export async function addLoginLog(data: Omit<LoginLog, "id">): Promise<void> {
-  await db.insert(loginLogs).values(data);
+  try {
+    await db.insert(loginLogs).values(data);
+  } catch (err) {
+    console.error("[LoginLog] Błąd zapisu logu:", err);
+  }
 }
 
 export async function getLoginLogs(): Promise<LoginLog[]> {
-  return db.select().from(loginLogs).orderBy(desc(loginLogs.timestamp)).limit(100);
+  return db.select().from(loginLogs).orderBy(desc(loginLogs.id)).limit(100);
 }
 
 export async function updateUserPassword(id: string, password: string): Promise<void> {
