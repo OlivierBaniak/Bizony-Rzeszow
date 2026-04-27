@@ -312,7 +312,7 @@ export default function AdminDashboard() {
                       <ReactQuill 
                         theme="snow" 
                         value={newsForm.content} 
-                        onChange={(content) => setNewsForm({ ...newsForm, content })}
+                        onChange={(content) => setNewsForm(prev => ({ ...prev, content }))}
                         className="h-48 mb-12"
                         modules={quillModules}
                       />
