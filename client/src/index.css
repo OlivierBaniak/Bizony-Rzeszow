@@ -112,42 +112,62 @@
 }
 
 /* Treść newsów - renderowanie HTML z Quilla */
-.news-content {
-  overflow-wrap: break-word;
-  word-break: normal;
-  line-height: 1.8;
-  font-size: 1.1rem;
+@layer base {
+  .news-content {
+    overflow-wrap: break-word;
+    word-break: normal;
+    line-height: 1.8;
+    font-size: 1.1rem;
+  }
+  .news-content p {
+    margin-top: 0;
+    margin-bottom: 1em;
+    min-height: 1em;
+  }
+  .news-content ul {
+    list-style-type: disc !important;
+    padding-left: 2em !important;
+    margin-bottom: 1em;
+  }
+  .news-content ol {
+    list-style-type: decimal !important;
+    padding-left: 2em !important;
+    margin-bottom: 1em;
+  }
+  .news-content li {
+    display: list-item !important;
+    margin-bottom: 0.3em;
+  }
+  .news-content h1, .news-content h2 {
+    font-size: 1.4em;
+    font-weight: bold;
+    margin-bottom: 0.6em;
+    margin-top: 1em;
+    text-transform: none;
+    letter-spacing: normal;
+    font-family: var(--font-sans);
+  }
+  .news-content strong { font-weight: 700; }
+  .news-content em { font-style: italic; }
+  .news-content u { text-decoration: underline; }
+  .news-content s { text-decoration: line-through; }
+  .news-content a { color: hsl(var(--primary)); text-decoration: underline; }
+  .news-content .ql-align-center { text-align: center; }
+  .news-content .ql-align-right { text-align: right; }
+  .news-content .ql-align-justify { text-align: justify; }
+  /* Puste linie w Quillu to <p><br></p> */
+  .news-content p:has(> br:only-child) {
+    min-height: 1.4em;
+  }
+  /* Quill używa data-list na li zamiast ul/ol w niektórych wersjach */
+  .news-content li[data-list="bullet"] {
+    list-style-type: disc !important;
+  }
+  .news-content li[data-list="ordered"] {
+    list-style-type: decimal !important;
+  }
+  .news-content li[data-list] {
+    display: list-item !important;
+    margin-left: 2em;
+  }
 }
-.news-content p {
-  margin-bottom: 1.2em;
-}
-.news-content ul {
-  list-style-type: disc;
-  padding-left: 1.8em;
-  margin-bottom: 1.2em;
-}
-.news-content ol {
-  list-style-type: decimal;
-  padding-left: 1.8em;
-  margin-bottom: 1.2em;
-}
-.news-content li {
-  margin-bottom: 0.4em;
-}
-.news-content h1, .news-content h2 {
-  font-size: 1.4em;
-  font-weight: bold;
-  margin-bottom: 0.6em;
-  margin-top: 1em;
-  text-transform: none;
-  letter-spacing: normal;
-  font-family: var(--font-sans);
-}
-.news-content strong { font-weight: 700; }
-.news-content em { font-style: italic; }
-.news-content u { text-decoration: underline; }
-.news-content s { text-decoration: line-through; }
-.news-content a { color: hsl(var(--primary)); text-decoration: underline; }
-.news-content .ql-align-center { text-align: center; }
-.news-content .ql-align-right { text-align: right; }
-.news-content .ql-align-justify { text-align: justify; }
