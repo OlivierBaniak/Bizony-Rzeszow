@@ -622,7 +622,7 @@ export default function AdminDashboard() {
                         <Input type="number" value={team.lost} onChange={e => updateDraftTeam(team.id, 'lost', parseInt(e.target.value))} className="text-center" />
                         <Input type="number" value={team.runsScored ?? 0} onChange={e => updateDraftTeam(team.id, 'runsScored', parseInt(e.target.value))} className="text-center text-green-600 font-bold" />
                         <Input type="number" value={team.runsAllowed ?? 0} onChange={e => updateDraftTeam(team.id, 'runsAllowed', parseInt(e.target.value))} className="text-center text-red-600 font-bold" />
-                        <Input type="number" value={team.points} onChange={e => updateDraftTeam(team.id, 'points', parseInt(e.target.value))} className="text-center font-bold" />
+                        <Input type="text" value={team.points} onChange={e => updateDraftTeam(team.id, 'points', e.target.value)} className="text-center font-bold" />
                       <div className="flex justify-center gap-1">
                         <Button
                           variant="ghost" size="icon"
