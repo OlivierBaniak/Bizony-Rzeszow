@@ -29,7 +29,9 @@ export default function Standings() {
                   <TableHead className="text-center uppercase font-bold">M</TableHead>
                   <TableHead className="text-center uppercase font-bold text-green-600">W</TableHead>
                   <TableHead className="text-center uppercase font-bold text-red-600">P</TableHead>
-                  <TableHead className="text-center uppercase font-bold text-primary text-lg">Pkt</TableHead>
+                  <TableHead className="text-center uppercase font-bold text-green-600">R+</TableHead>
+                  <TableHead className="text-center uppercase font-bold text-red-600">R-</TableHead>
+                  <TableHead className="text-center uppercase font-bold text-primary text-lg">RD</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -44,6 +46,8 @@ export default function Standings() {
                     <TableCell className="text-center">{team.played}</TableCell>
                     <TableCell className="text-center font-bold">{team.won}</TableCell>
                     <TableCell className="text-center">{team.lost}</TableCell>
+                    <TableCell className="text-center font-bold text-green-600">{team.runsScored}</TableCell>
+                    <TableCell className="text-center font-bold text-red-600">{team.runsAllowed}</TableCell>
                     <TableCell className="text-center font-bold text-lg text-primary">{team.points}</TableCell>
                   </TableRow>
                 ))}

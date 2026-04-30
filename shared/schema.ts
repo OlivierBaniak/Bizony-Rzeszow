@@ -50,6 +50,8 @@ export const standings = pgTable("standings", {
   won: integer("won").notNull().default(0),
   lost: integer("lost").notNull().default(0),
   points: integer("points").notNull().default(0),
+  runsScored: integer("runs_scored").notNull().default(0),
+  runsAllowed: integer("runs_allowed").notNull().default(0),
   sortOrder: integer("sort_order").notNull().default(0),
 });
 
