@@ -297,6 +297,12 @@ export async function registerRoutes(
   app.put("/api/standings", requireAuth, async (req, res) => {
     const items = req.body.map((item: any, index: number) => ({
       ...item,
+      played: parseInt(item.played) || 0,
+      won: parseInt(item.won) || 0,
+      lost: parseInt(item.lost) || 0,
+      runsScored: parseInt(item.runsScored) || 0,
+      runsAllowed: parseInt(item.runsAllowed) || 0,
+      points: parseInt(item.points) || 0,
       sortOrder: index,
     }));
     const result = await storage.replaceStandings(items);
