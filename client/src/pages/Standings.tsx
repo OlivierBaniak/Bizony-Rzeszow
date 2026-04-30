@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 export default function Standings() {
   const { standings, leagueMetadata } = useApp();
   // Sort standings by points (descending)
-  const sortedStandings = [...standings].sort((a, b) => b.points - a.points);
+  const sortedStandings = [...standings].sort((a, b) => a.sortOrder - b.sortOrder);
 
   return (
     <div className="min-h-screen bg-background py-12">
