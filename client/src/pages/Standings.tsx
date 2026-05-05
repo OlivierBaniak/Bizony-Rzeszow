@@ -48,7 +48,7 @@ export default function Standings() {
                     <TableCell className="text-center">{team.lost}</TableCell>
                     <TableCell className="text-center font-bold text-green-600">{team.runsScored}</TableCell>
                     <TableCell className="text-center font-bold text-red-600">{team.runsAllowed}</TableCell>
-                    <TableCell className="text-center font-bold text-lg text-primary">{team.points}</TableCell>
+                    <TableCell className="text-center font-bold text-lg text-primary">{team.runsScored - team.runsAllowed}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>

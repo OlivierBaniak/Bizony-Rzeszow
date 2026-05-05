@@ -110,7 +110,7 @@ export default function Home() {
                       <th className="p-3 text-left">Drużyna</th>
                       <th className="p-3 text-center">W</th>
                       <th className="p-3 text-center">P</th>
-                      <th className="p-3 text-center font-bold">Pkt</th>
+                      <th className="p-3 text-center font-bold">RD</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -122,7 +122,7 @@ export default function Home() {
                         </td>
                         <td className="p-3 text-center text-muted-foreground">{team.won}</td>
                         <td className="p-3 text-center text-muted-foreground">{team.lost}</td>
-                        <td className="p-3 text-center font-bold text-primary">{team.points}</td>
+                        <td className="p-3 text-center font-bold text-primary">{team.runsScored - team.runsAllowed}</td>
                       </tr>
                     ))}
                   </tbody>
