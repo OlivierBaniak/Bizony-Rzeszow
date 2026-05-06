@@ -333,6 +333,17 @@ export default function AdminDashboard() {
                       </div>
                     </div>
                   </div>
+                  <div className="space-y-2">
+                    <Label>URL wideo (YouTube / Vimeo)</Label>
+                    <Input
+                      value={newsForm.video_url || ""}
+                      onChange={e => setNewsForm({...newsForm, video_url: e.target.value})}
+                      placeholder="https://www.youtube.com/watch?v=..."
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Opcjonalne. Wideo wyświetli się zamiast zdjęcia pod artykułem.
+                    </p>
+                  </div>
                   {/* TO DODAJESZ - galeria */}
                   <div className="space-y-2">
                     <Label>Galeria zdjęć pod artykułem</Label>
