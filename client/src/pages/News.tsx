@@ -18,6 +18,17 @@ function getEmbedUrl(url: string): string {
   return url; // fallback – zwróć URL bez zmian
 }
 
+function getYoutubeThumbnail(videoUrl?: string, fallbackImage?: string): string {
+  if (videoUrl) {
+    const yt = videoUrl.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/);
+    if (yt) return `https://img.youtube.com/vi/${yt[1]}/hqdefault.jpg`;
+
+    const vm = videoUrl.match(/vimeo\.com\/(\d+)/);
+    if (vm) return `https://vumbnail.com/${vm[1]}.jpg`;
+  }
+  return fallbackImage || "https://placehold.co/600x400";
+}
+
 export default function News() {
   const { news } = useApp();
   const [selectedNewsId, setSelectedNewsId] = useState<string | null>(null);
