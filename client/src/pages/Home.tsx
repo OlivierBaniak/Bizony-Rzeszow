@@ -8,6 +8,17 @@ import logo from "@assets/bizony--rSs6oZ4_1770847193876.webp";
 import mainSign from "@assets/bizony-sign.webp";
 import { motion } from "framer-motion";
 
+function getYoutubeThumbnail(videoUrl?: string, fallbackImage?: string): string {
+  if (videoUrl) {
+    const yt = videoUrl.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/);
+    if (yt) return `https://img.youtube.com/vi/${yt[1]}/hqdefault.jpg`;
+
+    const vm = videoUrl.match(/vimeo\.com\/(\d+)/);
+    if (vm) return `https://vumbnail.com/${vm[1]}.jpg`;
+  }
+  return fallbackImage || "https://placehold.co/600x400";
+}
+
 export default function Home() {
   const { news, standings, nextMatch } = useApp();
   const latestNews = news.slice(0, 3);
@@ -75,7 +86,7 @@ export default function Home() {
                   <Card className={`group cursor-pointer overflow-hidden border-none shadow-lg hover:shadow-xl transition-all duration-300 ${idx === 0 ? 'md:col-span-2' : ''}`}>
                     <div className={`relative ${idx === 0 ? 'aspect-[21/9]' : 'aspect-video'} overflow-hidden`}>
                       <img 
-                        src={item.image} 
+                        src={getYoutubeThumbnail(item.video_url, item.image)} 
                         alt={item.title} 
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
