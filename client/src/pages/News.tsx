@@ -6,6 +6,18 @@ import { Button } from "@/components/ui/button";
 import 'react-quill-new/dist/quill.snow.css';
 import { Calendar, ChevronLeft, ChevronRight } from "lucide-react";
 
+function getEmbedUrl(url: string): string {
+  // YouTube
+  const yt = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/);
+  if (yt) return `https://www.youtube.com/embed/${yt[1]}`;
+
+  // Vimeo
+  const vm = url.match(/vimeo\.com\/(\d+)/);
+  if (vm) return `https://player.vimeo.com/video/${vm[1]}`;
+
+  return url; // fallback – zwróć URL bez zmian
+}
+
 export default function News() {
   const { news } = useApp();
   const [selectedNewsId, setSelectedNewsId] = useState<string | null>(null);
@@ -28,12 +40,24 @@ export default function News() {
 
           <article className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="relative aspect-[21/9] overflow-hidden rounded-2xl shadow-2xl border border-border">
-              <img 
-                src={selectedItem.image} 
-                alt={selectedItem.title} 
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
+              {selectedItem.video_url ? (
+                <iframe
+                  src={getEmbedUrl(selectedItem.video_url)}
+                  className="w-full h-full"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              ) : (
+                <>
+                  <img 
+                    src={selectedItem.image} 
+                    alt={selectedItem.title} 
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
+                </>
+              )}
             </div>
 
             <div className="space-y-4">

@@ -8,6 +8,7 @@ export type NewsItem = {
   content: string;
   date: string;
   image: string;
+  video_url?: string;
   images?: string[];
 };
 

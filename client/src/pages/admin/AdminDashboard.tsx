@@ -110,14 +110,16 @@ export default function AdminDashboard() {
     e.target.value = "";
   };
 
-  const handleAddNews = () => {
-    if (!newsForm.title) return;
-    if (newsForm.id) {
-      updateNews(newsForm as NewsItem);
-      setNewsForm({ id: "", title: "", excerpt: "", content: "", image: "", images: [] });
-    } else {
-      addNews({ ...newsForm, image: newsForm.image || "https://placehold.co/600x400" });
-      setNewsForm({ id: "", title: "", excerpt: "", content: "", image: "", images: [] });
+      const handleAddNews = () => {
+        if (!newsForm.title) return;
+        if (newsForm.id) {
+          updateNews(newsForm as NewsItem);
+          setNewsForm({ id: "", title: "", excerpt: "", content: "", image: "", video_url: "", images: [] }); // ← dodaj video_url: ""
+        } else {
+          addNews({ ...newsForm, image: newsForm.image || "https://placehold.co/600x400" });
+          setNewsForm({ id: "", title: "", excerpt: "", content: "", image: "", video_url: "", images: [] }); // ← dodaj video_url: ""
+        }
+      };
     }
   };
 
