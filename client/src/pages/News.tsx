@@ -138,7 +138,7 @@ export default function News() {
             >
               <div className="relative aspect-video overflow-hidden">
                 <img 
-                  src={item.image} 
+                  src={getYoutubeThumbnail(item.video_url, item.image)} 
                   alt={item.title} 
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />
