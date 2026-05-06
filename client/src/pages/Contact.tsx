@@ -93,7 +93,7 @@ export default function Contact() {
           <CardHeader className="bg-secondary text-white">
             <CardTitle className="font-display uppercase tracking-wider text-2xl flex items-center gap-3">
               <MapPin className="w-6 h-6 text-primary" />
-              Nasze Boisko — Sports SALOS
+              Nasze Boisko — SALOS Rzeszów
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
@@ -114,9 +114,9 @@ export default function Contact() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground uppercase font-bold tracking-wider mb-0.5">Adres boiska</p>
-                  <p className="font-medium">ul. Witolda Świądka 5a, 35-310 Rzeszów</p>
+                  <p className="font-medium">ul. Witolda Świadka 5a, 35-310 Rzeszów</p>
                   <p className="text-sm text-muted-foreground mt-1">
-                    ⚾ Otwarte treningi: <strong>sobota &amp; niedziela, godz. 13:00</strong>
+                    ⚾ Otwarte treningi: <strong>sobota &amp; niedziela, godz. 14:00</strong>
                   </p>
                 </div>
               </div>
