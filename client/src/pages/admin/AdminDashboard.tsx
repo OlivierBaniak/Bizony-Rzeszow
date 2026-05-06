@@ -118,9 +118,7 @@ export default function AdminDashboard() {
         } else {
           addNews({ ...newsForm, image: newsForm.image || "https://placehold.co/600x400" });
           setNewsForm({ id: "", title: "", excerpt: "", content: "", image: "", video_url: "", images: [] }); // ← dodaj video_url: ""
-        }
-      };
-    }
+         }
   };
 
   const handleEditNews = (item: any) => {

@@ -19,6 +19,7 @@ export const news = pgTable("news", {
   content: text("content").notNull().default(""),
   date: text("date").notNull(),
   image: text("image").notNull().default(""),
+  video_url: text("video_url").default(""),  // ← DODAJ TO
   images: jsonb("images").$type<string[]>().default([]),
   createdAt: timestamp("created_at").defaultNow(),
 });
