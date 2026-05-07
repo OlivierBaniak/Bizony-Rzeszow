@@ -8,7 +8,7 @@ import {
   DropdownMenuItem, 
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
-import { Menu, Shield, ChevronDown } from "lucide-react";
+import { Menu, ChevronDown } from "lucide-react";
 import { useState } from "react";
 
 import logo from "@assets/BIZONY_(6)_1771387532198.png";
@@ -127,6 +127,20 @@ export function Navbar() {
           {navItems.map((item) => (
             <NavLink key={item.label} item={item} />
           ))}
+
+          {/* Dołącz — wyróżniony przycisk CTA */}
+          <Link href="/dolacz">
+            <a>
+              <Button
+                className={`
+                  bg-primary hover:bg-primary/90 text-white font-display uppercase tracking-wider text-sm px-5 h-9
+                  ${location === "/dolacz" ? "ring-2 ring-primary ring-offset-2" : ""}
+                `}
+              >
+                ⚾ Dołącz do nas
+              </Button>
+            </a>
+          </Link>
           
           {isAdmin && (
             <div className="flex items-center gap-4 ml-4 pl-4 border-l border-border">
@@ -150,6 +164,16 @@ export function Navbar() {
                 {navItems.map((item) => (
                   <NavLink key={item.label} item={item} mobile />
                 ))}
+
+                {/* Dołącz — mobile */}
+                <Link href="/dolacz">
+                  <a onClick={() => setIsOpen(false)}>
+                    <Button className="w-full bg-primary hover:bg-primary/90 text-white font-display uppercase tracking-wider text-lg h-14">
+                      ⚾ Dołącz do nas
+                    </Button>
+                  </a>
+                </Link>
+
                 <div className="h-px bg-border my-2" />
                 {isAdmin && (
                   <Button variant="outline" onClick={() => { logout(); setIsOpen(false); }} className="w-full">
