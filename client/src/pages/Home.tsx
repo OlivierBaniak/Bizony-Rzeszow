@@ -2,7 +2,7 @@ import { useApp } from "@/lib/store";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowRight, Calendar, Trophy } from "lucide-react";
+import { ArrowRight, Calendar, Trophy, ChevronRight } from "lucide-react";
 import heroImg from "@assets/1771073775355_1771144286177.jpg";
 import logo from "@assets/bizony--rSs6oZ4_1770847193876.webp";
 import mainSign from "@assets/bizony-sign.webp";
@@ -37,8 +37,8 @@ export default function Home() {
           <div className="absolute inset-0 bg-gradient-to-t from-background via-secondary/50 to-secondary/30" />
         </div>
         
-            <div className="relative container mx-auto px-4 text-center text-white">
-              <div className="flex flex-col items-center">
+        <div className="relative container mx-auto px-4 text-center text-white">
+          <div className="flex flex-col items-center">
             <span className="inline-block py-1 px-3 border border-primary/50 bg-primary rounded-full text-sm font-bold uppercase tracking-widest mb-4 text-white">
               Oficjalna Strona Drużyny
             </span>
@@ -191,6 +191,63 @@ export default function Home() {
 
         </div>
       </section>
+
+      {/* ── CTA — Chcę grać w baseball ── */}
+      <section className="bg-secondary py-16 px-4">
+        <div className="container mx-auto max-w-4xl">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-10">
+
+            {/* Tekst */}
+            <div className="flex-1">
+              <p className="text-primary font-display text-sm uppercase tracking-widest font-bold mb-3">
+                Jedyna drużyna na Podkarpaciu
+              </p>
+              <h2 className="text-4xl md:text-5xl font-display font-bold uppercase text-white leading-tight mb-4">
+                Chcę grać<br />w baseball
+              </h2>
+              <p className="text-gray-400 text-base leading-relaxed max-w-md">
+                Nie musisz mieć sprzętu ani doświadczenia. Przyjedź na otwarty trening — sobota i niedziela o 13:00 na boisku SALOS.
+              </p>
+
+              {/* Minipigułki z info */}
+              <div className="flex flex-wrap gap-3 mt-6">
+                <span className="flex items-center gap-2 bg-white/5 border border-white/10 text-gray-300 text-xs font-bold uppercase tracking-wider px-3 py-2 rounded">
+                  ⚾ Sobota &amp; Niedziela
+                </span>
+                <span className="flex items-center gap-2 bg-white/5 border border-white/10 text-gray-300 text-xs font-bold uppercase tracking-wider px-3 py-2 rounded">
+                  🕐 Godz. 13:00
+                </span>
+                <span className="flex items-center gap-2 bg-white/5 border border-white/10 text-gray-300 text-xs font-bold uppercase tracking-wider px-3 py-2 rounded">
+                  📍 Boisko SALOS
+                </span>
+              </div>
+            </div>
+
+            {/* CTA box */}
+            <div className="flex-shrink-0 w-full md:w-auto">
+              <div className="border-l-4 border-primary pl-6 md:text-right">
+                <p className="text-gray-400 text-sm mb-6 max-w-xs md:ml-auto">
+                  Wypełnij krótkie zgłoszenie — odezwiemy się przez Messenger i ustalimy szczegóły.
+                </p>
+                <Link href="/dolacz">
+                  <Button
+                    size="lg"
+                    className="bg-primary hover:bg-primary/90 text-white font-display text-lg uppercase tracking-wider px-10 h-14 w-full md:w-auto group"
+                  >
+                    Zgłoś się teraz
+                    <ChevronRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  </Button>
+                </Link>
+                <p className="text-gray-600 text-xs mt-3 uppercase tracking-wider">
+                  Wstęp wolny · Sprzęt zapewniamy
+                </p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
     </div>
   );
 }
