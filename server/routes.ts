@@ -414,5 +414,39 @@ export async function registerRoutes(
       res.status(500).json({ ok: false });
     }
   });
+  // ── Join form — wysyłka zgłoszenia na Messenger ──────────────────
+  app.post("/api/join", async (req, res) => {
+    const { name, age, phone, experience, availability } = req.body;
+
+    const message =
+      `⚾ Nowe zgłoszenie!\n\n` +
+      `👤 ${name}, lat ${age}\n` +
+      `📞 ${phone}\n` +
+      `🏃 Doświadczenie: ${experience}\n` +
+      `📅 Dostępność: ${availability}`;
+
+    try {
+      const fbRes = await fetch("https://graph.facebook.com/v21.0/me/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          recipient: { id: process.env.ADMIN_PSID },
+          message: { text: message },
+          access_token: process.env.FB_PAGE_TOKEN,
+        }),
+      });
+
+      if (!fbRes.ok) {
+        const err = await fbRes.json();
+        console.error("FB Messenger error:", err);
+        return res.status(500).json({ message: "Błąd wysyłki na Messenger" });
+      }
+
+      res.json({ ok: true });
+    } catch (err) {
+      console.error("Join endpoint error:", err);
+      res.status(500).json({ message: "Błąd serwera" });
+    }
+  });
   return httpServer;
 }

@@ -5,7 +5,6 @@ import { Toaster } from "@/components/ui/toaster";
 import { AppProvider } from "@/lib/store";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
-
 // Pages
 import Home from "@/pages/Home";
 import News from "@/pages/News";
@@ -15,6 +14,7 @@ import Results from "@/pages/Results";
 import Gallery from "@/pages/Gallery";
 import About from "@/pages/About";
 import Contact from "@/pages/Contact";
+import Join from "@/pages/Join";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import Login from "@/pages/admin/Login";
 import NotFound from "@/pages/not-found";
@@ -33,6 +33,7 @@ function Router() {
           <Route path="/gallery" component={Gallery} />
           <Route path="/about" component={About} />
           <Route path="/contact" component={Contact} />
+          <Route path="/dolacz" component={Join} />
           <Route path="/admin" component={AdminDashboard} />
           <Route path="/login" component={Login} />
           <Route component={NotFound} />
