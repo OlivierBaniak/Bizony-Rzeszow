@@ -88,12 +88,12 @@ export default function Join() {
               <div className="grid grid-cols-2">
                 <div className="bg-secondary/95 text-white p-8 text-center border-r border-white/10">
                   <div className="font-display text-xl uppercase tracking-widest text-primary mb-1">Sobota</div>
-                  <div className="font-display text-5xl font-bold">13:00</div>
+                  <div className="font-display text-5xl font-bold">14:00</div>
                   <div className="text-xs text-gray-400 uppercase tracking-wider mt-2">Trening otwarty</div>
                 </div>
                 <div className="bg-secondary/95 text-white p-8 text-center">
                   <div className="font-display text-xl uppercase tracking-widest text-primary mb-1">Niedziela</div>
-                  <div className="font-display text-5xl font-bold">13:00</div>
+                  <div className="font-display text-5xl font-bold">14:00</div>
                   <div className="text-xs text-gray-400 uppercase tracking-wider mt-2">Trening otwarty</div>
                 </div>
               </div>
