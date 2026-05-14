@@ -206,7 +206,7 @@ export default function Home() {
                 Chcę grać<br />w baseball
               </h2>
               <p className="text-gray-400 text-base leading-relaxed max-w-md">
-                Nie musisz mieć sprzętu ani doświadczenia. Przyjedź na otwarty trening — sobota i niedziela o 13:00 na boisku SALOS.
+                Nie musisz mieć sprzętu ani doświadczenia. Przyjedź na otwarty trening — sobota i niedziela o 14:00 na boisku SALOS.
               </p>
 
               {/* Minipigułki z info */}
@@ -215,7 +215,7 @@ export default function Home() {
                   ⚾ Sobota &amp; Niedziela
                 </span>
                 <span className="flex items-center gap-2 bg-white/5 border border-white/10 text-gray-300 text-xs font-bold uppercase tracking-wider px-3 py-2 rounded">
-                  🕐 Godz. 13:00
+                  🕐 Godz. 14:00
                 </span>
                 <span className="flex items-center gap-2 bg-white/5 border border-white/10 text-gray-300 text-xs font-bold uppercase tracking-wider px-3 py-2 rounded">
                   📍 Boisko SALOS
