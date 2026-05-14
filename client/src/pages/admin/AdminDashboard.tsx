@@ -487,8 +487,8 @@ export default function AdminDashboard() {
                       <p className="text-sm text-muted-foreground">#{player.number} • {player.position}</p>
                     </div>
                     <div className="flex gap-2">
-                      <Button variant="outline" size="icon" onClick={() => handleEditPlayer(player)}>
-                        <LayoutDashboard className="w-4 h-4" />
+                      <Button variant="outline" onClick={() => handleEditPlayer(player)} className="flex items-center gap-2">
+                        <Pencil className="w-4 h-4" /> Edytuj
                       </Button>
                       <Button variant="destructive" size="icon" onClick={() => deletePlayer(player.id)}>
                         <Trash className="w-4 h-4" />
