@@ -15,6 +15,7 @@ import Gallery from "@/pages/Gallery";
 import About from "@/pages/About";
 import Contact from "@/pages/Contact";
 import Join from "@/pages/Join";
+import LearnBaseball from "@/pages/LearnBaseball";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import Login from "@/pages/admin/Login";
 import NotFound from "@/pages/not-found";
@@ -34,6 +35,7 @@ function Router() {
           <Route path="/about" component={About} />
           <Route path="/contact" component={Contact} />
           <Route path="/dolacz" component={Join} />
+          <Route path="/poznaj-baseball" component={LearnBaseball} />
           <Route path="/admin" component={AdminDashboard} />
           <Route path="/login" component={Login} />
           <Route component={NotFound} />

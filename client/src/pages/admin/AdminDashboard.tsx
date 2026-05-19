@@ -58,6 +58,12 @@ export default function AdminDashboard() {
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
   const [passwordForm, setPasswordForm] = useState({ newPassword: "", confirmPassword: "" });
   const [passwordMessage, setPasswordMessage] = useState<{ type: "success" | "error", text: string } | null>(null);
+   const [learnArticles, setLearnArticles] = useState<any[]>([]);
+   const [learnForm, setLearnForm] = useState({ id: "", title: "", excerpt: "", content: "", image: "", slug: "" });
+  
+   useEffect(() => {
+   fetch("/api/learn").then(r => r.json()).then(setLearnArticles);
+  }, []);
   
   // Local states for metadata and history
   const [metaDraft, setMetaDraft] = useState(leagueMetadata);
@@ -102,6 +108,29 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleAddLearn = async () => {
+     if (!learnForm.title || !learnForm.slug) return;
+     const method = learnForm.id ? "PUT" : "POST";
+     const url = learnForm.id ? `/api/learn/${learnForm.id}` : "/api/learn";
+     await fetch(url, {
+       method,
+       headers: { "Content-Type": "application/json" },
+       body: JSON.stringify(learnForm),
+     });
+     const updated = await fetch("/api/learn").then(r => r.json());
+     setLearnArticles(updated);
+     setLearnForm({ id: "", title: "", excerpt: "", content: "", image: "", slug: "" });
+   };
+  
+   const handleDeleteLearn = async (id: string) => {
+     await fetch(`/api/learn/${id}`, { method: "DELETE" });
+     setLearnArticles(learnArticles.filter(a => a.id !== id));
+   };
+  
+   const handleEditLearn = (article: any) => {
+     setLearnForm(article);
+   };
+  
   const handleMultipleFilesUpload = async (e: React.ChangeEvent<HTMLInputElement>, callback: (urls: string[]) => void) => {
     const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
@@ -110,6 +139,7 @@ export default function AdminDashboard() {
     e.target.value = "";
   };
 
+  
       const handleAddNews = () => {
         if (!newsForm.title) return;
         if (newsForm.id) {
@@ -272,6 +302,9 @@ export default function AdminDashboard() {
               Kontakt
             </TabsTrigger>
             <TabsTrigger value="settings" className="px-6 py-2 uppercase font-display tracking-wider">
+              <TabsTrigger value="learn" className="px-6 py-2 uppercase font-display tracking-wider">
+                Poznaj Baseball
+              </TabsTrigger>
               Ustawienia
             </TabsTrigger>
             {userRole === "admin" && (
@@ -955,6 +988,116 @@ export default function AdminDashboard() {
             </Card>
           </TabsContent>
 
+          <TabsContent value="learn" className="space-y-6">
+            <div className="grid md:grid-cols-3 gap-6">
+              <Card className="md:col-span-1 h-fit">
+                <CardHeader>
+                  <CardTitle>{learnForm.id ? "Edytuj artykuł" : "Dodaj artykuł"}</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label>Tytuł</Label>
+                    <Input
+                      value={learnForm.title}
+                      onChange={e => setLearnForm({ ...learnForm, title: e.target.value })}
+                      placeholder="Podstawy baseballu..."
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Slug (URL)</Label>
+                    <Input
+                      value={learnForm.slug}
+                      onChange={e => setLearnForm({ ...learnForm, slug: e.target.value.toLowerCase().replace(/\s+/g, "-") })}
+                      placeholder="podstawy-baseballu"
+                    />
+                    <p className="text-xs text-muted-foreground">Unikalny identyfikator w URL, np. podstawy-baseballu</p>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Wstęp</Label>
+                    <Textarea
+                      value={learnForm.excerpt}
+                      onChange={e => setLearnForm({ ...learnForm, excerpt: e.target.value })}
+                      placeholder="Krótkie podsumowanie artykułu..."
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Treść</Label>
+                    <div className="bg-white rounded-md border min-h-[200px] overflow-hidden">
+                      <ReactQuill
+                        theme="snow"
+                        value={learnForm.content}
+                        onChange={(content) => setLearnForm(prev => ({ ...prev, content }))}
+                        className="h-48 mb-12"
+                        modules={quillModules}
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Zdjęcie (URL lub Prześlij)</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        value={learnForm.image}
+                        onChange={e => setLearnForm({ ...learnForm, image: e.target.value })}
+                        placeholder="https://..."
+                      />
+                      <div className="relative">
+                        <Input
+                          type="file"
+                          accept="image/*"
+                          className="absolute inset-0 opacity-0 cursor-pointer"
+                          onChange={(e) => handleFileUpload(e, (url) => setLearnForm({ ...learnForm, image: url }))}
+                        />
+                        <Button variant="outline" type="button">Wybierz</Button>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button onClick={handleAddLearn} className="flex-1 bg-green-700 hover:bg-green-800 text-white">
+                      {learnForm.id ? <><Save className="w-4 h-4 mr-2" /> Zapisz</> : <><Plus className="w-4 h-4 mr-2" /> Opublikuj</>}
+                    </Button>
+                    {learnForm.id && (
+                      <Button variant="outline" onClick={() => setLearnForm({ id: "", title: "", excerpt: "", content: "", image: "", slug: "" })}>
+                        Anuluj
+                      </Button>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+
+              <div className="md:col-span-2 space-y-4">
+                {learnArticles.map(article => (
+                  <Card key={article.id} className="flex flex-row items-center p-4 gap-4">
+                    <img src={article.image} className="w-24 h-24 object-cover rounded bg-muted" alt={article.title} />
+                    <div className="flex-grow">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="bg-green-700 text-white text-[10px] font-bold px-2 py-0.5 rounded-sm uppercase tracking-wider">
+                          Poznaj Baseball
+                        </span>
+                      </div>
+                      <h3 className="font-bold">{article.title}</h3>
+                      <p className="text-sm text-muted-foreground">{article.excerpt}</p>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button variant="outline" onClick={() => handleEditLearn(article)} className="flex items-center gap-2">
+                        <Pencil className="w-4 h-4" /> Edytuj
+                      </Button>
+                      <Button variant="destructive" size="icon" onClick={() => handleDeleteLearn(article.id)}>
+                        <Trash className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </Card>
+                ))}
+                {learnArticles.length === 0 && (
+                  <div className="text-center py-12 text-muted-foreground">
+                    Brak artykułów. Dodaj pierwszy powyżej lub wywołaj seed:
+                    <br />
+                    <code className="text-xs bg-muted px-2 py-1 rounded mt-2 inline-block">GET /api/learn/seed</code>
+                  </div>
+                )}
+              </div>
+            </div>
+          </TabsContent>
+          
           <TabsContent value="settings" className="space-y-6">
             <Card>
               <CardHeader>

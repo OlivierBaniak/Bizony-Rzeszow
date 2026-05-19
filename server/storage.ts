@@ -1,4 +1,5 @@
 import { eq, desc } from "drizzle-orm";
+import { learnArticles, type LearnArticle } from "@shared/schema";
 import { db } from "./db";
 import {
   users, news, players, gameResults, standings,
@@ -162,4 +163,26 @@ export async function updateUserPassword(id: string, password: string): Promise<
 
 export async function updateUser2FA(id: string, enabled: boolean, secret: string | null): Promise<void> {
   await db.update(users).set({ is2FAEnabled: enabled, twoFASecret: secret }).where(eq(users.id, id));
+}
+export async function getAllLearnArticles(): Promise<LearnArticle[]> {
+  return db.select().from(learnArticles).orderBy(learnArticles.sortOrder);
+}
+
+export async function getLearnArticleBySlug(slug: string): Promise<LearnArticle | undefined> {
+  const result = await db.select().from(learnArticles).where(eq(learnArticles.slug, slug)).limit(1);
+  return result[0];
+}
+
+export async function createLearnArticle(data: Omit<LearnArticle, "id" | "createdAt">): Promise<LearnArticle> {
+  const result = await db.insert(learnArticles).values(data).returning();
+  return result[0];
+}
+
+export async function updateLearnArticle(id: string, data: Partial<LearnArticle>): Promise<LearnArticle> {
+  const result = await db.update(learnArticles).set(data).where(eq(learnArticles.id, id)).returning();
+  return result[0];
+}
+
+export async function deleteLearnArticle(id: string): Promise<void> {
+  await db.delete(learnArticles).where(eq(learnArticles.id, id));
 }
