@@ -448,6 +448,44 @@ export async function registerRoutes(
       res.status(500).json({ message: "Błąd serwera" });
     }
   });
+
+  // ── Seed artykułów startowych (wywołaj raz przez GET /api/learn/seed) ──────
+    app.get("/api/learn/seed", requireAuth, async (_req, res) => {
+      const { db } = await import("./db");
+      const { learnArticles } = await import("@shared/schema");
+
+      await db.insert(learnArticles).values([
+        {
+          slug: "podstawy-baseballu",
+          sortOrder: 0,
+          title: "Podstawy baseballu — czym jest ta gra?",
+          excerpt: "Inning, strike, home run — co to właściwie znaczy? Wyjaśniamy od zera.",
+          image: "https://images.unsplash.com/photo-1508344928928-7165b67de128?w=800",
+          content: `<h2>Czym jest baseball?</h2><p>Baseball to sport drużynowy rozgrywany między dwiema drużynami po 9 zawodników. Celem jest zdobycie jak największej liczby punktów (runów) przez okrążenie czterech baz na boisku.</p><h2>Jak liczyć inningi?</h2><p>Mecz składa się z 9 <strong>inningów</strong>. W każdym inningu obie drużyny mają szansę zarówno atakować (odbijać), jak i bronić (łapać piłki). Drużyna broniąca musi wyeliminować 3 graczy atakujących, żeby zakończyć swoją połowę inningu.</p><h2>Strike, ball, out</h2><p><strong>Strike</strong> — uderzenie lub nieudane odbicie piłki w strefie. Trzy strike'i = out.<br/><strong>Ball</strong> — rzut poza strefą. Cztery balle = gracz idzie na pierwszą bazę.<br/><strong>Out</strong> — wyeliminowanie gracza. Trzy outy kończą połowę inningu.</p><h2>Home run</h2><p>Najefektowniejszy element gry — piłka wylatuje poza boisko, a wszystkie osoby na bazach (i bijący) mogą spokojnie okrążyć wszystkie bazy i zdobyć punkty.</p>`,
+        },
+        {
+          slug: "pozycje-na-boisku",
+          sortOrder: 1,
+          title: "Pozycje na boisku — kto robi co?",
+          excerpt: "Pitcher, catcher, shortstop... Baseball ma 9 pozycji obronnych. Poznaj każdą z nich.",
+          image: "https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=800",
+          content: `<h2>9 pozycji w baseballu</h2><p>Drużyna broniąca wystawia 9 zawodników na różnych pozycjach. Każda ma inną rolę i wymaga innych umiejętności.</p><h2>Miotacz (Pitcher)</h2><p>Najważniejsza pozycja w obronie. Miotacz rzuca piłkę do łapacza starając się sprawić, żeby pałkarz jej nie trafił lub trafił słabo.</p><h2>Łapacz (Catcher)</h2><p>Łapacz kuca za pałkarzem i przyjmuje każdy rzut miotacza. Kieruje grą obronną, podpowiadając miotaczowi jakich rzutów używać.</p><h2>Gracze wewnętrzni (Infielders)</h2><p><strong>1B</strong> — strzeże pierwszej bazy.<br/><strong>2B</strong> — chroni drugą bazę i środek pola.<br/><strong>3B</strong> — wymaga szybkich reakcji na mocne uderzenia.<br/><strong>SS (shortstop)</strong> — kluczowa pozycja między drugą a trzecią bazą.</p><h2>Gracze zewnętrzni (Outfielders)</h2><p><strong>LF, CF, RF</strong> — lewy, środkowy i prawy zapolowy. Łapią piłki wylatujące daleko od boiska wewnętrznego.</p>`,
+        },
+        {
+          slug: "jak-czytac-statystyki",
+          sortOrder: 2,
+          title: "Jak czytać statystyki baseballowe?",
+          excerpt: "ERA, batting average, RBI — statystyki baseballowe wyglądają skomplikowanie, ale są logiczne.",
+          image: "https://images.unsplash.com/photo-1551958219-acbc595b3cd8?w=800",
+          content: `<h2>Statystyki pałkarzy</h2><p><strong>AVG (Batting Average)</strong> — średnia uderzeń. AVG .300 to bardzo dobry wynik.</p><p><strong>RBI (Runs Batted In)</strong> — liczba punktów zdobytych dzięki uderzeniu gracza.</p><p><strong>HR (Home Runs)</strong> — liczba home runów.</p><p><strong>OBP (On-Base Percentage)</strong> — jak często gracz dostaje się na bazę.</p><h2>Statystyki miotaczy</h2><p><strong>ERA (Earned Run Average)</strong> — średnia liczba punktów na 9 inningów. ERA poniżej 3.00 to wynik klasy światowej.</p><p><strong>K (Strikeouts)</strong> — liczba wyeliminowań przez trzy strike'i.</p><p><strong>WHIP</strong> — ile graczy średnio wchodzi na bazę w każdym inningu. Im niższy, tym lepiej.</p>`,
+        },
+      ]).onConflictDoNothing();
+
+      res.json({ ok: true, seeded: 3 });
+    });
+    return httpServer;
+  }
+  
   // ── Learn Articles ──────────────────────────────────────────────
   app.get("/api/learn", async (_req, res) => {
     res.json(await storage.getAllLearnArticles());
@@ -475,40 +513,3 @@ export async function registerRoutes(
     await storage.deleteLearnArticle(req.params.id);
     res.json({ ok: true });
   });
-
-  // ── Seed artykułów startowych (wywołaj raz przez GET /api/learn/seed) ──────
-  app.get("/api/learn/seed", requireAuth, async (_req, res) => {
-    const { db } = await import("./db");
-    const { learnArticles } = await import("@shared/schema");
-
-    await db.insert(learnArticles).values([
-      {
-        slug: "podstawy-baseballu",
-        sortOrder: 0,
-        title: "Podstawy baseballu — czym jest ta gra?",
-        excerpt: "Inning, strike, home run — co to właściwie znaczy? Wyjaśniamy od zera.",
-        image: "https://images.unsplash.com/photo-1508344928928-7165b67de128?w=800",
-        content: `<h2>Czym jest baseball?</h2><p>Baseball to sport drużynowy rozgrywany między dwiema drużynami po 9 zawodników. Celem jest zdobycie jak największej liczby punktów (runów) przez okrążenie czterech baz na boisku.</p><h2>Jak liczyć inningi?</h2><p>Mecz składa się z 9 <strong>inningów</strong>. W każdym inningu obie drużyny mają szansę zarówno atakować (odbijać), jak i bronić (łapać piłki). Drużyna broniąca musi wyeliminować 3 graczy atakujących, żeby zakończyć swoją połowę inningu.</p><h2>Strike, ball, out</h2><p><strong>Strike</strong> — uderzenie lub nieudane odbicie piłki w strefie. Trzy strike'i = out.<br/><strong>Ball</strong> — rzut poza strefą. Cztery balle = gracz idzie na pierwszą bazę.<br/><strong>Out</strong> — wyeliminowanie gracza. Trzy outy kończą połowę inningu.</p><h2>Home run</h2><p>Najefektowniejszy element gry — piłka wylatuje poza boisko, a wszystkie osoby na bazach (i bijący) mogą spokojnie okrążyć wszystkie bazy i zdobyć punkty.</p>`,
-      },
-      {
-        slug: "pozycje-na-boisku",
-        sortOrder: 1,
-        title: "Pozycje na boisku — kto robi co?",
-        excerpt: "Pitcher, catcher, shortstop... Baseball ma 9 pozycji obronnych. Poznaj każdą z nich.",
-        image: "https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=800",
-        content: `<h2>9 pozycji w baseballu</h2><p>Drużyna broniąca wystawia 9 zawodników na różnych pozycjach. Każda ma inną rolę i wymaga innych umiejętności.</p><h2>Miotacz (Pitcher)</h2><p>Najważniejsza pozycja w obronie. Miotacz rzuca piłkę do łapacza starając się sprawić, żeby pałkarz jej nie trafił lub trafił słabo.</p><h2>Łapacz (Catcher)</h2><p>Łapacz kuca za pałkarzem i przyjmuje każdy rzut miotacza. Kieruje grą obronną, podpowiadając miotaczowi jakich rzutów używać.</p><h2>Gracze wewnętrzni (Infielders)</h2><p><strong>1B</strong> — strzeże pierwszej bazy.<br/><strong>2B</strong> — chroni drugą bazę i środek pola.<br/><strong>3B</strong> — wymaga szybkich reakcji na mocne uderzenia.<br/><strong>SS (shortstop)</strong> — kluczowa pozycja między drugą a trzecią bazą.</p><h2>Gracze zewnętrzni (Outfielders)</h2><p><strong>LF, CF, RF</strong> — lewy, środkowy i prawy zapolowy. Łapią piłki wylatujące daleko od boiska wewnętrznego.</p>`,
-      },
-      {
-        slug: "jak-czytac-statystyki",
-        sortOrder: 2,
-        title: "Jak czytać statystyki baseballowe?",
-        excerpt: "ERA, batting average, RBI — statystyki baseballowe wyglądają skomplikowanie, ale są logiczne.",
-        image: "https://images.unsplash.com/photo-1551958219-acbc595b3cd8?w=800",
-        content: `<h2>Statystyki pałkarzy</h2><p><strong>AVG (Batting Average)</strong> — średnia uderzeń. AVG .300 to bardzo dobry wynik.</p><p><strong>RBI (Runs Batted In)</strong> — liczba punktów zdobytych dzięki uderzeniu gracza.</p><p><strong>HR (Home Runs)</strong> — liczba home runów.</p><p><strong>OBP (On-Base Percentage)</strong> — jak często gracz dostaje się na bazę.</p><h2>Statystyki miotaczy</h2><p><strong>ERA (Earned Run Average)</strong> — średnia liczba punktów na 9 inningów. ERA poniżej 3.00 to wynik klasy światowej.</p><p><strong>K (Strikeouts)</strong> — liczba wyeliminowań przez trzy strike'i.</p><p><strong>WHIP</strong> — ile graczy średnio wchodzi na bazę w każdym inningu. Im niższy, tym lepiej.</p>`,
-      },
-    ]).onConflictDoNothing();
-
-    res.json({ ok: true, seeded: 3 });
-  });
-  return httpServer;
-}
