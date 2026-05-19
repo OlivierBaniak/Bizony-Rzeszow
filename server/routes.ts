@@ -483,9 +483,7 @@ export async function registerRoutes(
 
       res.json({ ok: true, seeded: 3 });
     });
-    return httpServer;
-  }
-  
+
   // ── Learn Articles ──────────────────────────────────────────────
   app.get("/api/learn", async (_req, res) => {
     res.json(await storage.getAllLearnArticles());
@@ -513,3 +511,7 @@ export async function registerRoutes(
     await storage.deleteLearnArticle(req.params.id);
     res.json({ ok: true });
   });
+
+    return httpServer;
+  }
+  
