@@ -51,10 +51,11 @@ export function Navbar() {
           <DropdownMenuContent align="start" className="bg-background border-border">
             {item.children.map((child: any) => (
               <DropdownMenuItem key={child.href} asChild>
-                <Link href={child.href}>
-                  <a className="uppercase font-display tracking-wider text-sm px-4 py-2 hover:bg-primary hover:text-white transition-colors cursor-pointer block">
-                    {child.label}
-                  </a>
+                <Link
+                  href={child.href}
+                  className="uppercase font-display tracking-wider text-sm px-4 py-2 hover:bg-primary hover:text-white transition-colors cursor-pointer block"
+                >
+                  {child.label}
                 </Link>
               </DropdownMenuItem>
             ))}
@@ -71,16 +72,16 @@ export function Navbar() {
           </span>
           <div className="pl-6 flex flex-col gap-4 border-l-2 border-primary/20">
             {item.children.map((child: any) => (
-              <Link key={child.href} href={child.href}>
-                <a
-                  onClick={() => setIsOpen(false)}
-                  className={`
-                    uppercase font-display tracking-wider transition-colors duration-200 text-xl
-                    ${location === child.href ? "text-primary font-bold" : "text-foreground"}
-                  `}
-                >
-                  {child.label}
-                </a>
+              <Link
+                key={child.href}
+                href={child.href}
+                onClick={() => setIsOpen(false)}
+                className={`
+                  uppercase font-display tracking-wider transition-colors duration-200 text-xl
+                  ${location === child.href ? "text-primary font-bold" : "text-foreground"}
+                `}
+              >
+                {child.label}
               </Link>
             ))}
           </div>
@@ -89,17 +90,16 @@ export function Navbar() {
     }
 
     return (
-      <Link href={item.href}>
-        <a
-          onClick={() => mobile && setIsOpen(false)}
-          className={`
-            uppercase font-display tracking-wider transition-colors duration-200
-            ${mobile ? "text-2xl py-2" : "text-lg hover:text-primary"}
-            ${isActive ? "text-primary font-bold" : "text-foreground"}
-          `}
-        >
-          {item.label}
-        </a>
+      <Link
+        href={item.href}
+        onClick={() => mobile && setIsOpen(false)}
+        className={`
+          uppercase font-display tracking-wider transition-colors duration-200
+          ${mobile ? "text-2xl py-2" : "text-lg hover:text-primary"}
+          ${isActive ? "text-primary font-bold" : "text-foreground"}
+        `}
+      >
+        {item.label}
       </Link>
     );
   };
@@ -107,19 +107,18 @@ export function Navbar() {
   return (
     <nav className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
       <div className="container mx-auto px-4 h-20 flex items-center justify-between">
+
         {/* Logo */}
-        <Link href="/">
-          <a className="flex items-center gap-2 group">
-            <img src={logo} alt="Bizony Rzeszów Logo" className="h-16 w-auto object-contain" />
-            <div className="flex flex-col">
-              <span className="font-display text-2xl leading-none font-bold uppercase tracking-wider text-foreground">
-                Bizony
-              </span>
-              <span className="text-xs font-sans tracking-[0.2em] text-muted-foreground uppercase">
-                Rzeszów
-              </span>
-            </div>
-          </a>
+        <Link href="/" className="flex items-center gap-2 group">
+          <img src={logo} alt="Bizony Rzeszów Logo" className="h-16 w-auto object-contain" />
+          <div className="flex flex-col">
+            <span className="font-display text-2xl leading-none font-bold uppercase tracking-wider text-foreground">
+              Bizony
+            </span>
+            <span className="text-xs font-sans tracking-[0.2em] text-muted-foreground uppercase">
+              Rzeszów
+            </span>
+          </div>
         </Link>
 
         {/* Desktop Nav */}
@@ -130,16 +129,14 @@ export function Navbar() {
 
           {/* Dołącz — wyróżniony przycisk CTA */}
           <Link href="/dolacz">
-            <a>
-              <Button
-                className={`
-                  bg-primary hover:bg-primary/90 text-white font-display uppercase tracking-wider text-sm px-5 h-9
-                  ${location === "/dolacz" ? "ring-2 ring-primary ring-offset-2" : ""}
-                `}
-              >
-                ⚾ Dołącz do nas
-              </Button>
-            </a>
+            <Button
+              className={`
+                bg-primary hover:bg-primary/90 text-white font-display uppercase tracking-wider text-sm px-5 h-9
+                ${location === "/dolacz" ? "ring-2 ring-primary ring-offset-2" : ""}
+              `}
+            >
+              ⚾ Dołącz do nas
+            </Button>
           </Link>
           
           {isAdmin && (
@@ -166,12 +163,10 @@ export function Navbar() {
                 ))}
 
                 {/* Dołącz — mobile */}
-                <Link href="/dolacz">
-                  <a onClick={() => setIsOpen(false)}>
-                    <Button className="w-full bg-primary hover:bg-primary/90 text-white font-display uppercase tracking-wider text-lg h-14">
-                      ⚾ Dołącz do nas
-                    </Button>
-                  </a>
+                <Link href="/dolacz" onClick={() => setIsOpen(false)}>
+                  <Button className="w-full bg-primary hover:bg-primary/90 text-white font-display uppercase tracking-wider text-lg h-14">
+                    ⚾ Dołącz do nas
+                  </Button>
                 </Link>
 
                 <div className="h-px bg-border my-2" />
@@ -184,6 +179,7 @@ export function Navbar() {
             </SheetContent>
           </Sheet>
         </div>
+
       </div>
     </nav>
   );

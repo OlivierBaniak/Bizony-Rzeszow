@@ -1,7 +1,7 @@
 import { useApp, NewsItem } from "@/lib/store";
 import { uploadImage } from "@/lib/store";
 import { useLocation } from "wouter";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
