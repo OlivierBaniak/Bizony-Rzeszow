@@ -33,7 +33,7 @@ export function Navbar() {
     },
     { label: "Galeria", href: "/gallery" },
     { label: "Kontakt", href: "/contact" },
-    { label: "⚾ Poznaj Baseball", href: "/poznaj-baseball" },
+    { label: "Poznaj Baseball", href: "/poznaj-baseball" },
   ];
 
   const NavLink = ({ item, mobile = false }: { item: any; mobile?: boolean }) => {
