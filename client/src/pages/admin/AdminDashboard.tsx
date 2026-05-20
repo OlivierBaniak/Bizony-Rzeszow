@@ -76,6 +76,12 @@ export default function AdminDashboard() {
   const [twoFAToken, setTwoFAToken] = useState("");
   const [twoFAError, setTwoFAError] = useState("");
 
+  useEffect(() => { setStandingsDraft(standings); }, [standings]);
+  useEffect(() => { setMetaDraft(leagueMetadata); }, [leagueMetadata]);
+  useEffect(() => { setHistoryDraft(clubHistory); }, [clubHistory]);
+  useEffect(() => { setMatchDraft(nextMatch); }, [nextMatch]);
+  useEffect(() => { setContactDraft(contactDetails); }, [contactDetails]);
+  
   if (loading) return null;
   if (!currentUser) {
     setLocation("/login");
