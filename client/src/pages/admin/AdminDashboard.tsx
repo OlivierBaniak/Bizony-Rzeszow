@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
-import { Plus, Trash, Save, LayoutDashboard, Newspaper, Users, Trophy, Image as ImageIcon, FolderOpen, Info, ShieldCheck, ShieldAlert, QrCode, ScrollText, Lock, Pencil } from "lucide-react";
+import { Plus, Trash, Save, LayoutDashboard, RefreshCw, Newspaper, Users, Trophy, Image as ImageIcon, FolderOpen, Info, ShieldCheck, ShieldAlert, QrCode, ScrollText, Lock, Pencil } from "lucide-react";
 
 const quillModules = {
   toolbar: [
@@ -45,6 +45,7 @@ export default function AdminDashboard() {
     verify2FA, 
     disable2FA,
     logout,
+    refreshAll,
   } = useApp();
   const [, setLocation] = useLocation();
 
@@ -254,25 +255,55 @@ export default function AdminDashboard() {
     setUserForm({ username: "", password: "", role: "editor" });  // było: email
   };
 
-  const updateDraftTeam = (id: string, field: string, value: string | number) => {
-    setStandingsDraft(standingsDraft.map(t => 
-      t.id === id ? { ...t, [field]: value } : t
-    ));
-  };
+      const updateDraftTeam = (id: string, field: string, value: string | number) => {
+        setStandingsDraft(standingsDraft.map(t => 
+          t.id === id ? { ...t, [field]: value } : t
+        ));
+      };
 
-  return (
-    <div className="min-h-screen bg-muted/30 pb-20">
-      <div className="bg-secondary text-white py-8 mb-8 shadow-md">
-        <div className="container mx-auto px-4 flex items-center gap-4">
-          <LayoutDashboard className="w-8 h-8 text-primary" />
-          <h1 className="text-3xl font-display font-bold uppercase tracking-wider">CMS Dashboard</h1>
-          <div className="ml-auto">
-            <Button onClick={() => logout().then(() => setLocation("/login"))} variant="outline" className="text-white border-white hover:bg-white/10">
-              Wyloguj
-            </Button>
+  const refreshAll = async () => {
+    const [n, p, r, s, g, meta, history, match, contact] = await Promise.all([
+      api("GET", "/api/news").catch(() => []),
+      api("GET", "/api/players").catch(() => []),
+      api("GET", "/api/results").catch(() => []),
+      api("GET", "/api/standings").catch(() => []),
+      api("GET", "/api/gallery").catch(() => []),
+      api("GET", "/api/settings/leagueMetadata").catch(() => null),
+      api("GET", "/api/settings/clubHistory").catch(() => null),
+      api("GET", "/api/settings/nextMatch").catch(() => null),
+      api("GET", "/api/settings/contactDetails").catch(() => null),
+    ]);
+    setNews(n || []);
+    setPlayers(p || []);
+    setResults(r || []);
+    setStandings(s || []);
+    setGalleryFolders(g || []);
+    if (meta) setLeagueMetadata(meta);
+    if (history) setHistoryDraft(history);
+    if (match) setMatchDraft(match);
+    if (contact) setContactDraft(contact);
+  };
+      return (
+        <div className="min-h-screen bg-muted/30 pb-20">
+          <div className="bg-secondary text-white py-8 mb-8 shadow-md">
+            <div className="container mx-auto px-4 flex items-center gap-4">
+              <LayoutDashboard className="w-8 h-8 text-primary" />
+              <h1 className="text-3xl font-display font-bold uppercase tracking-wider">CMS Dashboard</h1>
+              <div className="ml-auto flex items-center gap-3">
+                <Button
+                  onClick={refreshAll}
+                  variant="outline"
+                  className="text-white border-white/50 hover:bg-white/10"
+                >
+                  <RefreshCw className="w-4 h-4 mr-2" />
+                  Odśwież dane
+                </Button>
+                <Button onClick={() => logout().then(() => setLocation("/login"))} variant="outline" className="text-white border-white hover:bg-white/10">
+                  Wyloguj
+                </Button>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
 
       <div className="container mx-auto px-4">
         <Tabs defaultValue="news" className="space-y-6">

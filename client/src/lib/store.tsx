@@ -157,6 +157,7 @@ type AppContextType = {
   changePassword: (password: string) => Promise<void>;
   nextMatch: Match;
   contactDetails: ContactDetails;
+  refreshAll: () => Promise<void>;
   isAdmin: boolean;
   userRole: "admin" | "editor" | null;
   currentUser: User | null;
@@ -440,6 +441,33 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setContactDetails(details);
   };
 
+  const refreshAll = async () => {
+    try {
+      const [n, p, r, s, g, meta, history, match, contact] = await Promise.all([
+        api("GET", "/api/news").catch(() => []),
+        api("GET", "/api/players").catch(() => []),
+        api("GET", "/api/results").catch(() => []),
+        api("GET", "/api/standings").catch(() => []),
+        api("GET", "/api/gallery").catch(() => []),
+        api("GET", "/api/settings/leagueMetadata").catch(() => null),
+        api("GET", "/api/settings/clubHistory").catch(() => null),
+        api("GET", "/api/settings/nextMatch").catch(() => null),
+        api("GET", "/api/settings/contactDetails").catch(() => null),
+      ]);
+      setNews(n || []);
+      setPlayers(p || []);
+      setResults(r || []);
+      setStandings(s || []);
+      setGalleryFolders(g || []);
+      if (meta) setLeagueMetadata(meta);
+      if (history) setClubHistory(history);
+      if (match) setNextMatch(match);
+      if (contact) setContactDetails(contact);
+    } catch (e) {
+      console.error("refreshAll error", e);
+    }
+  };
+  
   return (
     <AppContext.Provider value={{
       news, players, results, standings, leagueMetadata,
@@ -454,6 +482,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       updateStandings, updateLeagueMetadata,
       addGalleryFolder, deleteGalleryFolder, addImageToFolder, deleteImageFromFolder,
       updateClubHistory, updateNextMatch, updateContactDetails,
+      refreshAll,
     }}>
       {children}
     </AppContext.Provider>
