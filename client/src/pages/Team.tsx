@@ -31,7 +31,7 @@ export default function Team() {
                         <img
                           src={optimizeImage(player.image, 400)}
                           alt={player.name}
-                          className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
+                          className="w-full h-full object-cover transition-all duration-500"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-secondary/90 via-transparent to-transparent opacity-80" />
                         <div className="absolute bottom-0 left-0 w-full p-6 text-white">
