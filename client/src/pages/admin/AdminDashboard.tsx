@@ -609,8 +609,8 @@ export default function AdminDashboard() {
                       </div>
                     </div>
                     <div className="flex gap-2">
-                      <Button variant="outline" size="icon" onClick={() => handleEditResult(item)}>
-                        <LayoutDashboard className="w-4 h-4" />
+                      <Button variant="outline" onClick={() => handleEditResult(item)} className="flex items-center gap-2">
+                        <Pencil className="w-4 h-4" /> Edytuj
                       </Button>
                       <Button variant="destructive" size="icon" onClick={() => deleteResult(item.id)}>
                         <Trash className="w-4 h-4" />
