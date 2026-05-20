@@ -774,14 +774,16 @@ export default function AdminDashboard() {
                                     accept="image/*" 
                                     multiple
                                     className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10" 
-                                    onChange={(e) => handleMultipleFilesUpload(e, (urls) => {
-                                      urls.forEach(url => {
-                                        addImageToFolder(folder.id, { url, description: imageForm.description });
-                                      });
+                                    onChange={async (e) => {
+                                      const files = Array.from(e.target.files || []);
+                                      if (files.length === 0) return;
+                                      const urls = await Promise.all(files.map(uploadImage));
+                                      for (const url of urls) {
+                                        await addImageToFolder(folder.id, { url, description: imageForm.description });
+                                      }
                                       setImageForm({ url: "", description: "" });
-                                      // Clear the input value so the same files can be selected again if needed
                                       e.target.value = "";
-                                    })}
+                                    }}
                                   />
                                   <Button variant="outline" type="button" className="relative z-0">Wybierz (Wiele)</Button>
                                 </div>
