@@ -261,28 +261,6 @@ export default function AdminDashboard() {
         ));
       };
 
-  const refreshAll = async () => {
-    const [n, p, r, s, g, meta, history, match, contact] = await Promise.all([
-      api("GET", "/api/news").catch(() => []),
-      api("GET", "/api/players").catch(() => []),
-      api("GET", "/api/results").catch(() => []),
-      api("GET", "/api/standings").catch(() => []),
-      api("GET", "/api/gallery").catch(() => []),
-      api("GET", "/api/settings/leagueMetadata").catch(() => null),
-      api("GET", "/api/settings/clubHistory").catch(() => null),
-      api("GET", "/api/settings/nextMatch").catch(() => null),
-      api("GET", "/api/settings/contactDetails").catch(() => null),
-    ]);
-    setNews(n || []);
-    setPlayers(p || []);
-    setResults(r || []);
-    setStandings(s || []);
-    setGalleryFolders(g || []);
-    if (meta) setLeagueMetadata(meta);
-    if (history) setHistoryDraft(history);
-    if (match) setMatchDraft(match);
-    if (contact) setContactDraft(contact);
-  };
       return (
         <div className="min-h-screen bg-muted/30 pb-20">
           <div className="bg-secondary text-white py-8 mb-8 shadow-md">
