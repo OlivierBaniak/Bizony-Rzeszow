@@ -406,7 +406,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   };
 
   const addImageToFolder = async (folderId: string, image: Omit<GalleryImage, "id">) => {
-    const folder = galleryFolders.find(f => f.id === folderId);
+    // Pobierz aktualny folder z serwera (nie ze stanu React)
+    const folders = await api("GET", "/api/gallery");
+    const folder = folders.find((f: GalleryFolder) => f.id === folderId);
     if (!folder) return;
     const newImage: GalleryImage = { ...image, id: Math.random().toString(36).substr(2, 9) };
     const updatedImages = [...folder.images, newImage];
