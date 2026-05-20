@@ -317,7 +317,7 @@ export default function AdminDashboard() {
               Kontakt
             </TabsTrigger>
             <TabsTrigger value="settings" className="px-6 py-2 uppercase font-display tracking-wider">
-              <TabsTrigger value="learn" className="px-6 py-2 uppercase font-display tracking-wider">
+              <TabsTrigger value="learn" className="px-6 py-2 uppercase font-display tracking-wider text-green-700">
                 Poznaj Baseball
               </TabsTrigger>
               Ustawienia
