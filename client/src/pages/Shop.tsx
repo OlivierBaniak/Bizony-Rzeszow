@@ -304,10 +304,10 @@ export default function Shop() {
             <p className="text-sm mt-2">Wróć wkrótce — już pracujemy nad ofertą!</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {products.map(product => (
               <Card key={product.id} className="group overflow-hidden border-none shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-white">
-                <div className="relative aspect-square overflow-hidden bg-muted">
+                  <div className="relative aspect-[4/3] overflow-hidden bg-muted">
                   <img
                     src={product.image || "https://placehold.co/400x400"}
                     alt={product.name}
@@ -317,8 +317,8 @@ export default function Shop() {
                     {product.category}
                   </div>
                 </div>
-                <CardContent className="p-5">
-                  <h3 className="font-display text-xl uppercase font-bold mb-1">{product.name}</h3>
+                <CardContent className="p-3">
+                  <h3 className="font-display text-base uppercase font-bold mb-1">
                   <p className="text-sm text-muted-foreground mb-3 line-clamp-2">{product.description}</p>
 
                   {product.sizes.length > 0 && (
@@ -343,7 +343,7 @@ export default function Shop() {
                   )}
 
                   <div className="flex items-center justify-between mt-4">
-                    <span className="text-2xl font-display font-bold text-primary">
+                    <span className="text-lg font-display font-bold text-primary">
                       {(product.price / 100).toFixed(2)} zł
                     </span>
                     <Button
