@@ -330,51 +330,21 @@ export default function AdminDashboard() {
       <div className="container mx-auto px-4">
         <Tabs defaultValue="news" className="space-y-6">
           <TabsList className="bg-white p-1 shadow-sm border h-auto flex-wrap justify-start">
-            <TabsTrigger value="news" className="px-6 py-2 uppercase font-display tracking-wider">
-              Aktualności
-            </TabsTrigger>
-            <TabsTrigger value="team" className="px-6 py-2 uppercase font-display tracking-wider">
-              Skład
-            </TabsTrigger>
-            <TabsTrigger value="results" className="px-6 py-2 uppercase font-display tracking-wider">
-              Wyniki
-            </TabsTrigger>
-            <TabsTrigger value="standings" className="px-6 py-2 uppercase font-display tracking-wider">
-              Tabela
-            </TabsTrigger>
-            <TabsTrigger value="gallery" className="px-6 py-2 uppercase font-display tracking-wider">
-              Galeria
-            </TabsTrigger>
-            <TabsTrigger value="about" className="px-6 py-2 uppercase font-display tracking-wider">
-              O Klubie
-            </TabsTrigger>
-            <TabsTrigger value="match" className="px-6 py-2 uppercase font-display tracking-wider">
-              Mecz
-            </TabsTrigger>
-            <TabsTrigger value="contact" className="px-6 py-2 uppercase font-display tracking-wider">
-              Kontakt
-            </TabsTrigger>
-            <TabsTrigger value="settings" className="px-6 py-2 uppercase font-display tracking-wider">
-              <TabsTrigger value="learn" className="px-6 py-2 uppercase font-display tracking-wider text-green-700">
-                <TabsTrigger value="shop" className="px-6 py-2 uppercase font-display tracking-wider">
-                🛒 Sklep
-                </TabsTrigger>
-                Poznaj Baseball
-              </TabsTrigger>
-              Ustawienia
-            </TabsTrigger>
+            <TabsTrigger value="news" className="px-6 py-2 uppercase font-display tracking-wider">Aktualności</TabsTrigger>
+            <TabsTrigger value="team" className="px-6 py-2 uppercase font-display tracking-wider">Skład</TabsTrigger>
+            <TabsTrigger value="results" className="px-6 py-2 uppercase font-display tracking-wider">Wyniki</TabsTrigger>
+            <TabsTrigger value="standings" className="px-6 py-2 uppercase font-display tracking-wider">Tabela</TabsTrigger>
+            <TabsTrigger value="gallery" className="px-6 py-2 uppercase font-display tracking-wider">Galeria</TabsTrigger>
+            <TabsTrigger value="about" className="px-6 py-2 uppercase font-display tracking-wider">O Klubie</TabsTrigger>
+            <TabsTrigger value="match" className="px-6 py-2 uppercase font-display tracking-wider">Mecz</TabsTrigger>
+            <TabsTrigger value="contact" className="px-6 py-2 uppercase font-display tracking-wider">Kontakt</TabsTrigger>
+            <TabsTrigger value="shop" className="px-6 py-2 uppercase font-display tracking-wider">🛒 Sklep</TabsTrigger>
+            <TabsTrigger value="learn" className="px-6 py-2 uppercase font-display tracking-wider text-green-700">⚾ Poznaj Baseball</TabsTrigger>
+            <TabsTrigger value="settings" className="px-6 py-2 uppercase font-display tracking-wider">Ustawienia</TabsTrigger>
             {userRole === "admin" && (
               <>
-                {userRole === "admin" && (
-                  <TabsTrigger value="users" className="px-6 py-2 uppercase font-display tracking-wider">
-                    Użytkownicy
-                  </TabsTrigger>
-                )}
-                {userRole === "admin" && (
-                  <TabsTrigger value="logs" className="px-6 py-2 uppercase font-display tracking-wider">
-                    Logi
-                  </TabsTrigger>
-                )}
+                <TabsTrigger value="users" className="px-6 py-2 uppercase font-display tracking-wider">Użytkownicy</TabsTrigger>
+                <TabsTrigger value="logs" className="px-6 py-2 uppercase font-display tracking-wider">Logi</TabsTrigger>
               </>
             )}
           </TabsList>
