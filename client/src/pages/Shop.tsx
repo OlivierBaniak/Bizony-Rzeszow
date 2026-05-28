@@ -321,7 +321,7 @@ export default function Shop() {
                   <h3 className="font-display text-base uppercase font-bold mb-1">
                     {product.name}</h3>
                   <p className="text-sm text-muted-foreground mb-3 line-clamp-2">{product.description}</p>
-                  </h3>  
+                   
                   {product.sizes.length > 0 && (
                     <div className="mb-3">
                       <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">Rozmiar</p>
