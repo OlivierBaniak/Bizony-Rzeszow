@@ -6,6 +6,7 @@ import MemoryStore from "memorystore";
 import * as storage from "./storage";
 import speakeasy from "speakeasy";
 import QRCode from "qrcode";
+import nodemailer from "nodemailer";
 
 declare module "express-session" {
   interface SessionData {
@@ -511,7 +512,124 @@ export async function registerRoutes(
     await storage.deleteLearnArticle(req.params.id);
     res.json({ ok: true });
   });
+  const mailer = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.GMAIL_USER,
+      pass: process.env.GMAIL_PASS,
+    },
+  });
 
+  // ── Products ──────────────────────────────────────────────
+  app.get("/api/products", async (_req, res) => {
+    res.json(await storage.getAllProducts());
+  });
+
+  app.post("/api/products", requireAuth, async (req, res) => {
+    const { id, createdAt, ...data } = req.body;
+    const product = await storage.createProduct(data);
+    res.json(product);
+  });
+
+  app.put("/api/products/:id", requireAuth, async (req, res) => {
+    const { id, createdAt, ...data } = req.body;
+    const product = await storage.updateProduct(req.params.id, data);
+    res.json(product);
+  });
+
+  app.delete("/api/products/:id", requireAuth, async (req, res) => {
+    await storage.deleteProduct(req.params.id);
+    res.json({ ok: true });
+  });
+
+  // ── Orders ──────────────────────────────────────────────
+  app.get("/api/orders", requireAuth, async (_req, res) => {
+    res.json(await storage.getAllOrders());
+  });
+
+  app.post("/api/orders", async (req, res) => {
+    try {
+      const orderNumber = await storage.generateOrderNumber();
+      const order = await storage.createOrder({ ...req.body, orderNumber });
+
+      const itemsList = order.items
+        .map((i: any) => `• ${i.productName} (rozmiar: ${i.size || "—"}) x${i.quantity} — ${(i.price * i.quantity / 100).toFixed(2)} zł`)
+        .join("\n");
+
+      const paymentInfo = order.paymentMethod === "blik"
+        ? `BLIK na numer: 570 168 991 (Krzysztof Jurczyński)`
+        : `Przelew na konto:\nKrzysztof Jurczyński\n48 2910 0006 0000 0000 2933 3770\nTytuł: ${orderNumber}`;
+
+      const emailBody = `
+  Nowe zamówienie ze sklepu Bizony Rzeszów!
+
+  Nr zamówienia: ${orderNumber}
+  ─────────────────────────────
+  Klient: ${order.customerName}
+  Email: ${order.customerEmail}
+  Telefon: ${order.customerPhone}
+  Adres: ${order.customerAddress}
+  ─────────────────────────────
+  Zamówione produkty:
+  ${itemsList}
+  ─────────────────────────────
+  Łączna kwota: ${(order.totalAmount / 100).toFixed(2)} zł
+  Metoda płatności: ${order.paymentMethod === "blik" ? "BLIK" : "Przelew tradycyjny"}
+  ─────────────────────────────
+  Dane do płatności:
+  ${paymentInfo}
+      `.trim();
+
+      await mailer.sendMail({
+        from: process.env.GMAIL_USER,
+        to: "bizony.rzeszow@gmail.com",
+        subject: `[Sklep] Nowe zamówienie ${orderNumber} — ${order.customerName}`,
+        text: emailBody,
+      });
+
+      // Email potwierdzający do klienta
+      const clientEmail = `
+  Dziękujemy za zamówienie, ${order.customerName}!
+
+  Nr zamówienia: ${orderNumber}
+
+  Zamówiłeś/aś:
+  ${itemsList}
+
+  Łączna kwota: ${(order.totalAmount / 100).toFixed(2)} zł
+
+  Prosimy o wpłatę w ciągu 3 dni roboczych:
+  ${paymentInfo}
+
+  Po zaksięgowaniu płatności skontaktujemy się z Tobą w sprawie realizacji.
+
+  Bizony Rzeszów ⚾
+      `.trim();
+
+      await mailer.sendMail({
+        from: process.env.GMAIL_USER,
+        to: order.customerEmail,
+        subject: `Potwierdzenie zamówienia ${orderNumber} — Sklep Bizony Rzeszów`,
+        text: clientEmail,
+      });
+
+      res.json({ ok: true, orderNumber });
+    } catch (err) {
+      console.error("Order error:", err);
+      res.status(500).json({ message: "Błąd składania zamówienia" });
+    }
+  });
+
+  app.put("/api/orders/:id/status", requireAuth, async (req, res) => {
+    const order = await storage.updateOrderStatus(req.params.id, req.body.status);
+    res.json(order);
+  });
+
+  app.delete("/api/orders/:id", requireAuth, async (req, res) => {
+    await storage.deleteOrder(req.params.id);
+    res.json({ ok: true });
+  });
+  
     return httpServer;
   }
   

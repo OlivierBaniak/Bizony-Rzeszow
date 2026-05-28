@@ -61,6 +61,18 @@ export default function AdminDashboard() {
   const [passwordMessage, setPasswordMessage] = useState<{ type: "success" | "error", text: string } | null>(null);
    const [learnArticles, setLearnArticles] = useState<any[]>([]);
    const [learnForm, setLearnForm] = useState({ id: "", title: "", excerpt: "", content: "", image: "", slug: "" });
+  const [shopProducts, setShopProducts] = useState<any[]>([]);
+  const [shopOrders, setShopOrders] = useState<any[]>([]);
+  const [productForm, setProductForm] = useState({
+    id: "", name: "", description: "", price: "", image: "",
+    sizes: [] as string[], category: "", inStock: true, sortOrder: 0
+  });
+  const [sizeInput, setSizeInput] = useState("");
+  
+  useEffect(() => {
+    fetch("/api/products").then(r => r.json()).then(setShopProducts).catch(() => {});
+    fetch("/api/orders", { credentials: "include" }).then(r => r.json()).then(setShopOrders).catch(() => {});
+  }, []);
   
    useEffect(() => {
    fetch("/api/learn").then(r => r.json()).then(setLearnArticles);
@@ -88,6 +100,32 @@ export default function AdminDashboard() {
     return null;
   }
 
+  const handleSaveProduct = async () => {
+    if (!productForm.name || !productForm.price) return;
+    const data = { ...productForm, price: Math.round(parseFloat(productForm.price) * 100) };
+    const method = productForm.id ? "PUT" : "POST";
+    const url = productForm.id ? `/api/products/${productForm.id}` : "/api/products";
+    await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(data), credentials: "include" });
+    const updated = await fetch("/api/products").then(r => r.json());
+    setShopProducts(updated);
+    setProductForm({ id: "", name: "", description: "", price: "", image: "", sizes: [], category: "", inStock: true, sortOrder: 0 });
+  };
+  
+   const handleDeleteProduct = async (id: string) => {
+    await fetch(`/api/products/${id}`, { method: "DELETE", credentials: "include" });
+    setShopProducts(shopProducts.filter(p => p.id !== id));
+  };
+  
+  const handleUpdateOrderStatus = async (id: string, status: string) => {
+    await fetch(`/api/orders/${id}/status`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ status }), credentials: "include" });
+    setShopOrders(shopOrders.map(o => o.id === id ? { ...o, status } : o));
+  };
+  
+  const handleDeleteOrder = async (id: string) => {
+    await fetch(`/api/orders/${id}`, { method: "DELETE", credentials: "include" });
+    setShopOrders(shopOrders.filter(o => o.id !== id));
+  };
+  
   const handleChangePassword = () => {
     if (!passwordForm.newPassword || !passwordForm.confirmPassword) {
       setPasswordMessage({ type: "error", text: "Oba pola są wymagane" });
@@ -318,6 +356,9 @@ export default function AdminDashboard() {
             </TabsTrigger>
             <TabsTrigger value="settings" className="px-6 py-2 uppercase font-display tracking-wider">
               <TabsTrigger value="learn" className="px-6 py-2 uppercase font-display tracking-wider text-green-700">
+                <TabsTrigger value="shop" className="px-6 py-2 uppercase font-display tracking-wider">
+                🛒 Sklep
+                </TabsTrigger>
                 Poznaj Baseball
               </TabsTrigger>
               Ustawienia
@@ -1005,6 +1046,157 @@ export default function AdminDashboard() {
             </Card>
           </TabsContent>
 
+          <TabsContent value="shop" className="space-y-8">
+
+            {/* Produkty */}
+            <div className="grid md:grid-cols-3 gap-6">
+              <Card className="md:col-span-1 h-fit">
+                <CardHeader>
+                  <CardTitle>{productForm.id ? "Edytuj produkt" : "Dodaj produkt"}</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label>Nazwa produktu</Label>
+                    <Input value={productForm.name} onChange={e => setProductForm({...productForm, name: e.target.value})} placeholder="Czapka Bizony..." />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Kategoria</Label>
+                    <select className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                      value={productForm.category} onChange={e => setProductForm({...productForm, category: e.target.value})}>
+                      <option value="">Wybierz...</option>
+                      <option value="czapka">Czapka</option>
+                      <option value="koszulka">Koszulka</option>
+                      <option value="bluza">Bluza</option>
+                      <option value="kubek">Kubek</option>
+                      <option value="jersey">Jersey</option>
+                      <option value="inne">Inne</option>
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Opis</Label>
+                    <Textarea value={productForm.description} onChange={e => setProductForm({...productForm, description: e.target.value})} placeholder="Opis produktu..." />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Cena (zł)</Label>
+                    <Input type="number" step="0.01" value={productForm.price} onChange={e => setProductForm({...productForm, price: e.target.value})} placeholder="49.00" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Zdjęcie (URL lub Prześlij)</Label>
+                    <div className="flex gap-2">
+                      <Input value={productForm.image} onChange={e => setProductForm({...productForm, image: e.target.value})} placeholder="https://..." />
+                      <div className="relative">
+                        <Input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer"
+                          onChange={(e) => handleFileUpload(e, (url) => setProductForm({...productForm, image: url}))} />
+                        <Button variant="outline" type="button">Wybierz</Button>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Rozmiary (zostaw puste jeśli brak, np. dla kubków)</Label>
+                    <div className="flex gap-2">
+                      <Input value={sizeInput} onChange={e => setSizeInput(e.target.value.toUpperCase())} placeholder="np. XL" onKeyDown={e => { if (e.key === "Enter" && sizeInput) { setProductForm(p => ({...p, sizes: [...p.sizes, sizeInput]})); setSizeInput(""); }}} />
+                      <Button variant="outline" onClick={() => { if (sizeInput) { setProductForm(p => ({...p, sizes: [...p.sizes, sizeInput]})); setSizeInput(""); }}}>+</Button>
+                    </div>
+                    <div className="flex flex-wrap gap-2 mt-1">
+                      {productForm.sizes.map(s => (
+                        <span key={s} className="flex items-center gap-1 bg-secondary text-white text-xs px-2 py-1 rounded">
+                          {s}
+                          <button onClick={() => setProductForm(p => ({...p, sizes: p.sizes.filter(x => x !== s)}))} className="hover:text-primary">×</button>
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input type="checkbox" id="inStock" checked={productForm.inStock} onChange={e => setProductForm({...productForm, inStock: e.target.checked})} />
+                    <Label htmlFor="inStock">Dostępny w sprzedaży</Label>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button onClick={handleSaveProduct} className="flex-1 bg-primary hover:bg-primary/90 text-white">
+                      {productForm.id ? <><Save className="w-4 h-4 mr-2" />Zapisz</> : <><Plus className="w-4 h-4 mr-2" />Dodaj</>}
+                    </Button>
+                    {productForm.id && <Button variant="outline" onClick={() => setProductForm({ id: "", name: "", description: "", price: "", image: "", sizes: [], category: "", inStock: true, sortOrder: 0 })}>Anuluj</Button>}
+                  </div>
+                </CardContent>
+              </Card>
+
+              <div className="md:col-span-2 space-y-4">
+                {shopProducts.map(product => (
+                  <Card key={product.id} className="flex items-center p-4 gap-4">
+                    <img src={product.image || "https://placehold.co/64x64"} className="w-16 h-16 object-cover rounded bg-muted flex-shrink-0" alt={product.name} />
+                    <div className="flex-grow min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded-sm uppercase tracking-wider">{product.category}</span>
+                        {!product.inStock && <span className="bg-red-100 text-red-700 text-[10px] font-bold px-2 py-0.5 rounded-sm uppercase">Niedostępny</span>}
+                      </div>
+                      <h3 className="font-bold truncate">{product.name}</h3>
+                      <p className="text-sm text-primary font-bold">{(product.price / 100).toFixed(2)} zł</p>
+                      {product.sizes.length > 0 && <p className="text-xs text-muted-foreground">Rozmiary: {product.sizes.join(", ")}</p>}
+                    </div>
+                    <div className="flex gap-2 flex-shrink-0">
+                      <Button variant="outline" onClick={() => setProductForm({...product, price: (product.price / 100).toFixed(2)})} className="flex items-center gap-2"><Pencil className="w-4 h-4" /> Edytuj</Button>
+                      <Button variant="destructive" size="icon" onClick={() => handleDeleteProduct(product.id)}><Trash className="w-4 h-4" /></Button>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            </div>
+
+            {/* Zamówienia */}
+            <Card>
+              <CardHeader className="border-b">
+                <CardTitle className="flex items-center gap-2">
+                  📦 Zamówienia ({shopOrders.length})
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-0">
+                {shopOrders.length === 0 ? (
+                  <div className="text-center py-12 text-muted-foreground">Brak zamówień</div>
+                ) : (
+                  <div className="divide-y">
+                    {shopOrders.map(order => (
+                      <div key={order.id} className="p-4 flex items-start gap-4">
+                        <div className="flex-grow min-w-0">
+                          <div className="flex items-center gap-3 mb-1 flex-wrap">
+                            <span className="font-display font-bold text-primary">{order.orderNumber}</span>
+                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-sm uppercase ${
+                              order.status === "new" ? "bg-blue-100 text-blue-700" :
+                              order.status === "paid" ? "bg-yellow-100 text-yellow-700" :
+                              order.status === "shipped" ? "bg-purple-100 text-purple-700" :
+                              order.status === "completed" ? "bg-green-100 text-green-700" :
+                              "bg-red-100 text-red-700"
+                            }`}>{order.status === "new" ? "Nowe" : order.status === "paid" ? "Opłacone" : order.status === "shipped" ? "Wysłane" : order.status === "completed" ? "Zrealizowane" : "Anulowane"}</span>
+                            <span className="text-xs text-muted-foreground">{order.paymentMethod === "blik" ? "BLIK" : "Przelew"}</span>
+                          </div>
+                          <p className="font-medium text-sm">{order.customerName} — {order.customerEmail}</p>
+                          <p className="text-xs text-muted-foreground">{order.customerAddress}</p>
+                          <div className="text-xs text-muted-foreground mt-1">
+                            {order.items?.map((i: any, idx: number) => (
+                              <span key={idx}>{i.productName} {i.size ? `(${i.size})` : ""} x{i.quantity}{idx < order.items.length - 1 ? ", " : ""}</span>
+                            ))}
+                          </div>
+                          <p className="font-bold text-primary mt-1">{(order.totalAmount / 100).toFixed(2)} zł</p>
+                        </div>
+                        <div className="flex flex-col gap-2 flex-shrink-0">
+                          <select className="h-8 rounded border text-xs px-2"
+                            value={order.status}
+                            onChange={e => handleUpdateOrderStatus(order.id, e.target.value)}>
+                            <option value="new">Nowe</option>
+                            <option value="paid">Opłacone</option>
+                            <option value="shipped">Wysłane</option>
+                            <option value="completed">Zrealizowane</option>
+                            <option value="cancelled">Anulowane</option>
+                          </select>
+                          <Button variant="destructive" size="sm" onClick={() => handleDeleteOrder(order.id)}><Trash className="w-3 h-3" /></Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+          </TabsContent>
+          
           <TabsContent value="learn" className="space-y-6">
             <div className="grid md:grid-cols-3 gap-6">
               <Card className="md:col-span-1 h-fit">

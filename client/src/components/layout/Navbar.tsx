@@ -33,6 +33,7 @@ export function Navbar() {
     },
     { label: "Galeria", href: "/gallery" },
     { label: "Kontakt", href: "/contact" },
+    { label: "Sklep", href: "/sklep" },
     { label: "Poznaj Baseball", href: "/poznaj-baseball" },
   ];
 

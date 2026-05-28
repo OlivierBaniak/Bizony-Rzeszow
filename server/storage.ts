@@ -3,9 +3,11 @@ import { learnArticles, type LearnArticle } from "@shared/schema";
 import { db } from "./db";
 import {
   users, news, players, gameResults, standings,
-  galleryFolders, siteSettings, loginLogs,
+  galleryFolders, siteSettings, loginLogs, learnArticles,
+  products, orders,                                        
   type User, type NewsItem, type Player, type GameResult,
-  type Standing, type GalleryFolder, type LoginLog,
+  type Standing, type GalleryFolder, type LoginLog, type LearnArticle,
+  type Product, type Order,                                
 } from "@shared/schema";
 
 // ── Users ──────────────────────────────────────────────
@@ -185,4 +187,48 @@ export async function updateLearnArticle(id: string, data: Partial<LearnArticle>
 
 export async function deleteLearnArticle(id: string): Promise<void> {
   await db.delete(learnArticles).where(eq(learnArticles.id, id));
+}
+// ── Products ──────────────────────────────────────────────
+export async function getAllProducts(): Promise<Product[]> {
+  return db.select().from(products).orderBy(products.sortOrder);
+}
+
+export async function createProduct(data: Omit<Product, "id" | "createdAt">): Promise<Product> {
+  const result = await db.insert(products).values(data).returning();
+  return result[0];
+}
+
+export async function updateProduct(id: string, data: Partial<Product>): Promise<Product> {
+  const result = await db.update(products).set(data).where(eq(products.id, id)).returning();
+  return result[0];
+}
+
+export async function deleteProduct(id: string): Promise<void> {
+  await db.delete(products).where(eq(products.id, id));
+}
+
+// ── Orders ──────────────────────────────────────────────
+export async function getAllOrders(): Promise<Order[]> {
+  return db.select().from(orders).orderBy(desc(orders.createdAt));
+}
+
+export async function createOrder(data: Omit<Order, "id" | "createdAt">): Promise<Order> {
+  const result = await db.insert(orders).values(data).returning();
+  return result[0];
+}
+
+export async function updateOrderStatus(id: string, status: string): Promise<Order> {
+  const result = await db.update(orders).set({ status }).where(eq(orders.id, id)).returning();
+  return result[0];
+}
+
+export async function deleteOrder(id: string): Promise<void> {
+  await db.delete(orders).where(eq(orders.id, id));
+}
+
+export async function generateOrderNumber(): Promise<string> {
+  const year = new Date().getFullYear();
+  const allOrders = await db.select().from(orders);
+  const num = String(allOrders.length + 1).padStart(3, "0");
+  return `BIZ-${year}-${num}`;
 }

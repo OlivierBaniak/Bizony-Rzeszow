@@ -134,7 +134,39 @@ export type InsertLearnArticle = z.infer<typeof insertLearnArticleSchema>;
 //     content: `<h2>Statystyki pałkarzy</h2><p>Baseball słynie z bogactwa statystyk. Oto najważniejsze dla pałkarzy:</p><p><strong>AVG (Batting Average)</strong> — średnia uderzeń. Liczba trafień podzielona przez liczbę podejść. AVG .300 to bardzo dobry wynik.</p><p><strong>RBI (Runs Batted In)</strong> — liczba punktów zdobytych dzięki uderzeniu danego gracza. Wysoki RBI oznacza skutecznego pałkarza w kluczowych momentach.</p><p><strong>HR (Home Runs)</strong> — liczba home runów. Prosta, spektakularna statystyka.</p><p><strong>OBP (On-Base Percentage)</strong> — jak często gracz dostaje się na bazę (trafienia + balle + trafienie piłką).</p><h2>Statystyki miotaczy</h2><p><strong>ERA (Earned Run Average)</strong> — średnia liczba punktów zdobytych na miotacza na 9 inningów. ERA poniżej 3.00 to wynik klasy światowej.</p><p><strong>K (Strikeouts)</strong> — liczba wyeliminowań przez trzy strike'i. Wysoki K świadczy o dominującym miotaczu.</p><p><strong>WHIP (Walks + Hits per Inning Pitched)</strong> — ile graczy średnio wchodzi na bazę w każdym inningu miotacza. Im niższy, tym lepiej.</p>`,
 //   },
 // ]).onConflictDoNothing();
+export const products = pgTable("products", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: text("name").notNull(),
+  description: text("description").notNull().default(""),
+  price: integer("price").notNull().default(0), // cena w groszach (np. 4900 = 49 zł)
+  image: text("image").notNull().default(""),
+  sizes: jsonb("sizes").$type<string[]>().default([]),
+  category: text("category").notNull().default(""),
+  inStock: boolean("in_stock").notNull().default(true),
+  sortOrder: integer("sort_order").notNull().default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+});
 
+export const orders = pgTable("orders", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  orderNumber: text("order_number").notNull().unique(),
+  customerName: text("customer_name").notNull(),
+  customerEmail: text("customer_email").notNull(),
+  customerPhone: text("customer_phone").notNull().default(""),
+  customerAddress: text("customer_address").notNull(),
+  items: jsonb("items").notNull().default([]),
+  totalAmount: integer("total_amount").notNull().default(0),
+  paymentMethod: text("payment_method").notNull().default("transfer"),
+  status: text("status").notNull().default("new"),
+  notes: text("notes").default(""),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const insertProductSchema = createInsertSchema(products).omit({ id: true, createdAt: true });
+export const insertOrderSchema = createInsertSchema(orders).omit({ id: true, createdAt: true });
+
+export type Product = typeof products.$inferSelect;
+export type Order = typeof orders.$inferSelect;
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type NewsItem = typeof news.$inferSelect;
