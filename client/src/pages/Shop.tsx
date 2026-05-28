@@ -254,7 +254,7 @@ export default function Shop() {
               </div>
               <div className="border-t pt-4 flex justify-between items-center mb-6">
                 <span className="font-display uppercase tracking-wider font-bold">Razem</span>
-                <span className="text-2xl font-display font-bold text-primary">{(totalAmount / 100).toFixed(2)} zł</span>
+                <span className="text-lg font-display font-bold text-primary">{(totalAmount / 100).toFixed(2)} zł</span>
               </div>
               <Button
                 onClick={handleOrder}
@@ -403,7 +403,7 @@ export default function Shop() {
                   <div className="p-5 border-t">
                     <div className="flex justify-between items-center mb-4">
                       <span className="font-display uppercase tracking-wider font-bold">Razem</span>
-                      <span className="text-2xl font-display font-bold text-primary">{(totalAmount / 100).toFixed(2)} zł</span>
+                        <span className="text-lg font-display font-bold text-primary">{(totalAmount / 100).toFixed(2)} zł</span>
                     </div>
                     <Button
                       onClick={() => { setCartOpen(false); setStep("checkout"); }}
