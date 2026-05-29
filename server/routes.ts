@@ -552,17 +552,21 @@ export async function registerRoutes(
       const orderNumber = await storage.generateOrderNumber();
       const order = await storage.createOrder({ ...req.body, orderNumber });
 
-      const itemsList = order.items
-        .map((i: any) => `• ${i.productName} (rozmiar: ${i.size || "—"}) x${i.quantity} — ${(i.price * i.quantity / 100).toFixed(2)} zł`)
-        .join("\n");
+      // Odpowiedz klientowi natychmiast
+      res.json({ ok: true, orderNumber });
 
-      const paymentInfo = order.paymentMethod === "blik"
-        ? `BLIK na numer: 570 168 991 (Krzysztof Jurczyński)`
-        : `Przelew na konto:\nKrzysztof Jurczyński\n48 2910 0006 0000 0000 2933 3770\nTytuł: ${orderNumber}`;
+      // Emaile wysyłaj po odpowiedzi
+      try {
+        const itemsList = order.items
+          .map((i: any) => `• ${i.productName} (rozmiar: ${i.size || "—"}) x${i.quantity} — ${(i.price * i.quantity / 100).toFixed(2)} zł`)
+          .join("\n");
 
-      const emailBody = `
+        const paymentInfo = order.paymentMethod === "blik"
+          ? `BLIK na numer: 570 168 991 (Krzysztof Jurczyński)`
+          : `Przelew na konto:\nKrzysztof Jurczyński\n48 2910 0006 0000 0000 2933 3770\nTytuł: ${orderNumber}`;
+
+        const emailBody = `
   Nowe zamówienie ze sklepu Bizony Rzeszów!
-
   Nr zamówienia: ${orderNumber}
   ─────────────────────────────
   Klient: ${order.customerName}
@@ -578,42 +582,38 @@ export async function registerRoutes(
   ─────────────────────────────
   Dane do płatności:
   ${paymentInfo}
-      `.trim();
+        `.trim();
 
-      await mailer.sendMail({
-        from: process.env.GMAIL_USER,
-        to: "bizony.rzeszow@gmail.com",
-        subject: `[Sklep] Nowe zamówienie ${orderNumber} — ${order.customerName}`,
-        text: emailBody,
-      });
+        await mailer.sendMail({
+          from: process.env.GMAIL_USER,
+          to: "bizony.rzeszow@gmail.com",
+          subject: `[Sklep] Nowe zamówienie ${orderNumber} — ${order.customerName}`,
+          text: emailBody,
+        });
 
-      // Email potwierdzający do klienta
-      const clientEmail = `
+        const clientEmail = `
   Dziękujemy za zamówienie, ${order.customerName}!
-
   Nr zamówienia: ${orderNumber}
-
   Zamówiłeś/aś:
   ${itemsList}
-
   Łączna kwota: ${(order.totalAmount / 100).toFixed(2)} zł
-
   Prosimy o wpłatę w ciągu 3 dni roboczych:
   ${paymentInfo}
-
   Po zaksięgowaniu płatności skontaktujemy się z Tobą w sprawie realizacji.
-
   Bizony Rzeszów ⚾
-      `.trim();
+        `.trim();
 
-      await mailer.sendMail({
-        from: process.env.GMAIL_USER,
-        to: order.customerEmail,
-        subject: `Potwierdzenie zamówienia ${orderNumber} — Sklep Bizony Rzeszów`,
-        text: clientEmail,
-      });
+        await mailer.sendMail({
+          from: process.env.GMAIL_USER,
+          to: order.customerEmail,
+          subject: `Potwierdzenie zamówienia ${orderNumber} — Sklep Bizony Rzeszów`,
+          text: clientEmail,
+        });
 
-      res.json({ ok: true, orderNumber });
+      } catch (mailErr) {
+        console.error("Błąd wysyłki emaila:", mailErr);
+      }
+
     } catch (err) {
       console.error("Order error:", err);
       res.status(500).json({ message: "Błąd składania zamówienia" });
