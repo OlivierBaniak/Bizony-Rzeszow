@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, X, Plus, Minus, ChevronRight, CheckCircle } from "lucide-react";
+import { ShoppingCart, X, Plus, Minus, ChevronRight, CheckCircle, Truck, MapPin } from "lucide-react";
 
 interface Product {
   id: string;
@@ -20,12 +20,16 @@ interface CartItem {
   quantity: number;
 }
 
-const STATUS_LABELS: Record<string, string> = {
-  new: "Nowe",
-  paid: "Opłacone",
-  shipped: "Wysłane",
-  completed: "Zrealizowane",
-  cancelled: "Anulowane",
+interface ShippingSettings {
+  shippingCost: number;   // w groszach
+  pickupCost: number;     // zawsze 0
+  freeShippingFrom: number; // 0 = brak progu darmowej dostawy
+}
+
+const DEFAULT_SHIPPING: ShippingSettings = {
+  shippingCost: 1600,
+  pickupCost: 0,
+  freeShippingFrom: 0,
 };
 
 export default function Shop() {
@@ -36,6 +40,8 @@ export default function Shop() {
   const [step, setStep] = useState<"shop" | "checkout" | "success">("shop");
   const [orderNumber, setOrderNumber] = useState("");
   const [paymentMethod, setPaymentMethod] = useState<"transfer" | "blik">("transfer");
+  const [deliveryMethod, setDeliveryMethod] = useState<"shipping" | "pickup">("shipping");
+  const [shipping, setShipping] = useState<ShippingSettings>(DEFAULT_SHIPPING);
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     customerName: "",
@@ -50,10 +56,16 @@ export default function Shop() {
       .then(r => r.json())
       .then(data => setProducts(data.filter((p: Product) => p.inStock)))
       .catch(() => {});
+    fetch("/api/settings/shippingSettings")
+      .then(r => r.json())
+      .then(data => { if (data) setShipping(data); })
+      .catch(() => {});
   }, []);
 
+  const productTotal = cart.reduce((s, i) => s + i.product.price * i.quantity, 0);
+  const deliveryCost = deliveryMethod === "pickup" ? 0 : shipping.shippingCost;
+  const totalAmount = productTotal + deliveryCost;
   const totalItems = cart.reduce((s, i) => s + i.quantity, 0);
-  const totalAmount = cart.reduce((s, i) => s + i.product.price * i.quantity, 0);
 
   const addToCart = (product: Product) => {
     const size = selectedSizes[product.id] || (product.sizes[0] ?? "");
@@ -77,8 +89,12 @@ export default function Shop() {
   };
 
   const handleOrder = async () => {
-    if (!form.customerName || !form.customerEmail || !form.customerAddress) {
+    if (!form.customerName || !form.customerEmail) {
       alert("Uzupełnij wymagane pola.");
+      return;
+    }
+    if (deliveryMethod === "shipping" && !form.customerAddress) {
+      alert("Podaj adres dostawy.");
       return;
     }
     setLoading(true);
@@ -90,9 +106,10 @@ export default function Shop() {
           customerName: form.customerName,
           customerEmail: form.customerEmail,
           customerPhone: form.customerPhone,
-          customerAddress: form.customerAddress,
+          customerAddress: deliveryMethod === "pickup" ? "Odbiór osobisty — boisko SALOS, ul. Witolda Świądka 5a, Rzeszów" : form.customerAddress,
           notes: form.notes,
           paymentMethod,
+          deliveryMethod,
           totalAmount,
           items: cart.map(i => ({
             productId: i.product.id,
@@ -108,7 +125,7 @@ export default function Shop() {
       setOrderNumber(data.orderNumber);
       setStep("success");
       setCart([]);
-    } catch (err) {
+    } catch {
       alert("Błąd składania zamówienia. Spróbuj ponownie.");
     } finally {
       setLoading(false);
@@ -121,9 +138,7 @@ export default function Shop() {
       <div className="min-h-screen bg-background py-12">
         <div className="container mx-auto px-4 max-w-2xl text-center">
           <CheckCircle className="w-20 h-20 text-green-600 mx-auto mb-6" />
-          <h1 className="text-4xl font-display font-bold uppercase text-secondary mb-4">
-            Zamówienie złożone!
-          </h1>
+          <h1 className="text-4xl font-display font-bold uppercase text-secondary mb-4">Zamówienie złożone!</h1>
           <p className="text-muted-foreground mb-2">Nr zamówienia: <strong className="text-primary">{orderNumber}</strong></p>
           <p className="text-muted-foreground mb-8">Wysłaliśmy potwierdzenie na Twój email. Sprawdź skrzynkę.</p>
 
@@ -145,7 +160,7 @@ export default function Shop() {
             )}
             <p className="mt-4 text-sm text-gray-400">
               Kwota: <strong className="text-white text-lg">{(totalAmount / 100).toFixed(2)} zł</strong>
-              <span className="ml-2">(lub sprawdź email)</span>
+              <span className="ml-2 text-xs">(produkty + dostawa)</span>
             </p>
             <p className="mt-2 text-xs text-gray-500">Płatność w ciągu 3 dni roboczych. Po zaksięgowaniu skontaktujemy się z Tobą.</p>
           </div>
@@ -166,19 +181,49 @@ export default function Shop() {
           <button onClick={() => setStep("shop")} className="flex items-center gap-2 text-muted-foreground hover:text-primary mb-8 uppercase font-display tracking-wider text-sm">
             ← Wróć do sklepu
           </button>
-          <h1 className="text-5xl font-display font-bold uppercase text-secondary mb-12 border-l-8 border-primary pl-6">
-            Finalizacja
-          </h1>
+          <h1 className="text-5xl font-display font-bold uppercase text-secondary mb-12 border-l-8 border-primary pl-6">Finalizacja</h1>
 
           <div className="grid md:grid-cols-2 gap-8">
             {/* Formularz */}
             <div className="space-y-4">
-              <h2 className="font-display uppercase tracking-wider text-lg font-bold border-b pb-2">Dane dostawy</h2>
+
+              {/* Dostawa */}
+              <h2 className="font-display uppercase tracking-wider text-lg font-bold border-b pb-2">Sposób dostawy</h2>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  onClick={() => setDeliveryMethod("shipping")}
+                  className={`p-4 border-2 rounded text-left transition-all ${deliveryMethod === "shipping" ? "border-primary bg-primary/5" : "border-input"}`}
+                >
+                  <div className="flex items-center gap-2 font-display font-bold uppercase text-sm mb-1">
+                    <Truck className="w-4 h-4" /> Dostawa kurierem
+                  </div>
+                  <div className="text-primary font-bold">{(shipping.shippingCost / 100).toFixed(2)} zł</div>
+                </button>
+                <button
+                  onClick={() => setDeliveryMethod("pickup")}
+                  className={`p-4 border-2 rounded text-left transition-all ${deliveryMethod === "pickup" ? "border-primary bg-primary/5" : "border-input"}`}
+                >
+                  <div className="flex items-center gap-2 font-display font-bold uppercase text-sm mb-1">
+                    <MapPin className="w-4 h-4" /> Odbiór osobisty
+                  </div>
+                  <div className="text-green-600 font-bold">0,00 zł</div>
+                </button>
+              </div>
+              {deliveryMethod === "pickup" && (
+                <div className="bg-muted/50 rounded p-3 text-sm">
+                  <p className="font-bold mb-1">Miejsce odbioru:</p>
+                  <p className="text-muted-foreground">Boisko SALOS, ul. Witolda Świądka 5a, Rzeszów</p>
+                  <p className="text-xs text-muted-foreground mt-1">Termin odbioru ustalimy po złożeniu zamówienia.</p>
+                </div>
+              )}
+
+              {/* Dane */}
+              <h2 className="font-display uppercase tracking-wider text-lg font-bold border-b pb-2 pt-2">Dane kontaktowe</h2>
               {[
                 { key: "customerName", label: "Imię i nazwisko *", placeholder: "Jan Kowalski" },
                 { key: "customerEmail", label: "Email *", placeholder: "jan@example.com" },
                 { key: "customerPhone", label: "Telefon", placeholder: "+48 600 000 000" },
-                { key: "customerAddress", label: "Adres dostawy *", placeholder: "ul. Przykładowa 1, 35-001 Rzeszów" },
+                ...(deliveryMethod === "shipping" ? [{ key: "customerAddress", label: "Adres dostawy *", placeholder: "ul. Przykładowa 1, 35-001 Rzeszów" }] : []),
               ].map(f => (
                 <div key={f.key} className="space-y-1">
                   <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">{f.label}</label>
@@ -201,25 +246,18 @@ export default function Shop() {
                 />
               </div>
 
-              {/* Metoda płatności */}
-              <h2 className="font-display uppercase tracking-wider text-lg font-bold border-b pb-2 pt-4">Metoda płatności</h2>
+              {/* Płatność */}
+              <h2 className="font-display uppercase tracking-wider text-lg font-bold border-b pb-2 pt-2">Metoda płatności</h2>
               <div className="grid grid-cols-2 gap-3">
-                <button
-                  onClick={() => setPaymentMethod("transfer")}
-                  className={`p-4 border-2 rounded text-left transition-all ${paymentMethod === "transfer" ? "border-primary bg-primary/5" : "border-input"}`}
-                >
+                <button onClick={() => setPaymentMethod("transfer")} className={`p-4 border-2 rounded text-left transition-all ${paymentMethod === "transfer" ? "border-primary bg-primary/5" : "border-input"}`}>
                   <div className="font-display font-bold uppercase text-sm">Przelew</div>
                   <div className="text-xs text-muted-foreground mt-1">Tradycyjny przelew bankowy</div>
                 </button>
-                <button
-                  onClick={() => setPaymentMethod("blik")}
-                  className={`p-4 border-2 rounded text-left transition-all ${paymentMethod === "blik" ? "border-primary bg-primary/5" : "border-input"}`}
-                >
+                <button onClick={() => setPaymentMethod("blik")} className={`p-4 border-2 rounded text-left transition-all ${paymentMethod === "blik" ? "border-primary bg-primary/5" : "border-input"}`}>
                   <div className="font-display font-bold uppercase text-sm">BLIK</div>
                   <div className="text-xs text-muted-foreground mt-1">BLIK na numer telefonu</div>
                 </button>
               </div>
-
               {paymentMethod === "transfer" && (
                 <div className="bg-muted/50 rounded p-4 text-sm">
                   <p className="font-bold mb-1">Krzysztof Jurczyński</p>
@@ -239,7 +277,7 @@ export default function Shop() {
             {/* Podsumowanie */}
             <div>
               <h2 className="font-display uppercase tracking-wider text-lg font-bold border-b pb-2 mb-4">Podsumowanie</h2>
-              <div className="space-y-3 mb-6">
+              <div className="space-y-3 mb-4">
                 {cart.map((item, i) => (
                   <div key={i} className="flex items-center gap-3 p-3 bg-muted/30 rounded">
                     <img src={item.product.image} className="w-14 h-14 object-cover rounded" alt={item.product.name} />
@@ -252,10 +290,27 @@ export default function Shop() {
                   </div>
                 ))}
               </div>
-              <div className="border-t pt-4 flex justify-between items-center mb-6">
-                <span className="font-display uppercase tracking-wider font-bold">Razem</span>
-                <span className="text-lg font-display font-bold text-primary">{(totalAmount / 100).toFixed(2)} zł</span>
+
+              {/* Koszty */}
+              <div className="border rounded p-4 space-y-2 mb-4">
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Produkty</span>
+                  <span>{(productTotal / 100).toFixed(2)} zł</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground flex items-center gap-1">
+                    {deliveryMethod === "pickup" ? <><MapPin className="w-3 h-3" /> Odbiór osobisty</> : <><Truck className="w-3 h-3" /> Dostawa</>}
+                  </span>
+                  <span className={deliveryMethod === "pickup" ? "text-green-600 font-bold" : ""}>
+                    {deliveryCost === 0 ? "0,00 zł" : `${(deliveryCost / 100).toFixed(2)} zł`}
+                  </span>
+                </div>
+                <div className="border-t pt-2 flex justify-between font-bold">
+                  <span className="font-display uppercase tracking-wider">Razem</span>
+                  <span className="text-primary text-xl font-display">{(totalAmount / 100).toFixed(2)} zł</span>
+                </div>
               </div>
+
               <Button
                 onClick={handleOrder}
                 disabled={loading}
@@ -264,7 +319,7 @@ export default function Shop() {
                 {loading ? "Składanie zamówienia..." : "Złóż zamówienie"}
               </Button>
               <p className="text-xs text-muted-foreground text-center mt-3">
-                Klikając „Złóż zamówienie" akceptujesz warunki sprzedaży. Płatność realizujesz po złożeniu zamówienia.
+                Klikając „Złóż zamówienie" akceptujesz <a href="/regulamin" className="underline hover:text-primary">regulamin sklepu</a>. Płatność realizujesz po złożeniu zamówienia.
               </p>
             </div>
           </div>
@@ -279,10 +334,8 @@ export default function Shop() {
       <div className="container mx-auto px-4">
 
         {/* Nagłówek */}
-        <div className="flex items-center justify-between mb-12">
-          <h1 className="text-5xl font-display font-bold uppercase text-secondary border-l-8 border-primary pl-6">
-            Sklep ⚾
-          </h1>
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-5xl font-display font-bold uppercase text-secondary border-l-8 border-primary pl-6">Sklep ⚾</h1>
           <button
             onClick={() => setCartOpen(true)}
             className="relative flex items-center gap-2 bg-secondary text-white px-5 py-3 rounded font-display uppercase tracking-wider text-sm hover:bg-secondary/90 transition-colors"
@@ -297,6 +350,18 @@ export default function Shop() {
           </button>
         </div>
 
+        {/* Info dostawa */}
+        <div className="flex flex-wrap gap-3 mb-8">
+          <div className="flex items-center gap-2 bg-white border rounded px-4 py-2 text-sm shadow-sm">
+            <Truck className="w-4 h-4 text-primary" />
+            <span>Dostawa kurierem: <strong>{(shipping.shippingCost / 100).toFixed(2)} zł</strong></span>
+          </div>
+          <div className="flex items-center gap-2 bg-white border rounded px-4 py-2 text-sm shadow-sm">
+            <MapPin className="w-4 h-4 text-green-600" />
+            <span>Odbiór osobisty: <strong className="text-green-600">bezpłatny</strong></span>
+          </div>
+        </div>
+
         {/* Produkty */}
         {products.length === 0 ? (
           <div className="text-center py-20 text-muted-foreground">
@@ -304,12 +369,12 @@ export default function Shop() {
             <p className="text-sm mt-2">Wróć wkrótce — już pracujemy nad ofertą!</p>
           </div>
         ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {products.map(product => (
               <Card key={product.id} className="group overflow-hidden border-none shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-white">
-                  <div className="relative aspect-[4/3] overflow-hidden bg-muted">
+                <div className="relative aspect-[4/3] overflow-hidden bg-muted">
                   <img
-                    src={product.image || "https://placehold.co/400x400"}
+                    src={product.image || "https://placehold.co/400x300"}
                     alt={product.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
@@ -318,22 +383,19 @@ export default function Shop() {
                   </div>
                 </div>
                 <CardContent className="p-3">
-                  <h3 className="font-display text-base uppercase font-bold mb-1">
-                    {product.name}</h3>
+                  <h3 className="font-display text-base uppercase font-bold mb-1">{product.name}</h3>
                   <p className="text-sm text-muted-foreground mb-3 line-clamp-2">{product.description}</p>
-                   
+
                   {product.sizes.length > 0 && (
                     <div className="mb-3">
                       <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">Rozmiar</p>
-                      <div className="flex flex-wrap gap-2">
+                      <div className="flex flex-wrap gap-1">
                         {product.sizes.map(size => (
                           <button
                             key={size}
                             onClick={() => setSelectedSizes(prev => ({ ...prev, [product.id]: size }))}
-                            className={`px-3 py-1 text-xs font-bold border rounded transition-all ${
-                              selectedSizes[product.id] === size
-                                ? "bg-secondary text-white border-secondary"
-                                : "border-input hover:border-primary"
+                            className={`px-2 py-1 text-xs font-bold border rounded transition-all ${
+                              selectedSizes[product.id] === size ? "bg-secondary text-white border-secondary" : "border-input hover:border-primary"
                             }`}
                           >
                             {size}
@@ -343,15 +405,10 @@ export default function Shop() {
                     </div>
                   )}
 
-                  <div className="flex items-center justify-between mt-4">
-                    <span className="text-lg font-display font-bold text-primary">
-                      {(product.price / 100).toFixed(2)} zł
-                    </span>
-                    <Button
-                      onClick={() => addToCart(product)}
-                      className="bg-primary hover:bg-primary/90 text-white font-display uppercase tracking-wider text-xs px-4"
-                    >
-                      Dodaj do koszyka
+                  <div className="flex items-center justify-between mt-3">
+                    <span className="text-lg font-display font-bold text-primary">{(product.price / 100).toFixed(2)} zł</span>
+                    <Button onClick={() => addToCart(product)} className="bg-primary hover:bg-primary/90 text-white font-display uppercase tracking-wider text-xs px-3">
+                      Dodaj
                     </Button>
                   </div>
                 </CardContent>
@@ -359,6 +416,11 @@ export default function Shop() {
             ))}
           </div>
         )}
+
+        {/* Regulamin link */}
+        <div className="mt-12 text-center text-xs text-muted-foreground">
+          Dokonując zakupu akceptujesz <a href="/regulamin" className="underline hover:text-primary">regulamin sklepu</a>.
+        </div>
 
         {/* Koszyk sidebar */}
         {cartOpen && (
@@ -373,9 +435,7 @@ export default function Shop() {
               </div>
 
               {cart.length === 0 ? (
-                <div className="flex-1 flex items-center justify-center text-muted-foreground">
-                  Koszyk jest pusty
-                </div>
+                <div className="flex-1 flex items-center justify-center text-muted-foreground">Koszyk jest pusty</div>
               ) : (
                 <>
                   <div className="flex-1 overflow-y-auto p-5 space-y-4">
@@ -395,17 +455,47 @@ export default function Shop() {
                             </button>
                           </div>
                         </div>
-                        <div className="font-bold text-primary text-sm">
-                          {((item.product.price * item.quantity) / 100).toFixed(2)} zł
-                        </div>
+                        <div className="font-bold text-primary text-sm">{((item.product.price * item.quantity) / 100).toFixed(2)} zł</div>
                       </div>
                     ))}
                   </div>
                   <div className="p-5 border-t">
-                    <div className="flex justify-between items-center mb-4">
-                      <span className="font-display uppercase tracking-wider font-bold">Razem</span>
-                        <span className="text-lg font-display font-bold text-primary">{(totalAmount / 100).toFixed(2)} zł</span>
+                    {/* Dostawa w koszyku */}
+                    <div className="mb-3 space-y-2">
+                      <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Dostawa</p>
+                      <div className="grid grid-cols-2 gap-2">
+                        <button
+                          onClick={() => setDeliveryMethod("shipping")}
+                          className={`p-2 border rounded text-xs text-left transition-all ${deliveryMethod === "shipping" ? "border-primary bg-primary/5" : "border-input"}`}
+                        >
+                          <div className="flex items-center gap-1 font-bold"><Truck className="w-3 h-3" /> Kurier</div>
+                          <div className="text-primary">{(shipping.shippingCost / 100).toFixed(2)} zł</div>
+                        </button>
+                        <button
+                          onClick={() => setDeliveryMethod("pickup")}
+                          className={`p-2 border rounded text-xs text-left transition-all ${deliveryMethod === "pickup" ? "border-primary bg-primary/5" : "border-input"}`}
+                        >
+                          <div className="flex items-center gap-1 font-bold"><MapPin className="w-3 h-3" /> Odbiór</div>
+                          <div className="text-green-600 font-bold">0,00 zł</div>
+                        </button>
+                      </div>
                     </div>
+
+                    <div className="space-y-1 mb-4">
+                      <div className="flex justify-between text-sm text-muted-foreground">
+                        <span>Produkty</span>
+                        <span>{(productTotal / 100).toFixed(2)} zł</span>
+                      </div>
+                      <div className="flex justify-between text-sm text-muted-foreground">
+                        <span>{deliveryMethod === "pickup" ? "Odbiór osobisty" : "Dostawa"}</span>
+                        <span className={deliveryMethod === "pickup" ? "text-green-600" : ""}>{deliveryCost === 0 ? "0,00 zł" : `${(deliveryCost / 100).toFixed(2)} zł`}</span>
+                      </div>
+                      <div className="flex justify-between font-bold border-t pt-1">
+                        <span className="font-display uppercase tracking-wider">Razem</span>
+                        <span className="text-primary font-display text-lg">{(totalAmount / 100).toFixed(2)} zł</span>
+                      </div>
+                    </div>
+
                     <Button
                       onClick={() => { setCartOpen(false); setStep("checkout"); }}
                       className="w-full bg-primary hover:bg-primary/90 text-white font-display uppercase tracking-wider h-12 flex items-center gap-2"

@@ -1110,7 +1110,22 @@ export default function AdminDashboard() {
                 ))}
               </div>
             </div>
-
+            <div className="space-y-2">
+              <Label>Koszt dostawy (zł)</Label>
+              <Input type="number" step="0.01"
+                value={shippingCost}
+                onChange={e => setShippingCost(e.target.value)}
+              />
+              <Button onClick={async () => {
+                await fetch("/api/settings/shippingSettings", {
+                  method: "PUT",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ shippingCost: Math.round(parseFloat(shippingCost) * 100), pickupCost: 0, freeShippingFrom: 0 }),
+                  credentials: "include",
+                });
+              }} className="bg-primary text-white">Zapisz koszty dostawy</Button>
+            </div>
+            
             {/* Zamówienia */}
             <Card>
               <CardHeader className="border-b">

@@ -20,6 +20,7 @@ import LearnBaseball from "@/pages/LearnBaseball";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import Login from "@/pages/admin/Login";
 import NotFound from "@/pages/not-found";
+import Regulamin from "@/pages/Regulamin";
 
 function Router() {
   return (
@@ -41,6 +42,7 @@ function Router() {
           <Route path="/admin" component={AdminDashboard} />
           <Route path="/login" component={Login} />
           <Route component={NotFound} />
+          <Route path="/regulamin" component={Regulamin} />
         </Switch>
       </main>
       <Footer />
