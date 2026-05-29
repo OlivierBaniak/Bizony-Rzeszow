@@ -610,8 +610,10 @@ export async function registerRoutes(
           text: clientEmail,
         });
 
-      } catch (mailErr) {
-        console.error("Błąd wysyłki emaila:", mailErr);
+      } catch (mailErr: any) {
+        console.error("Błąd wysyłki emaila:", mailErr?.message || mailErr);
+        console.error("Kod błędu:", mailErr?.code);
+        console.error("Odpowiedź serwera:", mailErr?.response);
       }
 
     } catch (err) {
