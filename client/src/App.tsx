@@ -41,8 +41,8 @@ function Router() {
           <Route path="/poznaj-baseball" component={LearnBaseball} />
           <Route path="/admin" component={AdminDashboard} />
           <Route path="/login" component={Login} />
-          <Route component={NotFound} />
           <Route path="/regulamin" component={Regulamin} />
+          <Route component={NotFound} />
         </Switch>
       </main>
       <Footer />

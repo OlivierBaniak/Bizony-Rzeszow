@@ -68,10 +68,15 @@ export default function AdminDashboard() {
     sizes: [] as string[], category: "", inStock: true, sortOrder: 0
   });
   const [sizeInput, setSizeInput] = useState("");
+  const [shippingCost, setShippingCost] = useState("16.00");
   
   useEffect(() => {
     fetch("/api/products").then(r => r.json()).then(setShopProducts).catch(() => {});
     fetch("/api/orders", { credentials: "include" }).then(r => r.json()).then(setShopOrders).catch(() => {});
+    fetch("/api/settings/shippingSettings")
+    .then(r => r.json())
+    .then(data => { if (data?.shippingCost) setShippingCost((data.shippingCost / 100).toFixed(2)); })
+    .catch(() => {});
   }, []);
   
    useEffect(() => {
