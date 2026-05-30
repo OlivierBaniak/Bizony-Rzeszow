@@ -229,6 +229,17 @@ export async function deleteOrder(id: string): Promise<void> {
 export async function generateOrderNumber(): Promise<string> {
   const year = new Date().getFullYear();
   const allOrders = await db.select().from(orders);
-  const num = String(allOrders.length + 1).padStart(3, "0");
+
+  // Znajdź najwyższy istniejący numer i dodaj 1
+  let maxNum = 0;
+  for (const order of allOrders) {
+    const match = order.orderNumber?.match(/BIZ-\d{4}-(\d+)/);
+    if (match) {
+      const num = parseInt(match[1]);
+      if (num > maxNum) maxNum = num;
+    }
+  }
+
+  const num = String(maxNum + 1).padStart(3, "0");
   return `BIZ-${year}-${num}`;
 }
