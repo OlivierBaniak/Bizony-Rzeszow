@@ -556,16 +556,15 @@ export async function registerRoutes(
       res.json({ ok: true, orderNumber });
 
       // Emaile wysyłaj po odpowiedzi
-      try {
-        const itemsList = order.items
-          .map((i: any) => `• ${i.productName} (rozmiar: ${i.size || "—"}) x${i.quantity} — ${(i.price * i.quantity / 100).toFixed(2)} zł`)
-          .join("\n");
+      const itemsList = order.items
+        .map((i: any) => `• ${i.productName} (rozmiar: ${i.size || "—"}) x${i.quantity} — ${(i.price * i.quantity / 100).toFixed(2)} zł`)
+        .join("\n");
 
-        const paymentInfo = order.paymentMethod === "blik"
-          ? `BLIK na numer: 570 168 991 (Krzysztof Jurczyński)`
-          : `Przelew na konto:\nKrzysztof Jurczyński\n48 2910 0006 0000 0000 2933 3770\nTytuł: ${orderNumber}`;
+      const paymentInfo = order.paymentMethod === "blik"
+        ? `BLIK na numer: 570 168 991 (Krzysztof Jurczyński)`
+        : `Przelew na konto:\nKrzysztof Jurczyński\n48 2910 0006 0000 0000 2933 3770\nTytuł: ${orderNumber}`;
 
-        const emailBody = `
+      const emailBody = `
   Nowe zamówienie ze sklepu Bizony Rzeszów!
   Nr zamówienia: ${orderNumber}
   ─────────────────────────────
@@ -582,22 +581,9 @@ export async function registerRoutes(
   ─────────────────────────────
   Dane do płatności:
   ${paymentInfo}
-        `.trim();
+      `.trim();
 
-        try {
-          console.log("=== MAIL START ===");
-          console.log("GMAIL_USER:", process.env.GMAIL_USER);
-          console.log("GMAIL_PASS istnieje:", !!process.env.GMAIL_PASS);
-        
-        await mailer.sendMail({
-          from: process.env.GMAIL_USER,
-          to: "bizony.rzeszow@gmail.com",
-          subject: `[Sklep] Nowe zamówienie ${orderNumber} — ${order.customerName}`,
-          text: emailBody,
-        });
-          console.log("=== MAIL ADMIN OK ===");
-
-        const clientEmail = `
+      const clientEmail = `
   Dziękujemy za zamówienie, ${order.customerName}!
   Nr zamówienia: ${orderNumber}
   Zamówiłeś/aś:
@@ -607,7 +593,20 @@ export async function registerRoutes(
   ${paymentInfo}
   Po zaksięgowaniu płatności skontaktujemy się z Tobą w sprawie realizacji.
   Bizony Rzeszów ⚾
-        `.trim();
+      `.trim();
+
+      try {
+        console.log("=== MAIL START ===");
+        console.log("GMAIL_USER:", process.env.GMAIL_USER);
+        console.log("GMAIL_PASS istnieje:", !!process.env.GMAIL_PASS);
+
+        await mailer.sendMail({
+          from: process.env.GMAIL_USER,
+          to: "bizony.rzeszow@gmail.com",
+          subject: `[Sklep] Nowe zamówienie ${orderNumber} — ${order.customerName}`,
+          text: emailBody,
+        });
+        console.log("=== MAIL ADMIN OK ===");
 
         await mailer.sendMail({
           from: process.env.GMAIL_USER,
@@ -615,8 +614,8 @@ export async function registerRoutes(
           subject: `Potwierdzenie zamówienia ${orderNumber} — Sklep Bizony Rzeszów`,
           text: clientEmail,
         });
-          console.log("=== MAIL CLIENT OK ===");
-          
+        console.log("=== MAIL CLIENT OK ===");
+
       } catch (mailErr: any) {
         console.error("Błąd wysyłki emaila:", mailErr?.message || mailErr);
         console.error("Kod błędu:", mailErr?.code);
