@@ -584,12 +584,18 @@ export async function registerRoutes(
   ${paymentInfo}
         `.trim();
 
+        try {
+          console.log("=== MAIL START ===");
+          console.log("GMAIL_USER:", process.env.GMAIL_USER);
+          console.log("GMAIL_PASS istnieje:", !!process.env.GMAIL_PASS);
+        
         await mailer.sendMail({
           from: process.env.GMAIL_USER,
           to: "bizony.rzeszow@gmail.com",
           subject: `[Sklep] Nowe zamówienie ${orderNumber} — ${order.customerName}`,
           text: emailBody,
         });
+          console.log("=== MAIL ADMIN OK ===");
 
         const clientEmail = `
   Dziękujemy za zamówienie, ${order.customerName}!
@@ -609,7 +615,8 @@ export async function registerRoutes(
           subject: `Potwierdzenie zamówienia ${orderNumber} — Sklep Bizony Rzeszów`,
           text: clientEmail,
         });
-
+          console.log("=== MAIL CLIENT OK ===");
+          
       } catch (mailErr: any) {
         console.error("Błąd wysyłki emaila:", mailErr?.message || mailErr);
         console.error("Kod błędu:", mailErr?.code);
