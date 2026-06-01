@@ -595,14 +595,14 @@ export async function registerRoutes(
         console.log("GMAIL_PASS istnieje:", !!process.env.GMAIL_PASS);
 
         await sgMail.send({
-          from: "bizony.rzeszow@gmail.com",
+          from: "sklep@bizonyrzeszow.pl",
           to: "bizony.rzeszow@gmail.com",
           subject: `[Sklep] Nowe zamówienie ${orderNumber} — ${order.customerName}`,
           text: emailBody,
         });
 
         await sgMail.send({
-          from: "bizony.rzeszow@gmail.com",
+          from: "sklep@bizonyrzeszow.pl",
           to: order.customerEmail,
           subject: `Potwierdzenie zamówienia ${orderNumber} — Sklep Bizony Rzeszów`,
           text: clientEmail,
