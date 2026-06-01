@@ -572,6 +572,7 @@ export async function registerRoutes(
   ─────────────────────────────
   Łączna kwota: ${(order.totalAmount / 100).toFixed(2)} zł
   Metoda płatności: ${order.paymentMethod === "blik" ? "BLIK" : "Przelew tradycyjny"}
+  ${order.notes ? `─────────────────────────────\n  Uwagi klienta: ${order.notes}` : ""}
   ─────────────────────────────
   Dane do płatności:
   ${paymentInfo}
@@ -583,6 +584,7 @@ export async function registerRoutes(
   Zamówiłeś/aś:
   ${itemsList}
   Łączna kwota: ${(order.totalAmount / 100).toFixed(2)} zł
+  ${order.notes ? `\nUwagi do zamówienia: ${order.notes}\n` : ""}
   Prosimy o wpłatę w ciągu 3 dni roboczych:
   ${paymentInfo}
   Po zaksięgowaniu płatności skontaktujemy się z Tobą w sprawie realizacji.

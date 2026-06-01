@@ -1165,6 +1165,11 @@ export default function AdminDashboard() {
                             ))}
                           </div>
                           <p className="font-bold text-primary mt-1">{(order.totalAmount / 100).toFixed(2)} zł</p>
+                          {order.notes && (
+                            <p className="text-xs text-muted-foreground mt-1 italic">
+                              💬 Uwagi: {order.notes}
+                            </p>
+                          )}
                         </div>
                         <div className="flex flex-col gap-2 flex-shrink-0">
                           <select className="h-8 rounded border text-xs px-2"
