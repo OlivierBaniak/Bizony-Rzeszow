@@ -43,6 +43,7 @@ export default function Shop() {
   const [deliveryMethod, setDeliveryMethod] = useState<"shipping" | "pickup">("shipping");
   const [shipping, setShipping] = useState<ShippingSettings>(DEFAULT_SHIPPING);
   const [loading, setLoading] = useState(false);
+  const [finalAmount, setFinalAmount] = useState(0);
   const [form, setForm] = useState({
     customerName: "",
     customerEmail: "",
@@ -123,6 +124,7 @@ export default function Shop() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
       setOrderNumber(data.orderNumber);
+      setFinalAmount(totalAmount);
       setStep("success");
       setCart([]);
     } catch {
@@ -158,8 +160,9 @@ export default function Shop() {
                 <p className="text-sm text-gray-400 mt-2">Tytuł: <strong className="text-white">{orderNumber}</strong></p>
               </>
             )}
+            
             <p className="mt-4 text-sm text-gray-400">
-              Kwota: <strong className="text-white text-lg">{(totalAmount / 100).toFixed(2)} zł</strong>
+              Kwota: <strong className="text-white text-lg">{(finalAmount / 100).toFixed(2)} zł</strong>
               <span className="ml-2 text-xs">(produkty + dostawa)</span>
             </p>
             <p className="mt-2 text-xs text-gray-500">Płatność w ciągu 3 dni roboczych. Po zaksięgowaniu skontaktujemy się z Tobą.</p>
