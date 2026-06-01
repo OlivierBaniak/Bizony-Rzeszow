@@ -21,6 +21,8 @@ import AdminDashboard from "@/pages/admin/AdminDashboard";
 import Login from "@/pages/admin/Login";
 import NotFound from "@/pages/not-found";
 import Regulamin from "@/pages/Regulamin";
+import { CookieBanner } from "@/components/CookieBanner";
+import PolitykaCookies from "@/pages/PolitykaCookies";
 
 function Router() {
   return (
@@ -42,10 +44,12 @@ function Router() {
           <Route path="/admin" component={AdminDashboard} />
           <Route path="/login" component={Login} />
           <Route path="/regulamin" component={Regulamin} />
+          <Route path="/polityka-cookies" component={PolitykaCookies} />
           <Route component={NotFound} />
         </Switch>
       </main>
       <Footer />
+      <CookieBanner />
     </div>
   );
 }
