@@ -6,7 +6,7 @@ import MemoryStore from "memorystore";
 import * as storage from "./storage";
 import speakeasy from "speakeasy";
 import QRCode from "qrcode";
-import nodemailer from "nodemailer";
+import sgMail from "@sendgrid/mail";
 
 declare module "express-session" {
   interface SessionData {
@@ -512,18 +512,7 @@ export async function registerRoutes(
     await storage.deleteLearnArticle(req.params.id);
     res.json({ ok: true });
   });
-  const mailer = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 587,
-    secure: false,
-    auth: {
-      user: process.env.GMAIL_USER,
-      pass: process.env.GMAIL_PASS,
-    },
-    connectionTimeout: 10000,
-    greetingTimeout: 10000,
-    socketTimeout: 10000,
-  });
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
 
   // ── Products ──────────────────────────────────────────────
   app.get("/api/products", async (_req, res) => {
@@ -605,16 +594,15 @@ export async function registerRoutes(
         console.log("GMAIL_USER:", process.env.GMAIL_USER);
         console.log("GMAIL_PASS istnieje:", !!process.env.GMAIL_PASS);
 
-        await mailer.sendMail({
-          from: process.env.GMAIL_USER,
+        await sgMail.send({
+          from: "bizony.rzeszow@gmail.com",
           to: "bizony.rzeszow@gmail.com",
           subject: `[Sklep] Nowe zamówienie ${orderNumber} — ${order.customerName}`,
           text: emailBody,
         });
-        console.log("=== MAIL ADMIN OK ===");
 
-        await mailer.sendMail({
-          from: process.env.GMAIL_USER,
+        await sgMail.send({
+          from: "bizony.rzeszow@gmail.com",
           to: order.customerEmail,
           subject: `Potwierdzenie zamówienia ${orderNumber} — Sklep Bizony Rzeszów`,
           text: clientEmail,
