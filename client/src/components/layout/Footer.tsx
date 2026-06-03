@@ -30,6 +30,7 @@ export function Footer() {
               <li><Link href="/contact" className="hover:text-primary transition-colors">Kontakt</Link></li>
               <li><Link href="/regulamin" className="hover:text-primary transition-colors">Regulamin sklepu</Link></li>
               <li><Link href="/polityka-cookies" className="hover:text-primary transition-colors">Polityka cookies</Link></li>
+              <li><Link href="/polityka-prywatnosci" className="hover:text-primary transition-colors">Polityka prywatności</Link></li>
               <li className="pt-4 border-t border-secondary-foreground/10">
                 <Link href="/admin" className="inline-flex items-center gap-2 text-xs opacity-30 hover:opacity-100 transition-opacity">
                   <Shield className="w-3 h-3" />

@@ -23,6 +23,7 @@ import NotFound from "@/pages/not-found";
 import Regulamin from "@/pages/Regulamin";
 import { CookieBanner } from "@/components/CookieBanner";
 import PolitykaCookies from "@/pages/PolitykaCookies";
+import PolitykaPrywatnosci from "@/pages/PolitykaPrywatnosci";
 
 function Router() {
   return (
@@ -45,6 +46,7 @@ function Router() {
           <Route path="/login" component={Login} />
           <Route path="/regulamin" component={Regulamin} />
           <Route path="/polityka-cookies" component={PolitykaCookies} />
+          <Route path="/polityka-prywatnosci" component={PolitykaPrywatnosci} />
           <Route component={NotFound} />
         </Switch>
       </main>
