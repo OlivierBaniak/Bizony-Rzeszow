@@ -80,6 +80,7 @@ export default function PolitykaPrywatnosci() {
             </p>
             <ul className="list-disc pl-5 space-y-2 text-muted-foreground">
               <li><strong>Render.com</strong> — dostawca hostingu serwisu (serwery w USA; transfer na podstawie standardowych klauzul umownych SCC zatwierdz. przez KE)</li>
+              <li><strong>Neon.tech</strong> — dostawca bazy danych PostgreSQL (serwery w USA; transfer na podstawie standardowych klauzul umownych SCC zatwierdz. przez KE). Polityka prywatności: <a href="https://neon.tech/privacy-policy" target="_blank" rel="noopener" className="text-primary underline">neon.tech/privacy-policy</a></li>
               <li><strong>Cloudinary</strong> — hosting zdjęć i materiałów graficznych (serwery w USA; transfer na podstawie SCC)</li>
               <li><strong>Firma kurierska</strong> — w zakresie niezbędnym do doręczenia zamówienia (imię, nazwisko, adres, telefon)</li>
               <li><strong>Bank / operator płatności</strong> — w zakresie realizacji przelewu (dane podane przez klienta)</li>
