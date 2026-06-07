@@ -42,7 +42,7 @@ export default function Regulamin() {
             <h2 className="text-xl font-display font-bold uppercase text-secondary mb-3">§4. Dostawa</h2>
             <ul className="text-muted-foreground leading-relaxed space-y-2 list-disc pl-5">
               <li>Dostawa realizowana jest kurierem na terenie Polski. Koszt dostawy zgodny z aktualnym cennikiem podanym w sklepie.</li>
-              <li>Możliwy jest odbiór osobisty pod adresem: Sports SALOS, ul. Witolda Świądka 5a, Rzeszów — bezpłatnie. Termin odbioru ustalany jest indywidualnie.</li>
+              <li>Możliwy jest odbiór osobisty pod adresem: Sports SALOS, ul. Witolda Świadka 5a, Rzeszów — bezpłatnie. Termin odbioru ustalany jest indywidualnie.</li>
               <li>Czas realizacji zamówienia: do 14 dni roboczych od zaksięgowania płatności.</li>
               <li>Produkty na zamówienie (print-on-demand) mogą wymagać dłuższego czasu realizacji.</li>
             </ul>

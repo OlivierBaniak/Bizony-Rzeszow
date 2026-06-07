@@ -112,7 +112,7 @@ export default function Shop() {
           customerName: form.customerName,
           customerEmail: form.customerEmail,
           customerPhone: form.customerPhone,
-          customerAddress: deliveryMethod === "pickup" ? "Odbiór osobisty — boisko SALOS, ul. Witolda Świądka 5a, Rzeszów" : form.customerAddress,
+          customerAddress: deliveryMethod === "pickup" ? "Odbiór osobisty — boisko SALOS, ul. Witolda Świadka 5a, Rzeszów" : form.customerAddress,
           notes: form.notes,
           paymentMethod,
           deliveryMethod,
@@ -225,7 +225,7 @@ export default function Shop() {
               {deliveryMethod === "pickup" && (
                 <div className="bg-muted/50 rounded p-3 text-sm">
                   <p className="font-bold mb-1">Miejsce odbioru:</p>
-                  <p className="text-muted-foreground">Boisko SALOS, ul. Witolda Świądka 5a, Rzeszów</p>
+                  <p className="text-muted-foreground">Boisko SALOS, ul. Witolda Świadka 5a, Rzeszów</p>
                   <p className="text-xs text-muted-foreground mt-1">Termin odbioru ustalimy po złożeniu zamówienia.</p>
                 </div>
               )}

@@ -109,7 +109,7 @@ export default function Join() {
                 <div>
                   <p className="text-xs text-muted-foreground uppercase font-bold tracking-wider mb-0.5">Boisko</p>
                   <p className="font-medium text-sm">Sports SALOS</p>
-                  <p className="text-sm text-muted-foreground">ul. Witolda Świądka 5a, Rzeszów</p>
+                  <p className="text-sm text-muted-foreground">ul. Witolda Świadka 5a, Rzeszów</p>
                   <a
                     href="https://maps.google.com/?cid=8769096682282305758"
                     target="_blank"
