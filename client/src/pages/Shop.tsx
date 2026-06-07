@@ -21,9 +21,9 @@ interface CartItem {
 }
 
 interface ShippingSettings {
-  shippingCost: number;   // w groszach
-  pickupCost: number;     // zawsze 0
-  freeShippingFrom: number; // 0 = brak progu darmowej dostawy
+  shippingCost: number;
+  pickupCost: number;
+  freeShippingFrom: number;
 }
 
 const DEFAULT_SHIPPING: ShippingSettings = {
@@ -44,6 +44,7 @@ export default function Shop() {
   const [shipping, setShipping] = useState<ShippingSettings>(DEFAULT_SHIPPING);
   const [loading, setLoading] = useState(false);
   const [finalAmount, setFinalAmount] = useState(0);
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const [form, setForm] = useState({
     customerName: "",
     customerEmail: "",
@@ -96,6 +97,10 @@ export default function Shop() {
     }
     if (deliveryMethod === "shipping" && !form.customerAddress) {
       alert("Podaj adres dostawy.");
+      return;
+    }
+    if (!termsAccepted) {
+      alert("Zaakceptuj regulamin i politykę prywatności przed złożeniem zamówienia.");
       return;
     }
     setLoading(true);
@@ -160,12 +165,17 @@ export default function Shop() {
                 <p className="text-sm text-gray-400 mt-2">Tytuł: <strong className="text-white">{orderNumber}</strong></p>
               </>
             )}
-            
             <p className="mt-4 text-sm text-gray-400">
               Kwota: <strong className="text-white text-lg">{(finalAmount / 100).toFixed(2)} zł</strong>
               <span className="ml-2 text-xs">(produkty + dostawa)</span>
             </p>
             <p className="mt-2 text-xs text-gray-500">Płatność w ciągu 3 dni roboczych. Po zaksięgowaniu skontaktujemy się z Tobą.</p>
+          </div>
+
+          {/* Info o prawie odstąpienia */}
+          <div className="bg-muted/50 rounded-lg p-4 text-sm text-muted-foreground text-left mb-6">
+            <p className="font-bold text-foreground mb-1">Prawo odstąpienia od umowy</p>
+            <p>Masz prawo odstąpić od umowy w ciągu <strong>14 dni</strong> od otrzymania towaru bez podania przyczyny. Aby skorzystać z tego prawa, skontaktuj się z nami: <a href="mailto:bizony.rzeszow@gmail.com" className="text-primary underline">bizony.rzeszow@gmail.com</a></p>
           </div>
 
           <Button onClick={() => setStep("shop")} className="bg-primary hover:bg-primary/90 text-white font-display uppercase tracking-wider">
@@ -314,15 +324,49 @@ export default function Shop() {
                 </div>
               </div>
 
+              {/* Klauzula informacyjna RODO */}
+              <div className="bg-muted/40 rounded p-3 text-xs text-muted-foreground mb-4">
+                <p className="font-bold text-foreground mb-1">Informacja o przetwarzaniu danych</p>
+                <p>
+                  Administratorem Twoich danych osobowych jest <strong>Klub Baseballowy Bizony Rzeszów</strong> (bizony.rzeszow@gmail.com).
+                  Dane przetwarzane są w celu realizacji zamówienia (art. 6 ust. 1 lit. b RODO) i przechowywane przez 5 lat.
+                  Przysługuje Ci prawo dostępu, sprostowania i usunięcia danych. Szczegóły:{" "}
+                  <a href="/polityka-prywatnosci" className="text-primary underline">Polityka prywatności</a>.
+                </p>
+              </div>
+
+              {/* Info o prawie odstąpienia */}
+              <div className="bg-blue-50 border border-blue-200 rounded p-3 text-xs text-blue-800 mb-4">
+                <p className="font-bold mb-1">Prawo odstąpienia od umowy</p>
+                <p>Masz prawo odstąpić od umowy w ciągu <strong>14 dni</strong> od otrzymania towaru bez podania przyczyny. Szczegóły w <a href="/regulamin" className="underline">regulaminie sklepu</a>.</p>
+              </div>
+
+              {/* Checkbox zgody */}
+              <label className="flex items-start gap-3 cursor-pointer mb-4">
+                <input
+                  type="checkbox"
+                  checked={termsAccepted}
+                  onChange={e => setTermsAccepted(e.target.checked)}
+                  className="mt-0.5 w-4 h-4 accent-primary flex-shrink-0"
+                />
+                <span className="text-xs text-muted-foreground leading-relaxed">
+                  Zapoznałem/am się z{" "}
+                  <a href="/regulamin" target="_blank" className="text-primary underline">regulaminem sklepu</a>
+                  {" "}i{" "}
+                  <a href="/polityka-prywatnosci" target="_blank" className="text-primary underline">polityką prywatności</a>
+                  {" "}i akceptuję ich warunki. *
+                </span>
+              </label>
+
               <Button
                 onClick={handleOrder}
-                disabled={loading}
-                className="w-full bg-primary hover:bg-primary/90 text-white font-display uppercase tracking-wider text-lg h-14"
+                disabled={loading || !termsAccepted}
+                className="w-full bg-primary hover:bg-primary/90 text-white font-display uppercase tracking-wider text-lg h-14 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? "Składanie zamówienia..." : "Złóż zamówienie"}
               </Button>
-              <p className="text-xs text-muted-foreground text-center mt-3">
-                Klikając „Złóż zamówienie" akceptujesz <a href="/regulamin" className="underline hover:text-primary">regulamin sklepu</a>. Płatność realizujesz po złożeniu zamówienia.
+              <p className="text-xs text-muted-foreground text-center mt-2">
+                * Pole obowiązkowe
               </p>
             </div>
           </div>
@@ -422,7 +466,7 @@ export default function Shop() {
 
         {/* Regulamin link */}
         <div className="mt-12 text-center text-xs text-muted-foreground">
-          Dokonując zakupu akceptujesz <a href="/regulamin" className="underline hover:text-primary">regulamin sklepu</a>.
+          Dokonując zakupu akceptujesz <a href="/regulamin" className="underline hover:text-primary">regulamin sklepu</a> i <a href="/polityka-prywatnosci" className="underline hover:text-primary">politykę prywatności</a>.
         </div>
 
         {/* Koszyk sidebar */}
@@ -463,27 +507,19 @@ export default function Shop() {
                     ))}
                   </div>
                   <div className="p-5 border-t">
-                    {/* Dostawa w koszyku */}
                     <div className="mb-3 space-y-2">
                       <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Dostawa</p>
                       <div className="grid grid-cols-2 gap-2">
-                        <button
-                          onClick={() => setDeliveryMethod("shipping")}
-                          className={`p-2 border rounded text-xs text-left transition-all ${deliveryMethod === "shipping" ? "border-primary bg-primary/5" : "border-input"}`}
-                        >
+                        <button onClick={() => setDeliveryMethod("shipping")} className={`p-2 border rounded text-xs text-left transition-all ${deliveryMethod === "shipping" ? "border-primary bg-primary/5" : "border-input"}`}>
                           <div className="flex items-center gap-1 font-bold"><Truck className="w-3 h-3" /> Kurier</div>
                           <div className="text-primary">{(shipping.shippingCost / 100).toFixed(2)} zł</div>
                         </button>
-                        <button
-                          onClick={() => setDeliveryMethod("pickup")}
-                          className={`p-2 border rounded text-xs text-left transition-all ${deliveryMethod === "pickup" ? "border-primary bg-primary/5" : "border-input"}`}
-                        >
+                        <button onClick={() => setDeliveryMethod("pickup")} className={`p-2 border rounded text-xs text-left transition-all ${deliveryMethod === "pickup" ? "border-primary bg-primary/5" : "border-input"}`}>
                           <div className="flex items-center gap-1 font-bold"><MapPin className="w-3 h-3" /> Odbiór</div>
                           <div className="text-green-600 font-bold">0,00 zł</div>
                         </button>
                       </div>
                     </div>
-
                     <div className="space-y-1 mb-4">
                       <div className="flex justify-between text-sm text-muted-foreground">
                         <span>Produkty</span>
@@ -498,7 +534,6 @@ export default function Shop() {
                         <span className="text-primary font-display text-lg">{(totalAmount / 100).toFixed(2)} zł</span>
                       </div>
                     </div>
-
                     <Button
                       onClick={() => { setCartOpen(false); setStep("checkout"); }}
                       className="w-full bg-primary hover:bg-primary/90 text-white font-display uppercase tracking-wider h-12 flex items-center gap-2"

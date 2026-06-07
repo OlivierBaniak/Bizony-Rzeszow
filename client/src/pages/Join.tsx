@@ -30,6 +30,7 @@ export default function Join() {
   const [open, setOpen] = useState<number | null>(null);
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [consentAccepted, setConsentAccepted] = useState(false);
   const [form, setForm] = useState({
     name: "",
     age: "",
@@ -45,6 +46,10 @@ export default function Join() {
   const handleSubmit = async () => {
     if (!form.name || !form.age || !form.phone || !form.experience || !form.availability) {
       alert("Uzupełnij wszystkie pola przed wysłaniem.");
+      return;
+    }
+    if (!consentAccepted) {
+      alert("Zaakceptuj zgodę na przetwarzanie danych osobowych.");
       return;
     }
     setLoading(true);
@@ -200,17 +205,43 @@ export default function Join() {
                       <option>Elastycznie</option>
                     </select>
                   </div>
+
+                  {/* Klauzula informacyjna RODO */}
+                  <div className="bg-muted/40 rounded p-3 text-xs text-muted-foreground">
+                    <p className="font-bold text-foreground mb-1">Informacja o przetwarzaniu danych</p>
+                    <p>
+                      Administratorem Twoich danych jest <strong>Klub Baseballowy Bizony Rzeszów</strong> (bizony.rzeszow@gmail.com).
+                      Dane przetwarzane są w celu kontaktu w sprawie dołączenia do klubu (art. 6 ust. 1 lit. a RODO — zgoda).
+                      Możesz cofnąć zgodę w dowolnym momencie. Szczegóły:{" "}
+                      <a href="/polityka-prywatnosci" className="text-primary underline">Polityka prywatności</a>.
+                    </p>
+                  </div>
+
+                  {/* Checkbox zgody */}
+                  <label className="flex items-start gap-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={consentAccepted}
+                      onChange={e => setConsentAccepted(e.target.checked)}
+                      className="mt-0.5 w-4 h-4 accent-primary flex-shrink-0"
+                    />
+                    <span className="text-xs text-muted-foreground leading-relaxed">
+                      Wyrażam zgodę na przetwarzanie moich danych osobowych przez Klub Baseballowy Bizony Rzeszów w celu kontaktu w sprawie dołączenia do klubu. Zapoznałem/am się z{" "}
+                      <a href="/polityka-prywatnosci" target="_blank" className="text-primary underline">polityką prywatności</a>. *
+                    </span>
+                  </label>
+
                   <Button
                     onClick={handleSubmit}
-                    disabled={loading}
-                    className="w-full bg-primary hover:bg-primary/90 text-white font-display uppercase tracking-wider text-sm h-12 mt-2"
+                    disabled={loading || !consentAccepted}
+                    className="w-full bg-primary hover:bg-primary/90 text-white font-display uppercase tracking-wider text-sm h-12 mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {loading ? "Wysyłanie..." : (
                       <><Send className="w-4 h-4 mr-2" /> Wyślij zgłoszenie na Messenger</>
                     )}
                   </Button>
                   <p className="text-xs text-muted-foreground text-center">
-                    Odezwiemy się przez Facebook Messenger w ciągu 24h
+                    * Pole obowiązkowe · Odezwiemy się przez Facebook Messenger w ciągu 24h
                   </p>
                 </div>
               )}
