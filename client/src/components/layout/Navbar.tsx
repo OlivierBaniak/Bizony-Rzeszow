@@ -21,7 +21,14 @@ export function Navbar() {
   const navItems = [
     { label: "Start", href: "/" },
     { label: "Aktualności", href: "/news" },
-    { label: "O Klubie", href: "/about" },
+    { 
+      label: "O Klubie", 
+      href: "#",
+      children: [
+        { label: "O Klubie", href: "/about" },
+        { label: "Poznaj Baseball", href: "/poznaj-baseball" },
+      ]
+    },
     { label: "Drużyna", href: "/team" },
     { 
       label: "Rozgrywki", 
@@ -32,9 +39,8 @@ export function Navbar() {
       ]
     },
     { label: "Galeria", href: "/gallery" },
-    { label: "Kontakt", href: "/contact" },
     { label: "Sklep", href: "/sklep" },
-    { label: "Poznaj Baseball", href: "/poznaj-baseball" },
+    { label: "Kontakt", href: "/contact" },
   ];
 
   const NavLink = ({ item, mobile = false }: { item: any; mobile?: boolean }) => {
@@ -68,18 +74,18 @@ export function Navbar() {
 
     if (item.children && mobile) {
       return (
-        <div className="flex flex-col gap-4">
-          <span className="uppercase font-display tracking-wider text-2xl py-2 text-muted-foreground">
+        <div className="flex flex-col gap-3">
+          <span className="uppercase font-display tracking-wider text-xl py-1 text-muted-foreground">
             {item.label}
           </span>
-          <div className="pl-6 flex flex-col gap-4 border-l-2 border-primary/20">
+          <div className="pl-5 flex flex-col gap-3 border-l-2 border-primary/20">
             {item.children.map((child: any) => (
               <Link
                 key={child.href}
                 href={child.href}
                 onClick={() => setIsOpen(false)}
                 className={`
-                  uppercase font-display tracking-wider transition-colors duration-200 text-xl
+                  uppercase font-display tracking-wider transition-colors duration-200 text-lg
                   ${location === child.href ? "text-primary font-bold" : "text-foreground"}
                 `}
               >
@@ -97,7 +103,7 @@ export function Navbar() {
         onClick={() => mobile && setIsOpen(false)}
         className={`
           uppercase font-display tracking-wider transition-colors duration-200
-          ${mobile ? "text-2xl py-2" : "text-lg hover:text-primary"}
+          ${mobile ? "text-xl py-1" : "text-lg hover:text-primary"}
           ${isActive ? "text-primary font-bold" : "text-foreground"}
         `}
       >
@@ -112,9 +118,13 @@ export function Navbar() {
 
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 group">
-          <img src={logo} alt="Bizony Rzeszów Logo" className="h-16 w-auto object-contain" />
+          <img
+            src={logo}
+            alt="Bizony Rzeszów Logo"
+            className="h-12 md:h-16 w-auto object-contain"
+          />
           <div className="flex flex-col">
-            <span className="font-display text-2xl leading-none font-bold uppercase tracking-wider text-foreground">
+            <span className="font-display text-xl md:text-2xl leading-none font-bold uppercase tracking-wider text-foreground">
               Bizony
             </span>
             <span className="text-xs font-sans tracking-[0.2em] text-muted-foreground uppercase">
@@ -158,20 +168,20 @@ export function Navbar() {
                 <Menu className="w-6 h-6" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[300px] sm:w-[400px]">
-              <div className="flex flex-col gap-6 mt-10">
+            <SheetContent side="right" className="w-[300px] sm:w-[400px] overflow-y-auto">
+              <div className="flex flex-col gap-5 mt-10">
                 {navItems.map((item) => (
                   <NavLink key={item.label} item={item} mobile />
                 ))}
 
                 {/* Dołącz — mobile */}
                 <Link href="/dolacz" onClick={() => setIsOpen(false)}>
-                  <Button className="w-full bg-primary hover:bg-primary/90 text-white font-display uppercase tracking-wider text-lg h-14">
+                  <Button className="w-full bg-primary hover:bg-primary/90 text-white font-display uppercase tracking-wider text-lg h-12 mt-2">
                     ⚾ Dołącz do nas
                   </Button>
                 </Link>
 
-                <div className="h-px bg-border my-2" />
+                <div className="h-px bg-border my-1" />
                 {isAdmin && (
                   <Button variant="outline" onClick={() => { logout(); setIsOpen(false); }} className="w-full">
                     Logout
